@@ -1028,6 +1028,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;input id=&quot;pae-distance&quot; type=&quot;range&quot; min=&quot;1.40&quot; max=&quot;80&quot; step=&quot;0.01&quot; value=&quot;75.03&quot; aria-label=&quot;Perpendicular distance in feet&quot;&gt;
     &lt;/label&gt;
   &lt;/div&gt;
+  &lt;div class=&quot;viz-row&quot;&gt;
+    &lt;button id=&quot;pae-reset&quot; class=&quot;btn btn-ghost&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
+  &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 520&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
     &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
     &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle or perpendicular distance to see the linked projection change. Green right-angle dimensions show both edge insets and the span between the two inner green lines. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
@@ -1089,11 +1092,13 @@ html&gt;body{padding:0}&lt;/style&gt;
       const root = document.getElementById(&quot;parallelogram-angle-explorer&quot;);
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
       const distanceInput = root.querySelector(&quot;#pae-distance&quot;);
+      const resetButton = root.querySelector(&quot;#pae-reset&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
       const distanceOutput = root.querySelector(&quot;#pae-distance-output&quot;);
       const side = 80;
       const longSide = 165.93;
       const insetOffsetFeet = 15;
+      const defaultAngle = 69.69;
       const scale = 1.72;
       const centerX = 300;
       const centerY = 250;
@@ -1303,6 +1308,13 @@ html&gt;body{padding:0}&lt;/style&gt;
         const angle = Math.asin(distance / side) * 180 / Math.PI;
         angleInput.value = angle.toFixed(2);
         draw(angle);
+      });
+
+      resetButton.addEventListener(&quot;click&quot;, () =&gt; {
+        const distance = side * Math.sin(defaultAngle * Math.PI / 180);
+        angleInput.value = defaultAngle.toFixed(2);
+        distanceInput.value = distance.toFixed(2);
+        draw(defaultAngle);
       });
 
       draw(Number(angleInput.value));
