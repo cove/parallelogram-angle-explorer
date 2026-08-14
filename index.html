@@ -970,11 +970,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       stroke: #777777;
       stroke-width: 1;
     }
-    #parallelogram-angle-explorer .top-total-dimension {
-      fill: none;
-      stroke: #111111;
-      stroke-width: 1.2;
-    }
     #parallelogram-angle-explorer .static-line {
       fill: none;
       stroke: #6a3d12;
@@ -1031,9 +1026,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;marker id=&quot;pae-green-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
         &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#258a53&quot;&gt;&lt;/path&gt;
       &lt;/marker&gt;
-      &lt;marker id=&quot;pae-black-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
-        &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#111111&quot;&gt;&lt;/path&gt;
-      &lt;/marker&gt;
       &lt;marker id=&quot;pae-static-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
         &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#6a3d12&quot;&gt;&lt;/path&gt;
       &lt;/marker&gt;
@@ -1044,7 +1036,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;line id=&quot;pae-inset-right&quot; class=&quot;inset-segment&quot;&gt;&lt;/line&gt;
     &lt;line id=&quot;pae-top-dim-left&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
     &lt;line id=&quot;pae-top-dim-right&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-dim-full&quot; class=&quot;top-total-dimension&quot; marker-start=&quot;url(#pae-black-arrow)&quot; marker-end=&quot;url(#pae-black-arrow)&quot;&gt;&lt;/line&gt;
     &lt;line id=&quot;pae-top-dim-inner&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
     &lt;line id=&quot;pae-top-ext-left&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
     &lt;line id=&quot;pae-top-ext-inset-left&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
@@ -1052,7 +1043,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;line id=&quot;pae-top-ext-right&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
     &lt;text id=&quot;pae-top-dim-left-label&quot; class=&quot;label inset-label&quot;&gt;15 ft&lt;/text&gt;
     &lt;text id=&quot;pae-top-dim-right-label&quot; class=&quot;label inset-label&quot;&gt;15 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-top-dim-full-label&quot; class=&quot;label&quot;&gt;80 ft total&lt;/text&gt;
     &lt;text id=&quot;pae-top-dim-inner-label&quot; class=&quot;label inset-label&quot;&gt;50 ft&lt;/text&gt;
     &lt;path id=&quot;pae-angle-arc&quot; class=&quot;angle-arc&quot;&gt;&lt;/path&gt;
     &lt;text id=&quot;pae-angle-label&quot; class=&quot;label angle-label&quot;&gt;69.69°&lt;/text&gt;
@@ -1153,7 +1143,6 @@ html&gt;body{padding:0}&lt;/style&gt;
           y: y + outwardY * amount,
         });
         const innerDimensionOffset = 23;
-        const totalDimensionOffset = 47;
         const leftTop = { x: leftX, y: leftTopY };
         const leftInsetTop = { x: leftInsetX, y: leftInsetStart };
         const rightInsetTop = { x: rightInsetX, y: rightInsetStart };
@@ -1162,27 +1151,23 @@ html&gt;body{padding:0}&lt;/style&gt;
         const leftDimEnd = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerDimensionOffset);
         const rightDimStart = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerDimensionOffset);
         const rightDimEnd = offsetPoint(rightTop.x, rightTop.y, innerDimensionOffset);
-        const fullDimStart = offsetPoint(leftTop.x, leftTop.y, totalDimensionOffset);
-        const fullDimEnd = offsetPoint(rightTop.x, rightTop.y, totalDimensionOffset);
         const insideDimStart = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerDimensionOffset);
         const insideDimEnd = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerDimensionOffset);
 
         setLine(el(&quot;pae-top-dim-left&quot;), leftDimStart.x, leftDimStart.y, leftDimEnd.x, leftDimEnd.y);
         setLine(el(&quot;pae-top-dim-right&quot;), rightDimStart.x, rightDimStart.y, rightDimEnd.x, rightDimEnd.y);
-        setLine(el(&quot;pae-top-dim-full&quot;), fullDimStart.x, fullDimStart.y, fullDimEnd.x, fullDimEnd.y);
         setLine(el(&quot;pae-top-dim-inner&quot;), insideDimStart.x, insideDimStart.y, insideDimEnd.x, insideDimEnd.y);
 
-        const outerExtensionEnd = totalDimensionOffset + 6;
         const innerExtensionEnd = innerDimensionOffset + 6;
         const extensionStart = 3;
         const leftExtStart = offsetPoint(leftTop.x, leftTop.y, extensionStart);
-        const leftExtEnd = offsetPoint(leftTop.x, leftTop.y, outerExtensionEnd);
+        const leftExtEnd = offsetPoint(leftTop.x, leftTop.y, innerExtensionEnd);
         const insetLeftExtStart = offsetPoint(leftInsetTop.x, leftInsetTop.y, extensionStart);
         const insetLeftExtEnd = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerExtensionEnd);
         const insetRightExtStart = offsetPoint(rightInsetTop.x, rightInsetTop.y, extensionStart);
         const insetRightExtEnd = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerExtensionEnd);
         const rightExtStart = offsetPoint(rightTop.x, rightTop.y, extensionStart);
-        const rightExtEnd = offsetPoint(rightTop.x, rightTop.y, outerExtensionEnd);
+        const rightExtEnd = offsetPoint(rightTop.x, rightTop.y, innerExtensionEnd);
         setLine(el(&quot;pae-top-ext-left&quot;), leftExtStart.x, leftExtStart.y, leftExtEnd.x, leftExtEnd.y);
         setLine(el(&quot;pae-top-ext-inset-left&quot;), insetLeftExtStart.x, insetLeftExtStart.y, insetLeftExtEnd.x, insetLeftExtEnd.y);
         setLine(el(&quot;pae-top-ext-inset-right&quot;), insetRightExtStart.x, insetRightExtStart.y, insetRightExtEnd.x, insetRightExtEnd.y);
@@ -1198,11 +1183,6 @@ html&gt;body{padding:0}&lt;/style&gt;
           (rightInsetTop.y + rightTop.y) / 2,
           innerDimensionOffset + labelOffset
         );
-        const fullDimLabel = offsetPoint(
-          (leftTop.x + rightTop.x) / 2,
-          (leftTop.y + rightTop.y) / 2,
-          totalDimensionOffset + labelOffset
-        );
         const insideDimLabel = offsetPoint(
           (leftInsetTop.x + rightInsetTop.x) / 2,
           (leftInsetTop.y + rightInsetTop.y) / 2,
@@ -1210,7 +1190,6 @@ html&gt;body{padding:0}&lt;/style&gt;
         );
         setText(el(&quot;pae-top-dim-left-label&quot;), leftDimLabel.x, leftDimLabel.y, `${insetOffsetFeet} ft`, shortRotation);
         setText(el(&quot;pae-top-dim-right-label&quot;), rightDimLabel.x, rightDimLabel.y, `${insetOffsetFeet} ft`, shortRotation);
-        setText(el(&quot;pae-top-dim-full-label&quot;), fullDimLabel.x, fullDimLabel.y, `${side} ft total`, shortRotation);
         setText(el(&quot;pae-top-dim-inner-label&quot;), insideDimLabel.x, insideDimLabel.y, `${side - 2 * insetOffsetFeet} ft`, shortRotation);
 
         const perpendicularInset = insetOffsetFeet * Math.sin(angle);
