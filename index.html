@@ -1007,6 +1007,33 @@ html&gt;body{padding:0}&lt;/style&gt;
       fill: #c00000;
       text-anchor: end;
     }
+    @media (max-width: 600px) {
+      #parallelogram-angle-explorer {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        max-width: none;
+        min-height: 100svh;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 8px 8px 12px;
+      }
+      #parallelogram-angle-explorer h2 { order: 0; }
+      #parallelogram-angle-explorer #pae-svg {
+        order: 1;
+        max-height: none;
+      }
+      #parallelogram-angle-explorer .controls {
+        order: 2;
+        margin: 12px 0 10px;
+      }
+      #parallelogram-angle-explorer #pae-reset-row { order: 3; }
+      #parallelogram-angle-explorer #pae-source-footer {
+        order: 4;
+        margin-top: 12px;
+      }
+    }
   &lt;/style&gt;
 
   &lt;h2&gt;Parallelogram Angle &amp;amp; Perpendicular Distance&lt;/h2&gt;
@@ -1016,7 +1043,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;input id=&quot;pae-angle&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;90&quot; step=&quot;0.01&quot; value=&quot;69.69&quot; aria-label=&quot;Slant angle in degrees&quot;&gt;
     &lt;/label&gt;
   &lt;/div&gt;
-  &lt;div class=&quot;viz-row&quot;&gt;
+  &lt;div id=&quot;pae-reset-row&quot; class=&quot;viz-row&quot;&gt;
     &lt;button id=&quot;pae-reset&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
   &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 520&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
@@ -1070,7 +1097,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;text id=&quot;pae-right-side-label&quot; class=&quot;label&quot;&gt;165.93 ft&lt;/text&gt;
   &lt;/svg&gt;
 
-  &lt;footer class=&quot;viz-row&quot;&gt;
+  &lt;footer id=&quot;pae-source-footer&quot; class=&quot;viz-row&quot;&gt;
     &lt;a href=&quot;https://github.com/cove/parallelogram-angle-explorer&quot;&gt;Source Code&lt;/a&gt;
   &lt;/footer&gt;
 
@@ -1080,6 +1107,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
       const resetButton = root.querySelector(&quot;#pae-reset&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
+      const svg = root.querySelector(&quot;#pae-svg&quot;);
+      const mobileLayout = window.matchMedia(&quot;(max-width: 600px)&quot;);
       const side = 80;
       const longSide = 165.93;
       const insetOffsetFeet = 15;
@@ -1089,6 +1118,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       const centerY = 250;
 
       const el = (id) =&gt; root.querySelector(`#${id}`);
+      const syncMobileViewport = () =&gt; {
+        svg.setAttribute(&quot;viewBox&quot;, mobileLayout.matches ? &quot;88 0 444 520&quot; : &quot;0 0 620 520&quot;);
+      };
       const setLine = (node, x1, y1, x2, y2) =&gt; {
         node.setAttribute(&quot;x1&quot;, x1.toFixed(2));
         node.setAttribute(&quot;y1&quot;, y1.toFixed(2));
@@ -1279,6 +1311,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         draw(defaultAngle);
       });
 
+      mobileLayout.addEventListener(&quot;change&quot;, syncMobileViewport);
+      syncMobileViewport();
       draw(Number(angleInput.value));
     })();
   &lt;/script&gt;
