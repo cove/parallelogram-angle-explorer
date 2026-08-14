@@ -1109,7 +1109,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;text id=&quot;pae-overlap-label&quot; class=&quot;label overlap-label emphasized-dimension-label&quot;&gt;Overlap · 0.93 ft&lt;/text&gt;
 
     &lt;text id=&quot;pae-bottom-side-label&quot; class=&quot;label&quot;&gt;80 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-left-side-label&quot; class=&quot;label&quot;&gt;165.93 ft&lt;/text&gt;
     &lt;text id=&quot;pae-right-side-label&quot; class=&quot;label&quot;&gt;165.93 ft&lt;/text&gt;
     &lt;/g&gt;
   &lt;/svg&gt;
@@ -1312,7 +1311,6 @@ html&gt;body{padding:0}&lt;/style&gt;
         setText(el(&quot;pae-angle-label&quot;), rightX + 42 * Math.cos(labelAngle), rightTopY + 42 * Math.sin(labelAngle), `${angleDegrees.toFixed(2)}°`);
 
         setText(el(&quot;pae-bottom-side-label&quot;), (leftX + rightX) / 2, (leftBottomY + rightBottomY) / 2 + 17, &quot;80 ft&quot;, shortRotation);
-        setText(el(&quot;pae-left-side-label&quot;), leftX - 13, (leftTopY + leftBottomY) / 2, &quot;165.93 ft&quot;, -90);
         setText(el(&quot;pae-right-side-label&quot;), rightX + 13, (rightTopY + rightBottomY) / 2, &quot;165.93 ft&quot;, 90);
 
         angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
