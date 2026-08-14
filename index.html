@@ -920,7 +920,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     #parallelogram-angle-explorer .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 12px 22px;
       margin-bottom: 10px;
     }
@@ -1012,9 +1012,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       fill: #c00000;
       text-anchor: end;
     }
-    @media (max-width: 520px) {
-      #parallelogram-angle-explorer .controls { grid-template-columns: 1fr; }
-    }
   &lt;/style&gt;
 
   &lt;h2&gt;Parallelogram Angle &amp;amp; Perpendicular Distance&lt;/h2&gt;
@@ -1023,17 +1020,13 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;span&gt;Slant angle θ &lt;output id=&quot;pae-angle-output&quot;&gt;69.69°&lt;/output&gt;&lt;/span&gt;
       &lt;input id=&quot;pae-angle&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;90&quot; step=&quot;0.01&quot; value=&quot;69.69&quot; aria-label=&quot;Slant angle in degrees&quot;&gt;
     &lt;/label&gt;
-    &lt;label&gt;
-      &lt;span&gt;Right-angle distance d &lt;output id=&quot;pae-distance-output&quot;&gt;75.03 ft&lt;/output&gt;&lt;/span&gt;
-      &lt;input id=&quot;pae-distance&quot; type=&quot;range&quot; min=&quot;1.40&quot; max=&quot;80&quot; step=&quot;0.01&quot; value=&quot;75.03&quot; aria-label=&quot;Perpendicular distance in feet&quot;&gt;
-    &lt;/label&gt;
   &lt;/div&gt;
   &lt;div class=&quot;viz-row&quot;&gt;
-    &lt;button id=&quot;pae-reset&quot; class=&quot;btn btn-ghost&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
+    &lt;button id=&quot;pae-reset&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
   &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 520&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
     &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
-    &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle or perpendicular distance to see the linked projection change. Green right-angle dimensions show both edge insets and the span between the two inner green lines. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
+    &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle to see the linked geometry change. Green right-angle dimensions show both edge insets and the span between the two inner green lines. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
     &lt;defs&gt;
       &lt;marker id=&quot;pae-green-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
         &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#258a53&quot;&gt;&lt;/path&gt;
@@ -1091,10 +1084,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     (() =&gt; {
       const root = document.getElementById(&quot;parallelogram-angle-explorer&quot;);
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
-      const distanceInput = root.querySelector(&quot;#pae-distance&quot;);
       const resetButton = root.querySelector(&quot;#pae-reset&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
-      const distanceOutput = root.querySelector(&quot;#pae-distance-output&quot;);
       const side = 80;
       const longSide = 165.93;
       const insetOffsetFeet = 15;
@@ -1293,27 +1284,15 @@ html&gt;body{padding:0}&lt;/style&gt;
         setText(el(&quot;pae-right-side-label&quot;), rightX + 13, (rightTopY + rightBottomY) / 2, &quot;165.93 ft&quot;, 90);
 
         angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
-        distanceOutput.textContent = `${distance.toFixed(2)} ft`;
       }
 
       angleInput.addEventListener(&quot;input&quot;, () =&gt; {
         const angle = Number(angleInput.value);
-        const distance = side * Math.sin(angle * Math.PI / 180);
-        distanceInput.value = distance.toFixed(2);
-        draw(angle);
-      });
-
-      distanceInput.addEventListener(&quot;input&quot;, () =&gt; {
-        const distance = Math.min(side, Math.max(0, Number(distanceInput.value)));
-        const angle = Math.asin(distance / side) * 180 / Math.PI;
-        angleInput.value = angle.toFixed(2);
         draw(angle);
       });
 
       resetButton.addEventListener(&quot;click&quot;, () =&gt; {
-        const distance = side * Math.sin(defaultAngle * Math.PI / 180);
         angleInput.value = defaultAngle.toFixed(2);
-        distanceInput.value = distance.toFixed(2);
         draw(defaultAngle);
       });
 
