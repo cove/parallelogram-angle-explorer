@@ -1029,23 +1029,39 @@ html&gt;body{padding:0}&lt;/style&gt;
         flex-direction: column;
         width: 100vw;
         max-width: none;
-        min-height: 100svh;
+        height: 100vh;
+        height: 100svh;
+        height: 100dvh;
+        min-height: 0;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
         padding: 8px 8px 12px;
+        overflow: hidden;
+        overscroll-behavior: none;
       }
-      #parallelogram-angle-explorer h2 { order: 0; }
+      #parallelogram-angle-explorer h2 {
+        order: 0;
+        flex: 0 0 auto;
+      }
       #parallelogram-angle-explorer #pae-svg {
         order: 1;
+        flex: 1 1 0;
+        min-height: 0;
+        height: 100%;
         max-height: none;
       }
       #parallelogram-angle-explorer .controls {
         order: 2;
+        flex: 0 0 auto;
         margin: 12px 0 10px;
       }
-      #parallelogram-angle-explorer #pae-reset-row { order: 3; }
+      #parallelogram-angle-explorer #pae-reset-row {
+        order: 3;
+        flex: 0 0 auto;
+      }
       #parallelogram-angle-explorer #pae-source-footer {
         order: 4;
+        flex: 0 0 auto;
         margin-top: 12px;
       }
     }
