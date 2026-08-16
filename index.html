@@ -1089,7 +1089,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;/label&gt;
   &lt;/div&gt;
   &lt;div id=&quot;pae-reset-row&quot; class=&quot;viz-row&quot;&gt;
-    &lt;button id=&quot;pae-reset&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
     &lt;button id=&quot;pae-snap-90&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 90°&lt;/button&gt;
     &lt;button id=&quot;pae-snap-11023&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 110.23°&lt;/button&gt;
   &lt;/div&gt;
@@ -1157,7 +1156,6 @@ html&gt;body{padding:0}&lt;/style&gt;
     (() =&gt; {
       const root = document.getElementById(&quot;parallelogram-angle-explorer&quot;);
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
-      const resetButton = root.querySelector(&quot;#pae-reset&quot;);
       const snap90Button = root.querySelector(&quot;#pae-snap-90&quot;);
       const snap11023Button = root.querySelector(&quot;#pae-snap-11023&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
@@ -1166,7 +1164,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       const side = 80;
       const longSide = 165.93;
       const insetOffsetFeet = 15;
-      const defaultAngle = 69.69;
       const scale = 1.72;
       const centerX = 300;
       const centerY = 250;
@@ -1358,11 +1355,6 @@ html&gt;body{padding:0}&lt;/style&gt;
       angleInput.addEventListener(&quot;input&quot;, () =&gt; {
         const angle = Number(angleInput.value);
         draw(angle);
-      });
-
-      resetButton.addEventListener(&quot;click&quot;, () =&gt; {
-        angleInput.value = defaultAngle.toFixed(2);
-        draw(defaultAngle);
       });
 
       snap90Button.addEventListener(&quot;click&quot;, () =&gt; {
