@@ -1071,11 +1071,12 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;div class=&quot;controls&quot;&gt;
     &lt;label&gt;
       &lt;span&gt;Slant angle θ &lt;output id=&quot;pae-angle-output&quot;&gt;69.69°&lt;/output&gt;&lt;/span&gt;
-      &lt;input id=&quot;pae-angle&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;90&quot; step=&quot;0.01&quot; value=&quot;69.69&quot; aria-label=&quot;Slant angle in degrees&quot;&gt;
+      &lt;input id=&quot;pae-angle&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;180&quot; step=&quot;0.01&quot; value=&quot;69.69&quot; aria-label=&quot;Slant angle in degrees&quot;&gt;
     &lt;/label&gt;
   &lt;/div&gt;
   &lt;div id=&quot;pae-reset-row&quot; class=&quot;viz-row&quot;&gt;
     &lt;button id=&quot;pae-reset&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
+    &lt;button id=&quot;pae-snap-90&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 90°&lt;/button&gt;
   &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 676&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
     &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
@@ -1138,6 +1139,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const root = document.getElementById(&quot;parallelogram-angle-explorer&quot;);
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
       const resetButton = root.querySelector(&quot;#pae-reset&quot;);
+      const snap90Button = root.querySelector(&quot;#pae-snap-90&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
       const svg = root.querySelector(&quot;#pae-svg&quot;);
       const mobileLayout = window.matchMedia(&quot;(max-width: 600px)&quot;);
@@ -1340,6 +1342,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       resetButton.addEventListener(&quot;click&quot;, () =&gt; {
         angleInput.value = defaultAngle.toFixed(2);
         draw(defaultAngle);
+      });
+
+      snap90Button.addEventListener(&quot;click&quot;, () =&gt; {
+        angleInput.value = &quot;90&quot;;
+        draw(90);
       });
 
       mobileLayout.addEventListener(&quot;change&quot;, syncMobileViewport);
