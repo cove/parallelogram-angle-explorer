@@ -1077,6 +1077,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;div id=&quot;pae-reset-row&quot; class=&quot;viz-row&quot;&gt;
     &lt;button id=&quot;pae-reset&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 69.69°&lt;/button&gt;
     &lt;button id=&quot;pae-snap-90&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 90°&lt;/button&gt;
+    &lt;button id=&quot;pae-snap-11023&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 110.23°&lt;/button&gt;
   &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 676&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
     &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
@@ -1140,6 +1141,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       const angleInput = root.querySelector(&quot;#pae-angle&quot;);
       const resetButton = root.querySelector(&quot;#pae-reset&quot;);
       const snap90Button = root.querySelector(&quot;#pae-snap-90&quot;);
+      const snap11023Button = root.querySelector(&quot;#pae-snap-11023&quot;);
       const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
       const svg = root.querySelector(&quot;#pae-svg&quot;);
       const mobileLayout = window.matchMedia(&quot;(max-width: 600px)&quot;);
@@ -1347,6 +1349,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       snap90Button.addEventListener(&quot;click&quot;, () =&gt; {
         angleInput.value = &quot;90&quot;;
         draw(90);
+      });
+
+      snap11023Button.addEventListener(&quot;click&quot;, () =&gt; {
+        angleInput.value = &quot;110.23&quot;;
+        draw(110.23);
       });
 
       mobileLayout.addEventListener(&quot;change&quot;, syncMobileViewport);
