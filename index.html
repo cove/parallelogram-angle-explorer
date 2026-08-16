@@ -1022,6 +1022,20 @@ html&gt;body{padding:0}&lt;/style&gt;
       stroke-width: 5px;
       stroke-linejoin: round;
     }
+    #parallelogram-angle-explorer .right-angle-method {
+      stroke: #7030a0;
+    }
+    #parallelogram-angle-explorer text.right-angle-method-label {
+      fill: #7030a0;
+    }
+    #parallelogram-angle-explorer text.right-angle-method-title {
+      font-weight: 700;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 5px;
+      stroke-linejoin: round;
+      text-anchor: end;
+    }
     @media (max-width: 600px) {
       #parallelogram-angle-explorer {
         box-sizing: border-box;
@@ -1081,10 +1095,13 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/div&gt;
   &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 676&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
     &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
-    &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle to see the linked geometry change. Green right-angle dimensions show both edge insets and the span between the two inner green lines. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
+    &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
     &lt;defs&gt;
       &lt;marker id=&quot;pae-green-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
         &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#258a53&quot;&gt;&lt;/path&gt;
+      &lt;/marker&gt;
+      &lt;marker id=&quot;pae-purple-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
+        &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#7030a0&quot;&gt;&lt;/path&gt;
       &lt;/marker&gt;
       &lt;marker id=&quot;pae-static-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
         &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#6a3d12&quot;&gt;&lt;/path&gt;
@@ -1108,14 +1125,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;path id=&quot;pae-angle-arc&quot; class=&quot;angle-arc&quot;&gt;&lt;/path&gt;
     &lt;text id=&quot;pae-angle-label&quot; class=&quot;label angle-label&quot;&gt;69.69°&lt;/text&gt;
 
-    &lt;line id=&quot;pae-perp-inset-left&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-perp-inner&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-perp-inset-right&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;path id=&quot;pae-perp-square-left&quot; class=&quot;inset-offset&quot;&gt;&lt;/path&gt;
-    &lt;path id=&quot;pae-perp-square-right&quot; class=&quot;inset-offset&quot;&gt;&lt;/path&gt;
-    &lt;text id=&quot;pae-perp-inset-left-label&quot; class=&quot;label inset-label inside-measurement-label&quot;&gt;14.07 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-perp-inner-label&quot; class=&quot;label inset-label inside-measurement-label&quot;&gt;46.88 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-perp-inset-right-label&quot; class=&quot;label inset-label inside-measurement-label&quot;&gt;14.07 ft&lt;/text&gt;
+    &lt;line id=&quot;pae-perp-inset-left&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
+    &lt;line id=&quot;pae-perp-inner&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
+    &lt;line id=&quot;pae-perp-inset-right&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
+    &lt;path id=&quot;pae-perp-square-left&quot; class=&quot;inset-offset right-angle-method&quot;&gt;&lt;/path&gt;
+    &lt;path id=&quot;pae-perp-square-right&quot; class=&quot;inset-offset right-angle-method&quot;&gt;&lt;/path&gt;
+    &lt;text id=&quot;pae-right-angle-method-label&quot; class=&quot;label right-angle-method-label right-angle-method-title&quot;&gt;Right angle method&lt;/text&gt;
+    &lt;text id=&quot;pae-perp-inset-left-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;14.07 ft&lt;/text&gt;
+    &lt;text id=&quot;pae-perp-inner-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;46.88 ft&lt;/text&gt;
+    &lt;text id=&quot;pae-perp-inset-right-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;14.07 ft&lt;/text&gt;
 
     &lt;line id=&quot;pae-static-a&quot; class=&quot;static-line&quot; marker-start=&quot;url(#pae-static-arrow)&quot; marker-end=&quot;url(#pae-static-arrow)&quot;&gt;&lt;/line&gt;
     &lt;text id=&quot;pae-static-a-label&quot; class=&quot;label static-line-label&quot;&gt;A · 65 ft&lt;/text&gt;
@@ -1270,6 +1288,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         setLine(el(&quot;pae-perp-inset-left&quot;), leftX, perpendicularY, leftInsetX, perpendicularY);
         setLine(el(&quot;pae-perp-inner&quot;), leftInsetX, perpendicularY, rightInsetX, perpendicularY);
         setLine(el(&quot;pae-perp-inset-right&quot;), rightInsetX, perpendicularY, rightX, perpendicularY);
+        setText(el(&quot;pae-right-angle-method-label&quot;), leftX - 10, perpendicularY + 4, &quot;Right angle method&quot;);
         el(&quot;pae-perp-square-left&quot;).setAttribute(
           &quot;d&quot;,
           `M ${leftX} ${perpendicularY - 8} L ${leftX + 8} ${perpendicularY - 8} L ${leftX + 8} ${perpendicularY}`
