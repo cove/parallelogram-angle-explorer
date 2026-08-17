@@ -201,6 +201,20 @@
       font-size: 15px;
       margin: 0 0 2px;
     }
+    #parallelogram-angle-explorer .calculations-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 2px;
+    }
+    #parallelogram-angle-explorer .calculations-header h3 {
+      margin: 0;
+    }
+    #parallelogram-angle-explorer .calculation-status {
+      min-height: 15px;
+      color: #1c6d43;
+    }
     #parallelogram-angle-explorer .calculation-note {
       margin: 0 0 8px;
       color: #444444;
@@ -366,7 +380,12 @@
   </svg>
 
   <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
-    <h3 id="pae-calculations-title">Measurement calculations</h3>
+    <div class="calculations-header">
+      <h3 id="pae-calculations-title">Measurement calculations</h3>
+      <button id="pae-copy-measurements" class="btn" type="button">Copy live measurements</button>
+    </div>
+    <p class="calculation-note">Bound: the perpendicular spans are 15·sin&#8201;θ and 50·sin&#8201;θ, and sin&#8201;θ&#8202;≤&#8202;1, so they never exceed 15 ft and 50 ft — equality only at θ&#8202;=&#8202;90°.</p>
+    <p id="pae-copy-status" class="calculation-note calculation-status" role="status" aria-live="polite"></p>
     <div class="calculation-grid">
       <div class="calculation calculation-green">
         <span class="calculation-name">Shape</span>

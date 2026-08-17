@@ -72,14 +72,25 @@ async function createHarness() {
     },
   };
   const mediaQuery = new FakeMediaQuery();
+  const clipboard = {
+    writes: [],
+    shouldFail: false,
+    writeText(text) {
+      clipboard.writes.push(text);
+      return clipboard.shouldFail
+        ? Promise.reject(new Error("denied"))
+        : Promise.resolve();
+    },
+  };
   const windowRef = {
     matchMedia(query) {
       assert.equal(query, "(max-width: 600px)");
       return mediaQuery;
     },
+    navigator: { clipboard },
   };
   const controller = initializeApp(documentRef, windowRef);
-  return { controller, mediaQuery, nodes };
+  return { clipboard, controller, mediaQuery, nodes };
 }
 
 test("renders the initial state from the shared geometry module", async () => {
@@ -140,4 +151,44 @@ test("switches the SVG viewport at the mobile breakpoint", async () => {
   mediaQuery.matches = false;
   controller.syncMobileViewport();
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
+});
+
+test("copies only the angle-dependent measurements", async () => {
+  const { clipboard, nodes } = await createHarness();
+
+  nodes.get("pae-copy-measurements").dispatch("click");
+  await Promise.resolve();
+
+  assert.equal(clipboard.writes.length, 1);
+  assert.equal(
+    clipboard.writes[0],
+    [
+      "Slant angle \u03b8 = 69.69\u00b0",
+      "Outer offsets: 15 ft \u00d7 sin(69.69\u00b0) = 14.07 ft each",
+      "Inner span: 50 ft \u00d7 sin(69.69\u00b0) = 46.89 ft",
+      "Overlap: |65 ft \u2212 (50 ft + 15 ft \u00d7 sin(69.69\u00b0))| = 0.93 ft",
+    ].join("\n"),
+  );
+  assert.doesNotMatch(clipboard.writes[0], /165\.93|A = 65 ft/);
+  assert.equal(
+    nodes.get("pae-copy-status").textContent,
+    "Copied the angle-dependent measurements.",
+  );
+});
+
+test("reports a failed clipboard write and clears the status on redraw", async () => {
+  const { clipboard, controller, nodes } = await createHarness();
+
+  clipboard.shouldFail = true;
+  nodes.get("pae-copy-measurements").dispatch("click");
+  await Promise.resolve();
+  await Promise.resolve();
+
+  assert.equal(
+    nodes.get("pae-copy-status").textContent,
+    "Copy failed \u2014 select the values manually.",
+  );
+
+  controller.draw(90);
+  assert.equal(nodes.get("pae-copy-status").textContent, "");
 });

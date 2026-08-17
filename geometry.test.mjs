@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateDiagram, DIMENSIONS, PRESET_ANGLES } from "./geometry.mjs";
+import {
+  calculateDiagram,
+  DIMENSIONS,
+  PRESET_ANGLES,
+  variableMeasurementsText,
+} from "./geometry.mjs";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -39,10 +44,14 @@ test("calculates the initial 69.69 degree example", () => {
   approximately(diagram.measurements.perpendicularWidth, 75.02626949065717);
   approximately(diagram.measurements.overlap, 0.9325744705018165);
   assert.deepEqual(diagram.formulas.outerOffsets, {
+    label: "Outer offsets",
+    varies: true,
     expression: "15 ft × sin(69.69°)",
     result: "= 14.07 ft each",
   });
   assert.deepEqual(diagram.formulas.innerSpan, {
+    label: "Inner span",
+    varies: true,
     expression: "50 ft × sin(69.69°)",
     result: "= 46.89 ft",
   });
@@ -67,10 +76,14 @@ test("produces exact right-angle measurements at 90 degrees", () => {
   assert.equal(diagram.shape[0].y, diagram.shape[1].y);
   assert.equal(diagram.shape[2].y, diagram.shape[3].y);
   assert.deepEqual(diagram.formulas.shape, {
+    label: "Shape",
+    varies: false,
     expression: "15 ft + 50 ft + 15 ft",
     result: "= 80 ft; long sides = 165.93 ft",
   });
   assert.deepEqual(diagram.formulas.fixedArrows, {
+    label: "A and B",
+    varies: false,
     expression: "A = 65 ft",
     result: "· B = 50 ft",
   });
@@ -223,4 +236,36 @@ test("rejects invalid angle values", () => {
       new RangeError("angle must be a finite number from 1 through 180 degrees"),
     );
   }
+});
+
+test("flags which formulas vary with the slant angle", () => {
+  const diagram = calculateDiagram(PRESET_ANGLES.rightAngle);
+  const varying = Object.entries(diagram.formulas)
+    .filter(([, formula]) => formula.varies)
+    .map(([key]) => key);
+
+  assert.deepEqual(varying, ["outerOffsets", "innerSpan", "overlap"]);
+});
+
+test("builds clipboard text from the angle-dependent measurements only", () => {
+  const text = variableMeasurementsText(calculateDiagram(PRESET_ANGLES.rightAngle));
+
+  assert.deepEqual(text.split("\n"), [
+    "Slant angle \u03b8 = 90.00\u00b0",
+    "Outer offsets: 15 ft \u00d7 sin(90.00\u00b0) = 15.00 ft each",
+    "Inner span: 50 ft \u00d7 sin(90.00\u00b0) = 50.00 ft",
+    "Overlap: |65 ft \u2212 (50 ft + 15 ft \u00d7 sin(90.00\u00b0))| = 0.00 ft",
+  ]);
+  assert.doesNotMatch(text, /Shape|A and B/);
+});
+
+test("no slant exceeds the 15 ft and 50 ft perpendicular bounds", () => {
+  for (let angle = 1; angle <= 180; angle += 0.01) {
+    const { measurements } = calculateDiagram(Number(angle.toFixed(2)));
+    assert.ok(measurements.perpendicularInset <= DIMENSIONS.inset);
+    assert.ok(measurements.perpendicularInner <= DIMENSIONS.innerSpan);
+  }
+  const atRightAngle = calculateDiagram(PRESET_ANGLES.rightAngle).measurements;
+  assert.equal(atRightAngle.perpendicularInset, DIMENSIONS.inset);
+  assert.equal(atRightAngle.perpendicularInner, DIMENSIONS.innerSpan);
 });

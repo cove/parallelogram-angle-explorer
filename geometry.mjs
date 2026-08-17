@@ -189,25 +189,46 @@ export function calculateDiagram(angleDegrees) {
     measurements,
     formulas: {
       shape: {
+        label: "Shape",
+        varies: false,
         expression: "15 ft + 50 ft + 15 ft",
         result: "= 80 ft; long sides = 165.93 ft",
       },
       outerOffsets: {
+        label: "Outer offsets",
+        varies: true,
         expression: `15 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularInset)} ft each`,
       },
       innerSpan: {
+        label: "Inner span",
+        varies: true,
         expression: `50 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularInner)} ft`,
       },
       fixedArrows: {
+        label: "A and B",
+        varies: false,
         expression: "A = 65 ft",
         result: "· B = 50 ft",
       },
       overlap: {
+        label: "Overlap",
+        varies: true,
         expression: `|65 ft − (50 ft + 15 ft × sin(${angleDegrees.toFixed(2)}°))|`,
         result: `= ${formatFeet(overlap)} ft`,
       },
     },
   };
+}
+
+/**
+ * Clipboard text for the measurements that change with the slant angle.
+ * The fixed shape and the fixed A/B guides are deliberately left out.
+ */
+export function variableMeasurementsText(diagram) {
+  const lines = Object.values(diagram.formulas)
+    .filter((formula) => formula.varies)
+    .map((formula) => `${formula.label}: ${formula.expression} ${formula.result}`);
+  return [`Slant angle θ = ${diagram.angleDegrees.toFixed(2)}°`, ...lines].join("\n");
 }

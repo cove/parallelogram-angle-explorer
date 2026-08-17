@@ -1,4 +1,9 @@
-import { calculateDiagram, DIMENSIONS, PRESET_ANGLES } from "./geometry.mjs";
+import {
+  calculateDiagram,
+  DIMENSIONS,
+  PRESET_ANGLES,
+  variableMeasurementsText,
+} from "./geometry.mjs";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -7,6 +12,9 @@ export function initializeApp(documentRef, windowRef) {
   const snap11023Button = root.querySelector("#pae-snap-11023");
   const angleOutput = root.querySelector("#pae-angle-output");
   const svg = root.querySelector("#pae-svg");
+  const copyButton = root.querySelector("#pae-copy-measurements");
+  const copyStatus = root.querySelector("#pae-copy-status");
+  let clipboardText = "";
   const mobileLayout = windowRef.matchMedia("(max-width: 600px)");
   const element = (id) => root.querySelector(`#${id}`);
 
@@ -147,6 +155,8 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
+    clipboardText = variableMeasurementsText(diagram);
+    copyStatus.textContent = "";
     angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
   }
 
@@ -158,6 +168,16 @@ export function initializeApp(documentRef, windowRef) {
   snap11023Button.addEventListener("click", () => {
     angleInput.value = String(PRESET_ANGLES.reverse);
     draw(PRESET_ANGLES.reverse);
+  });
+  copyButton.addEventListener("click", () => {
+    windowRef.navigator.clipboard.writeText(clipboardText).then(
+      () => {
+        copyStatus.textContent = "Copied the angle-dependent measurements.";
+      },
+      () => {
+        copyStatus.textContent = "Copy failed — select the values manually.";
+      },
+    );
   });
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();
