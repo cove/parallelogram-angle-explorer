@@ -1,914 +1,70 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>Parallelogram Angle Explorer</title>
-<style>:root{color-scheme:light;background:rgb(255 255 255)}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Parallelogram Angle Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #ffffff;
+      --foreground: #1a1c1f;
+      --border: #d1d5db;
+      --viz-series-1: #2563eb;
+      --red: #c00000;
+      background: #ffffff;
+    }
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background: #ffffff;
+    }
+    body {
+      box-sizing: border-box;
+      padding: 16px;
+    }
+    .viz-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn {
+      appearance: auto;
+      min-height: 30px;
+      padding: 4px 10px;
+      color: #1a1c1f;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #e5e7eb;
+    }
+    .btn:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    a {
+      color: #2563a8;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+        overflow: hidden;
+      }
+    }
+  </style>
 </head>
 <body>
-<iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" title="Parallelogram Angle Explorer" srcdoc="&lt;!doctype html&gt;
-&lt;html lang=&quot;en&quot;&gt;
-&lt;head&gt;
-&lt;meta charset=&quot;utf-8&quot;&gt;
-&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
-&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
-&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
-&lt;title&gt;Parallelogram Angle Explorer&lt;/title&gt;
-&lt;style&gt;:root {
-  color-scheme: light dark;
-  background-color: var(
-    --background,
-    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
-  ) !important;
-
-  /* Agent-facing contract; keep in sync with SKILL.md. */
-  --background: var(
-    --color-background-primary,
-    light-dark(rgb(255 255 255), rgb(24 24 24))
-  );
-  --foreground: var(
-    --color-text-primary,
-    light-dark(rgb(26 28 31), rgb(255 255 255))
-  );
-  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
-  --card-foreground: var(
-    --color-text-primary,
-    light-dark(rgb(26 28 31), rgb(255 255 255))
-  );
-  --popover: var(
-    --color-background-secondary,
-    light-dark(rgb(255 255 255), rgb(45 45 45))
-  );
-  --popover-foreground: var(
-    --color-text-primary,
-    light-dark(rgb(26 28 31), rgb(255 255 255))
-  );
-  --primary: var(
-    --color-text-info,
-    light-dark(rgb(51 156 255), rgb(131 195 255))
-  );
-  --primary-foreground: var(
-    --color-text-inverse,
-    light-dark(rgb(255 255 255), rgb(13 13 13))
-  );
-  --secondary: var(
-    --color-background-secondary,
-    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
-  );
-  --secondary-foreground: var(
-    --color-text-primary,
-    light-dark(rgb(26 28 31), rgb(255 255 255))
-  );
-  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
-  --muted-foreground: var(
-    --color-text-secondary,
-    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
-  );
-  --accent: var(
-    --color-background-info,
-    light-dark(rgb(229 242 255), rgb(13 39 63))
-  );
-  --accent-foreground: var(
-    --color-text-info,
-    light-dark(rgb(51 156 255), rgb(131 195 255))
-  );
-  --destructive: var(
-    --color-text-warning,
-    light-dark(rgb(226 85 7), rgb(255 133 73))
-  );
-  --border: var(
-    --color-border-secondary,
-    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
-  );
-  --input: var(
-    --color-border-primary,
-    light-dark(
-      rgb(26 28 31 / 11.8%),
-      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
-    )
-  );
-  --ring: var(
-    --color-ring-primary,
-    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
-  );
-  --font-size-base: var(--font-text-md-size, 14px);
-  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
-  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
-  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
-  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
-  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
-  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
-  --viz-series-1: var(--primary);
-  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
-  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
-  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
-  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
-  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
-
-  /* Internal implementation variables; not part of the agent contract. */
-  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
-  --font-mono:
-    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
-    monospace;
-  --font-size-normal: max(11px, var(--font-size-base));
-  --font-size-tooltip: calc(var(--font-size-base) - 1px);
-  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
-  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
-  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
-  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
-  --font-weight-normal: 430;
-  --font-weight-medium: 500;
-  --line-height-normal: calc(var(--font-size-normal) * 1.5);
-  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
-  --line-height-small: calc(var(--font-size-small) + 4px);
-  --radius: var(--border-radius-lg, 12.5px);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-2xl: calc(var(--radius) * 1.6);
-  --radius-full: 9999px;
-  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
-  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
-
-  /* Legacy aliases; not part of the current agent contract. */
-  --viz-bg: transparent;
-  --viz-panel: var(--card);
-  --viz-border: var(--border);
-  --viz-text: var(--foreground);
-  --viz-muted: var(--muted-foreground);
-  --viz-accent: var(--primary);
-  --viz-accent-text: var(--primary-foreground);
-  --viz-accent-bg: var(--accent);
-  --viz-font-size: var(--font-size-base);
-  --viz-warning: var(--destructive);
-}
-
-:root[data-theme=&quot;light&quot;] {
-  color-scheme: light;
-}
-
-:root[data-theme=&quot;dark&quot;] {
-  color-scheme: dark;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html &gt; body {
-  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
-  --color-background-primary: var(
-    --background,
-    light-dark(rgb(255 255 255), rgb(24 24 24))
-  );
-  --color-text-primary: var(
-    --foreground,
-    light-dark(rgb(26 28 31), rgb(255 255 255))
-  );
-  --color-border-secondary: var(
-    --border,
-    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
-  );
-
-  margin: 0;
-  padding: 5px;
-  color: var(--foreground);
-  background: transparent !important;
-  font-family: var(--font-sans);
-  font-size: var(--font-size-normal);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--line-height-normal);
-}
-
-a {
-  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
-  cursor: pointer;
-  font-weight: var(--font-weight-medium, 500);
-  text-decoration: none;
-  text-underline-offset: 2px;
-}
-
-a:is(:hover, :focus-visible) {
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
-  text-decoration-thickness: 0.5px;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin-block: 0;
-}
-
-h1 {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.25;
-}
-
-h2 {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.25;
-}
-
-h3,
-h4,
-h5,
-h6 {
-  font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.3;
-}
-
-b,
-strong,
-th {
-  font-weight: var(--font-weight-medium);
-}
-
-code:not(pre code) {
-  display: inline;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  corner-shape: superellipse(1.5);
-  background: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 0.92em;
-  overflow-wrap: anywhere;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  word-break: break-word;
-}
-
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  color: var(--foreground);
-  font: inherit;
-  text-align: start;
-}
-
-.table :is(th, td) {
-  padding-block: 10px;
-  padding-inline: 0 24px;
-  overflow-wrap: anywhere;
-  border-bottom: 1px solid var(--border);
-  text-align: start;
-  vertical-align: top;
-}
-
-.table-responsive &gt; .table :is(th, td) {
-  overflow-wrap: break-word;
-}
-
-.table :is(th, td):last-child {
-  padding-inline-end: 0;
-}
-
-.table :is(caption, thead th) {
-  font-weight: 600;
-}
-
-.table thead th {
-  padding-block: 8px;
-  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
-}
-
-.table tbody tr:last-child :is(th, td) {
-  border-bottom: 0;
-}
-
-.table.table-sm :is(th, td) {
-  padding-block: 6px;
-}
-
-.table.table-sm :is(th, td):not(:last-child) {
-  padding-inline-end: 16px;
-}
-
-.table :is(.text-end, [align=&quot;right&quot;]) {
-  text-align: end;
-  font-variant-numeric: tabular-nums;
-}
-
-.table :is(.text-center, [align=&quot;center&quot;]) {
-  text-align: center;
-}
-
-.table .text-nowrap {
-  white-space: nowrap;
-}
-
-#widget {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  padding: 0;
-  background: transparent !important;
-}
-
-.card {
-  min-width: 0;
-  padding: 12px;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  border-radius: var(--radius-2xl);
-  corner-shape: superellipse(1.5);
-  color: var(--card-foreground);
-  background: var(--card);
-}
-
-#widget &gt; :not(.card, .progress) {
-  width: 100% !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.tooltip {
-  position: fixed;
-  z-index: 50;
-  top: 0;
-  left: 0;
-  width: max-content;
-  max-width: min(
-    20rem,
-    var(--tooltip-available-width, calc(100vw - 10px)),
-    calc(100vw - 10px)
-  );
-  max-height: min(
-    var(--tooltip-available-height, calc(100vh - 10px)),
-    calc(100vh - 10px)
-  );
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  corner-shape: superellipse(1.5);
-  color: var(--popover-foreground);
-  background: var(--popover);
-  box-shadow: none;
-  font-size: var(--font-size-tooltip);
-  line-height: var(--line-height-tooltip);
-  overflow-wrap: break-word;
-  white-space: normal;
-  pointer-events: none;
-  user-select: none;
-}
-
-.viz-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
-  gap: 10px;
-}
-
-.viz-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.viz-stat-value {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-medium);
-  line-height: 1.25;
-}
-
-.viz-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
-.progress {
-  display: flex;
-  height: 6px;
-  overflow: hidden;
-  border: 0;
-  border-radius: var(--radius-full);
-  background: var(--muted);
-}
-
-.progress-bar {
-  height: 100%;
-  flex-shrink: 0;
-  border: 0;
-  background: var(--viz-series-1);
-}
-
-.viz-badge {
-  padding: 3px 8px;
-  border-radius: var(--radius-full);
-  color: var(--accent-foreground);
-  background: var(--accent);
-  font-weight: var(--font-weight-medium);
-}
-
-small,
-.text-small,
-.viz-badge {
-  font-size: var(--font-size-small);
-  line-height: var(--line-height-small);
-}
-
-.text-muted {
-  color: var(--muted-foreground);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.viz-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
-.viz-controls &gt; .form-label {
-  display: grid;
-  min-width: min(100%, 260px);
-  flex: 1 1 280px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 2px 12px;
-  margin-bottom: 0;
-}
-
-.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
-  grid-column: 1 / -1;
-}
-
-.btn,
-.form-check-input,
-.form-control,
-.form-range,
-.form-select {
-  font: inherit;
-}
-
-.btn {
-  appearance: button;
-  display: inline-flex;
-  inline-size: fit-content;
-  max-inline-size: 100%;
-  min-height: 28px;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin: 0;
-  padding: 0 8px;
-  -webkit-app-region: no-drag;
-  border: 1px solid var(--input);
-  border-radius: var(--radius-lg);
-  corner-shape: superellipse(1.5);
-  color: var(--secondary-foreground);
-  background: var(--secondary);
-  cursor: var(--cursor-interaction, pointer);
-  text-align: center;
-  text-decoration: none;
-  white-space: nowrap;
-  user-select: none;
-  -webkit-font-smoothing: antialiased;
-}
-
-.btn:is(.btn-block, .viz-tile) {
-  inline-size: 100%;
-}
-
-.btn.viz-tile {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-a.btn {
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn:not(:disabled):hover {
-  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
-}
-
-.btn-primary {
-  border-color: transparent;
-  color: var(--primary-foreground);
-  background: var(--foreground);
-  background-clip: padding-box;
-}
-
-.btn-primary .text-muted {
-  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
-}
-
-.btn-primary:not(:disabled):hover {
-  background: color-mix(in srgb, var(--foreground) 80%, transparent);
-  background-clip: padding-box;
-}
-
-.btn-ghost {
-  border-color: transparent;
-  color: var(--muted-foreground);
-  background: transparent;
-}
-
-.btn-ghost:not(:disabled):hover {
-  color: var(--foreground);
-  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
-}
-
-.btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-[data-lucide] {
-  stroke-width: 1.6;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 6px;
-  color: var(--foreground);
-}
-
-.form-control {
-  display: block;
-  width: 100%;
-  min-height: 28px;
-  padding: 0 8px;
-  outline: none;
-  border: 1px solid var(--input);
-  border-radius: var(--radius-lg);
-  corner-shape: superellipse(1.5);
-  color: var(--foreground);
-  background: var(--secondary);
-}
-
-.form-control::placeholder {
-  color: var(--muted-foreground);
-}
-
-.form-control[type=&quot;file&quot;] {
-  padding: 0;
-  overflow: hidden;
-  cursor: var(--cursor-interaction, pointer);
-}
-
-.form-control[type=&quot;file&quot;]::file-selector-button {
-  min-height: 26px;
-  margin-right: 8px;
-  padding: 0 8px;
-  border: 0;
-  border-right: 1px solid var(--input);
-  color: var(--secondary-foreground);
-  background: var(--secondary);
-  cursor: inherit;
-  font: inherit;
-}
-
-.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
-  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
-}
-
-.form-control-color[type=&quot;color&quot;] {
-  width: 40px;
-  height: 28px;
-  padding: 3px;
-  cursor: var(--cursor-interaction, pointer);
-}
-
-.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
-  padding: 0;
-}
-
-.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
-  border: 0;
-  border-radius: calc(var(--radius-lg) - 4px);
-  corner-shape: superellipse(1.5);
-}
-
-textarea.form-control {
-  height: auto;
-  min-height: 72px;
-  padding: 8px 10px;
-  resize: vertical;
-}
-
-.form-control:focus-visible {
-  border-color: var(--ring);
-  box-shadow: inset 0 0 0 1px var(--ring);
-}
-
-.form-control:disabled,
-.form-select:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-.form-select {
-  appearance: none;
-  display: block;
-  width: 100%;
-  min-height: 28px;
-  margin: 0;
-  padding: 0 32px 0 8px;
-  outline: none;
-  border: 1px solid var(--input);
-  border-radius: var(--radius-lg);
-  corner-shape: superellipse(1.5);
-  color: var(--foreground);
-  background-color: var(--secondary);
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
-    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
-  background-position:
-    calc(100% - 14px) 50%,
-    calc(100% - 10px) 50%;
-  background-repeat: no-repeat;
-  background-size: 4px 4px;
-  cursor: var(--cursor-interaction, default);
-}
-
-.form-select:not(:disabled):hover {
-  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
-}
-
-.form-select:focus-visible {
-  border-color: var(--ring);
-  box-shadow: inset 0 0 0 1px var(--ring);
-}
-
-.form-check {
-  display: flex;
-  min-height: 20px;
-  align-items: center;
-  gap: 6px;
-}
-
-.form-check-input {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  flex: 0 0 auto;
-  margin: 0;
-  border: 1px solid var(--input);
-  color: var(--primary-foreground);
-  background-color: transparent;
-  cursor: var(--cursor-interaction, default);
-  transition:
-    background-color 150ms,
-    border-color 150ms,
-    box-shadow 150ms;
-}
-
-.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
-  border-color: var(--input);
-  border-radius: var(--radius-sm);
-  corner-shape: superellipse(1.5);
-  background-color: var(--secondary);
-  box-shadow: var(--shadow-sm);
-}
-
-.form-check:not(.form-switch)
-  .form-check-input:not(:disabled):not(:checked):hover {
-  background-color: var(--card);
-}
-
-.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
-  border-color: var(--primary);
-  background-color: var(--primary);
-}
-
-.form-check:not(.form-switch)
-  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--primary-foreground);
-  content: &quot;&quot;;
-  mask: var(--checkmark-image) center / 12px 12px no-repeat;
-}
-
-.form-check-input[type=&quot;radio&quot;] {
-  width: 14px;
-  height: 14px;
-  border-radius: var(--radius-full);
-}
-
-.form-check-input[type=&quot;radio&quot;]:checked {
-  border: 2px solid var(--primary);
-  background:
-    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
-    var(--primary);
-}
-
-.form-check:not(.form-switch) .form-check-input:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-.form-check:not(.form-switch) .form-check-input:disabled {
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
-  cursor: not-allowed;
-}
-
-.form-switch .form-check-input:disabled,
-.form-switch .form-check-input:disabled + .form-check-label {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.form-check-label {
-  color: var(--foreground);
-  cursor: var(--cursor-interaction, default);
-}
-
-.form-switch .form-check-input {
-  position: relative;
-  width: 32px;
-  height: 20px;
-  border: 0;
-  border-radius: var(--radius-full);
-  background: var(--muted);
-  box-shadow: none;
-  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.form-switch .form-check-input::before {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  box-sizing: border-box;
-  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
-  border-radius: var(--radius-full);
-  background: light-dark(var(--primary-foreground), var(--foreground));
-  box-shadow: var(--shadow-sm);
-  content: &quot;&quot;;
-  transform: translate(2px, -50%);
-  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.form-switch .form-check-input:checked {
-  background: var(--primary);
-}
-
-.form-switch .form-check-input:checked::before {
-  transform: translate(14px, -50%);
-}
-
-.form-switch .form-check-input:focus-visible {
-  box-shadow: 0 0 0 2px var(--ring);
-}
-
-.form-range {
-  appearance: none;
-  display: block;
-  width: 100%;
-  height: 28px;
-  flex: 1;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: 0;
-  accent-color: var(--primary);
-  background: linear-gradient(
-      color-mix(in srgb, var(--foreground) 7%, transparent),
-      color-mix(in srgb, var(--foreground) 7%, transparent)
-    )
-    center / 100% 2px no-repeat;
-}
-
-.form-range::-webkit-slider-runnable-track {
-  height: 28px;
-  background: transparent;
-}
-
-.form-range::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 4px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  background: light-dark(var(--primary-foreground), var(--foreground));
-}
-
-.form-range:focus-visible::-webkit-slider-thumb {
-  border-color: var(--ring);
-  box-shadow: inset 0 0 0 1px var(--ring);
-}
-
-.form-range::-moz-range-track {
-  height: 28px;
-  background: transparent;
-}
-
-.form-range::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  background: light-dark(var(--primary-foreground), var(--foreground));
-}
-
-.form-range:focus-visible::-moz-range-thumb {
-  border-color: var(--ring);
-  box-shadow: inset 0 0 0 1px var(--ring);
-}
-
-.form-range:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-.btn:not(.btn-primary, .viz-tile):is(
-  [aria-pressed=&quot;true&quot;],
-  [aria-selected=&quot;true&quot;],
-  .is-selected
-) {
-  border-color: var(--primary);
-  color: var(--primary-foreground);
-  background: var(--primary);
-}
-
-.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
-  border-color: var(--primary);
-  box-shadow: inset 0 0 0 1px var(--primary);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-#widget &gt; svg {
-  width: 100%;
-}
-
-/* Model-authored chart rules can otherwise stretch icons after these styles load. */
-svg.lucide {
-  display: block;
-  width: 16px !important;
-  height: 16px !important;
-  flex: none;
-  margin: 0 !important;
-  stroke-width: 1.6;
-}
-
-.text-warning,
-.text-destructive {
-  color: var(--destructive);
-}
-
-html&gt;body{padding:0}&lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;div id=&quot;parallelogram-angle-explorer&quot;&gt;
-  &lt;style&gt;
+<div id="parallelogram-angle-explorer">
+  <style>
     #parallelogram-angle-explorer {
       color: var(--foreground);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       max-width: 760px;
       margin: 0 auto;
     }
@@ -941,7 +97,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       font-size: 11px;
       font-weight: 400;
     }
-    #parallelogram-angle-explorer input[type=&quot;range&quot;] {
+    #parallelogram-angle-explorer input[type="range"] {
       width: 100%;
       accent-color: var(--viz-series-1);
     }
@@ -1126,572 +282,107 @@ html&gt;body{padding:0}&lt;/style&gt;
         gap: 4px;
       }
     }
-  &lt;/style&gt;
+  </style>
 
-  &lt;h2&gt;PARALLELOGRAM ANGLE EXPLORER&lt;/h2&gt;
-  &lt;div class=&quot;controls&quot;&gt;
-    &lt;label&gt;
-      &lt;span&gt;Slant angle θ &lt;output id=&quot;pae-angle-output&quot;&gt;69.69°&lt;/output&gt;&lt;/span&gt;
-      &lt;input id=&quot;pae-angle&quot; type=&quot;range&quot; min=&quot;1&quot; max=&quot;180&quot; step=&quot;0.01&quot; value=&quot;69.69&quot; aria-label=&quot;Slant angle in degrees&quot;&gt;
-    &lt;/label&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;pae-reset-row&quot; class=&quot;viz-row&quot;&gt;
-    &lt;button id=&quot;pae-snap-90&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 90°&lt;/button&gt;
-    &lt;button id=&quot;pae-snap-11023&quot; class=&quot;btn&quot; type=&quot;button&quot;&gt;Reset to 110.23°&lt;/button&gt;
-  &lt;/div&gt;
-  &lt;svg id=&quot;pae-svg&quot; viewBox=&quot;0 0 620 676&quot; role=&quot;img&quot; aria-labelledby=&quot;pae-svg-title pae-svg-desc&quot;&gt;
-    &lt;title id=&quot;pae-svg-title&quot;&gt;Interactive parallelogram geometry&lt;/title&gt;
-    &lt;desc id=&quot;pae-svg-desc&quot;&gt;Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.&lt;/desc&gt;
-    &lt;defs&gt;
-      &lt;marker id=&quot;pae-green-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
-        &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#258a53&quot;&gt;&lt;/path&gt;
-      &lt;/marker&gt;
-      &lt;marker id=&quot;pae-purple-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
-        &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#7030a0&quot;&gt;&lt;/path&gt;
-      &lt;/marker&gt;
-      &lt;marker id=&quot;pae-static-arrow&quot; viewBox=&quot;0 0 8 8&quot; refX=&quot;7&quot; refY=&quot;4&quot; markerWidth=&quot;6&quot; markerHeight=&quot;6&quot; orient=&quot;auto-start-reverse&quot;&gt;
-        &lt;path d=&quot;M 0 0 L 8 4 L 0 8 Z&quot; fill=&quot;#6a3d12&quot;&gt;&lt;/path&gt;
-      &lt;/marker&gt;
-    &lt;/defs&gt;
-    &lt;g id=&quot;pae-diagram-scale&quot; transform=&quot;translate(-93 0) scale(1.3)&quot;&gt;
-    &lt;rect class=&quot;page&quot; x=&quot;92&quot; y=&quot;12&quot; width=&quot;436&quot; height=&quot;496&quot; rx=&quot;2&quot;&gt;&lt;/rect&gt;
-    &lt;path id=&quot;pae-shape&quot; class=&quot;shape&quot;&gt;&lt;/path&gt;
-    &lt;line id=&quot;pae-inset-left&quot; class=&quot;inset-segment&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-inset-right&quot; class=&quot;inset-segment&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-dim-left&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-dim-right&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-dim-inner&quot; class=&quot;inset-offset&quot; marker-start=&quot;url(#pae-green-arrow)&quot; marker-end=&quot;url(#pae-green-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-ext-left&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-ext-inset-left&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-ext-inset-right&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-top-ext-right&quot; class=&quot;top-dimension-extension&quot;&gt;&lt;/line&gt;
-    &lt;text id=&quot;pae-top-dim-left-label&quot; class=&quot;label inset-label emphasized-dimension-label&quot;&gt;15 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-top-dim-right-label&quot; class=&quot;label inset-label emphasized-dimension-label&quot;&gt;15 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-top-dim-inner-label&quot; class=&quot;label inset-label emphasized-dimension-label&quot;&gt;50 ft&lt;/text&gt;
-    &lt;path id=&quot;pae-angle-arc&quot; class=&quot;angle-arc&quot;&gt;&lt;/path&gt;
-    &lt;text id=&quot;pae-angle-label&quot; class=&quot;label angle-label&quot;&gt;69.69°&lt;/text&gt;
+  <h2>PARALLELOGRAM ANGLE EXPLORER</h2>
+  <div class="controls">
+    <label>
+      <span>Slant angle θ <output id="pae-angle-output">69.69°</output></span>
+      <input id="pae-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+    </label>
+  </div>
+  <div id="pae-reset-row" class="viz-row">
+    <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
+    <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
+  </div>
+  <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
+    <title id="pae-svg-title">Interactive parallelogram geometry</title>
+    <desc id="pae-svg-desc">Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.</desc>
+    <defs>
+      <marker id="pae-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
+      </marker>
+      <marker id="pae-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
+      </marker>
+      <marker id="pae-static-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#6a3d12"></path>
+      </marker>
+    </defs>
+    <g id="pae-diagram-scale" transform="translate(-93 0) scale(1.3)">
+    <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
+    <path id="pae-shape" class="shape"></path>
+    <line id="pae-inset-left" class="inset-segment"></line>
+    <line id="pae-inset-right" class="inset-segment"></line>
+    <line id="pae-top-dim-left" class="inset-offset" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <line id="pae-top-dim-right" class="inset-offset" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <line id="pae-top-dim-inner" class="inset-offset" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <line id="pae-top-ext-left" class="top-dimension-extension"></line>
+    <line id="pae-top-ext-inset-left" class="top-dimension-extension"></line>
+    <line id="pae-top-ext-inset-right" class="top-dimension-extension"></line>
+    <line id="pae-top-ext-right" class="top-dimension-extension"></line>
+    <text id="pae-top-dim-left-label" class="label inset-label emphasized-dimension-label">15 ft</text>
+    <text id="pae-top-dim-right-label" class="label inset-label emphasized-dimension-label">15 ft</text>
+    <text id="pae-top-dim-inner-label" class="label inset-label emphasized-dimension-label">50 ft</text>
+    <path id="pae-angle-arc" class="angle-arc"></path>
+    <text id="pae-angle-label" class="label angle-label">69.69°</text>
 
-    &lt;line id=&quot;pae-perp-inset-left&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-perp-inner&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-perp-inset-right&quot; class=&quot;inset-offset right-angle-method&quot; marker-start=&quot;url(#pae-purple-arrow)&quot; marker-end=&quot;url(#pae-purple-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;path id=&quot;pae-perp-square-left&quot; class=&quot;inset-offset right-angle-method&quot;&gt;&lt;/path&gt;
-    &lt;path id=&quot;pae-perp-square-right&quot; class=&quot;inset-offset right-angle-method&quot;&gt;&lt;/path&gt;
-    &lt;text id=&quot;pae-right-angle-method-label&quot; class=&quot;label right-angle-method-label right-angle-method-title&quot;&gt;Right angle method&lt;/text&gt;
-    &lt;text id=&quot;pae-perp-inset-left-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;14.07 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-perp-inner-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;46.88 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-perp-inset-right-label&quot; class=&quot;label inset-label inside-measurement-label right-angle-method-label&quot;&gt;14.07 ft&lt;/text&gt;
+    <line id="pae-perp-inset-left" class="inset-offset right-angle-method" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-perp-inner" class="inset-offset right-angle-method" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-perp-inset-right" class="inset-offset right-angle-method" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <path id="pae-perp-square-left" class="inset-offset right-angle-method"></path>
+    <path id="pae-perp-square-right" class="inset-offset right-angle-method"></path>
+    <text id="pae-right-angle-method-label" class="label right-angle-method-label right-angle-method-title">Right angle method</text>
+    <text id="pae-perp-inset-left-label" class="label inset-label inside-measurement-label right-angle-method-label">14.07 ft</text>
+    <text id="pae-perp-inner-label" class="label inset-label inside-measurement-label right-angle-method-label">46.88 ft</text>
+    <text id="pae-perp-inset-right-label" class="label inset-label inside-measurement-label right-angle-method-label">14.07 ft</text>
 
-    &lt;line id=&quot;pae-static-a&quot; class=&quot;static-line&quot; marker-start=&quot;url(#pae-static-arrow)&quot; marker-end=&quot;url(#pae-static-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;text id=&quot;pae-static-a-label&quot; class=&quot;label static-line-label&quot;&gt;A · 65 ft&lt;/text&gt;
-    &lt;line id=&quot;pae-static-b&quot; class=&quot;static-line&quot; marker-start=&quot;url(#pae-static-arrow)&quot; marker-end=&quot;url(#pae-static-arrow)&quot;&gt;&lt;/line&gt;
-    &lt;text id=&quot;pae-static-b-label&quot; class=&quot;label static-line-label&quot;&gt;B · 50 ft&lt;/text&gt;
-    &lt;line id=&quot;pae-overlap-span&quot; class=&quot;overlap-dimension&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-overlap-extension&quot; class=&quot;overlap-dimension&quot;&gt;&lt;/line&gt;
-    &lt;line id=&quot;pae-overlap-witness-a&quot; class=&quot;overlap-dimension&quot;&gt;&lt;/line&gt;
-    &lt;text id=&quot;pae-overlap-label&quot; class=&quot;label overlap-label emphasized-dimension-label&quot;&gt;Overlap · 0.93 ft&lt;/text&gt;
+    <line id="pae-static-a" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
+    <text id="pae-static-a-label" class="label static-line-label">A · 65 ft</text>
+    <line id="pae-static-b" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
+    <text id="pae-static-b-label" class="label static-line-label">B · 50 ft</text>
+    <line id="pae-overlap-span" class="overlap-dimension"></line>
+    <line id="pae-overlap-extension" class="overlap-dimension"></line>
+    <line id="pae-overlap-witness-a" class="overlap-dimension"></line>
+    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 0.93 ft</text>
 
-    &lt;text id=&quot;pae-bottom-side-label&quot; class=&quot;label&quot;&gt;80 ft&lt;/text&gt;
-    &lt;text id=&quot;pae-right-side-label&quot; class=&quot;label&quot;&gt;165.93 ft&lt;/text&gt;
-    &lt;/g&gt;
-  &lt;/svg&gt;
+    <text id="pae-bottom-side-label" class="label">80 ft</text>
+    <text id="pae-right-side-label" class="label">165.93 ft</text>
+    </g>
+  </svg>
 
-  &lt;section id=&quot;pae-calculations&quot; class=&quot;calculations&quot; aria-labelledby=&quot;pae-calculations-title&quot;&gt;
-    &lt;h3 id=&quot;pae-calculations-title&quot;&gt;Measurement calculations&lt;/h3&gt;
-    &lt;div class=&quot;calculation-grid&quot;&gt;
-      &lt;div class=&quot;calculation calculation-green&quot;&gt;
-        &lt;span class=&quot;calculation-name&quot;&gt;Shape&lt;/span&gt;
-        &lt;span class=&quot;calculation-formula&quot;&gt;15 + 50 + 15 = 80 ft; long sides = 165.93 ft&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;calculation calculation-purple&quot;&gt;
-        &lt;span class=&quot;calculation-name&quot;&gt;Outer offsets&lt;/span&gt;
-        &lt;span id=&quot;pae-calc-perp-insets&quot; class=&quot;calculation-formula&quot;&gt;15 × sin(69.69°) = 14.07 ft each&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;calculation calculation-purple&quot;&gt;
-        &lt;span class=&quot;calculation-name&quot;&gt;Inner span&lt;/span&gt;
-        &lt;span id=&quot;pae-calc-perp-inner&quot; class=&quot;calculation-formula&quot;&gt;50 × sin(69.69°) = 46.89 ft&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;calculation calculation-brown&quot;&gt;
-        &lt;span class=&quot;calculation-name&quot;&gt;A and B&lt;/span&gt;
-        &lt;span class=&quot;calculation-formula&quot;&gt;A = 65 ft; B = 50 ft&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div class=&quot;calculation calculation-red&quot;&gt;
-        &lt;span class=&quot;calculation-name&quot;&gt;Overlap&lt;/span&gt;
-        &lt;span id=&quot;pae-calc-overlap&quot; class=&quot;calculation-formula&quot;&gt;|65 − (50 + 15 × sin(69.69°))| = 0.93 ft&lt;/span&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/section&gt;
+  <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
+    <h3 id="pae-calculations-title">Measurement calculations</h3>
+    <div class="calculation-grid">
+      <div class="calculation calculation-green">
+        <span class="calculation-name">Shape</span>
+        <span id="pae-calc-shape" class="calculation-formula">Calculating…</span>
+      </div>
+      <div class="calculation calculation-purple">
+        <span class="calculation-name">Outer offsets</span>
+        <span id="pae-calc-perp-insets" class="calculation-formula">Calculating…</span>
+      </div>
+      <div class="calculation calculation-purple">
+        <span class="calculation-name">Inner span</span>
+        <span id="pae-calc-perp-inner" class="calculation-formula">Calculating…</span>
+      </div>
+      <div class="calculation calculation-brown">
+        <span class="calculation-name">A and B</span>
+        <span id="pae-calc-fixed-arrows" class="calculation-formula">Calculating…</span>
+      </div>
+      <div class="calculation calculation-red">
+        <span class="calculation-name">Overlap</span>
+        <span id="pae-calc-overlap" class="calculation-formula">Calculating…</span>
+      </div>
+    </div>
+  </section>
 
-  &lt;footer id=&quot;pae-source-footer&quot; class=&quot;viz-row&quot;&gt;
-    &lt;a href=&quot;https://github.com/cove/parallelogram-angle-explorer&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Source Code&lt;/a&gt;
-  &lt;/footer&gt;
+  <footer id="pae-source-footer" class="viz-row">
+    <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
+  </footer>
 
-  &lt;script&gt;
-    (() =&gt; {
-      const root = document.getElementById(&quot;parallelogram-angle-explorer&quot;);
-      const angleInput = root.querySelector(&quot;#pae-angle&quot;);
-      const snap90Button = root.querySelector(&quot;#pae-snap-90&quot;);
-      const snap11023Button = root.querySelector(&quot;#pae-snap-11023&quot;);
-      const angleOutput = root.querySelector(&quot;#pae-angle-output&quot;);
-      const svg = root.querySelector(&quot;#pae-svg&quot;);
-      const mobileLayout = window.matchMedia(&quot;(max-width: 600px)&quot;);
-      const side = 80;
-      const longSide = 165.93;
-      const insetOffsetFeet = 15;
-      const scale = 1.72;
-      const centerX = 300;
-      const centerY = 250;
+  <script type="module" src="./app.mjs"></script>
+</div>
 
-      const el = (id) =&gt; root.querySelector(`#${id}`);
-      const syncMobileViewport = () =&gt; {
-        svg.setAttribute(&quot;viewBox&quot;, mobileLayout.matches ? &quot;88 0 444 676&quot; : &quot;0 0 620 676&quot;);
-      };
-      const setLine = (node, x1, y1, x2, y2) =&gt; {
-        node.setAttribute(&quot;x1&quot;, x1.toFixed(2));
-        node.setAttribute(&quot;y1&quot;, y1.toFixed(2));
-        node.setAttribute(&quot;x2&quot;, x2.toFixed(2));
-        node.setAttribute(&quot;y2&quot;, y2.toFixed(2));
-      };
-      const setText = (node, x, y, text, rotation = 0) =&gt; {
-        node.setAttribute(&quot;x&quot;, x.toFixed(2));
-        node.setAttribute(&quot;y&quot;, y.toFixed(2));
-        node.textContent = text;
-        node.setAttribute(&quot;transform&quot;, `rotate(${rotation.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)})`);
-      };
-
-      function draw(angleDegrees) {
-        const angle = angleDegrees * Math.PI / 180;
-        const distance = side * Math.sin(angle);
-        const projection = side * Math.cos(angle);
-        const d = distance * scale;
-        const p = projection * scale;
-        const length = longSide * scale;
-        const leftX = centerX - d / 2;
-        const rightX = centerX + d / 2;
-        const topY = centerY - (length + p) / 2;
-        const leftTopY = topY + p;
-        const rightTopY = topY;
-        const leftBottomY = leftTopY + length;
-        const rightBottomY = rightTopY + length;
-
-        el(&quot;pae-shape&quot;).setAttribute(&quot;d&quot;, `M ${leftX} ${leftTopY} L ${rightX} ${rightTopY} L ${rightX} ${rightBottomY} L ${leftX} ${leftBottomY} Z`);
-
-        const insetFraction = insetOffsetFeet / side;
-        const rightInsetFraction = 1 - insetFraction;
-        const leftInsetX = leftX + d * insetFraction;
-        const rightInsetX = leftX + d * rightInsetFraction;
-        const leftInsetStart = leftTopY + (rightTopY - leftTopY) * insetFraction;
-        const rightInsetStart = leftTopY + (rightTopY - leftTopY) * rightInsetFraction;
-        setLine(
-          el(&quot;pae-inset-left&quot;),
-          leftInsetX,
-          leftInsetStart,
-          leftInsetX,
-          leftInsetStart + length
-        );
-        setLine(
-          el(&quot;pae-inset-right&quot;),
-          rightInsetX,
-          rightInsetStart,
-          rightInsetX,
-          rightInsetStart + length
-        );
-        const shortRotation = angleDegrees - 90;
-        const outwardX = -projection / side;
-        const outwardY = -distance / side;
-        const offsetPoint = (x, y, amount) =&gt; ({
-          x: x + outwardX * amount,
-          y: y + outwardY * amount,
-        });
-        const innerDimensionOffset = 23;
-        const leftTop = { x: leftX, y: leftTopY };
-        const leftInsetTop = { x: leftInsetX, y: leftInsetStart };
-        const rightInsetTop = { x: rightInsetX, y: rightInsetStart };
-        const rightTop = { x: rightX, y: rightTopY };
-        const leftDimStart = offsetPoint(leftTop.x, leftTop.y, innerDimensionOffset);
-        const leftDimEnd = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerDimensionOffset);
-        const rightDimStart = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerDimensionOffset);
-        const rightDimEnd = offsetPoint(rightTop.x, rightTop.y, innerDimensionOffset);
-        const insideDimStart = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerDimensionOffset);
-        const insideDimEnd = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerDimensionOffset);
-
-        setLine(el(&quot;pae-top-dim-left&quot;), leftDimStart.x, leftDimStart.y, leftDimEnd.x, leftDimEnd.y);
-        setLine(el(&quot;pae-top-dim-right&quot;), rightDimStart.x, rightDimStart.y, rightDimEnd.x, rightDimEnd.y);
-        setLine(el(&quot;pae-top-dim-inner&quot;), insideDimStart.x, insideDimStart.y, insideDimEnd.x, insideDimEnd.y);
-
-        const innerExtensionEnd = innerDimensionOffset + 6;
-        const extensionStart = 3;
-        const leftExtStart = offsetPoint(leftTop.x, leftTop.y, extensionStart);
-        const leftExtEnd = offsetPoint(leftTop.x, leftTop.y, innerExtensionEnd);
-        const insetLeftExtStart = offsetPoint(leftInsetTop.x, leftInsetTop.y, extensionStart);
-        const insetLeftExtEnd = offsetPoint(leftInsetTop.x, leftInsetTop.y, innerExtensionEnd);
-        const insetRightExtStart = offsetPoint(rightInsetTop.x, rightInsetTop.y, extensionStart);
-        const insetRightExtEnd = offsetPoint(rightInsetTop.x, rightInsetTop.y, innerExtensionEnd);
-        const rightExtStart = offsetPoint(rightTop.x, rightTop.y, extensionStart);
-        const rightExtEnd = offsetPoint(rightTop.x, rightTop.y, innerExtensionEnd);
-        setLine(el(&quot;pae-top-ext-left&quot;), leftExtStart.x, leftExtStart.y, leftExtEnd.x, leftExtEnd.y);
-        setLine(el(&quot;pae-top-ext-inset-left&quot;), insetLeftExtStart.x, insetLeftExtStart.y, insetLeftExtEnd.x, insetLeftExtEnd.y);
-        setLine(el(&quot;pae-top-ext-inset-right&quot;), insetRightExtStart.x, insetRightExtStart.y, insetRightExtEnd.x, insetRightExtEnd.y);
-        setLine(el(&quot;pae-top-ext-right&quot;), rightExtStart.x, rightExtStart.y, rightExtEnd.x, rightExtEnd.y);
-        const labelOffset = 8;
-        const leftDimLabel = offsetPoint(
-          (leftTop.x + leftInsetTop.x) / 2,
-          (leftTop.y + leftInsetTop.y) / 2,
-          innerDimensionOffset + labelOffset
-        );
-        const rightDimLabel = offsetPoint(
-          (rightInsetTop.x + rightTop.x) / 2,
-          (rightInsetTop.y + rightTop.y) / 2,
-          innerDimensionOffset + labelOffset
-        );
-        const insideDimLabel = offsetPoint(
-          (leftInsetTop.x + rightInsetTop.x) / 2,
-          (leftInsetTop.y + rightInsetTop.y) / 2,
-          innerDimensionOffset + labelOffset
-        );
-        setText(el(&quot;pae-top-dim-left-label&quot;), leftDimLabel.x, leftDimLabel.y, `${insetOffsetFeet} ft`, shortRotation);
-        setText(el(&quot;pae-top-dim-right-label&quot;), rightDimLabel.x, rightDimLabel.y, `${insetOffsetFeet} ft`, shortRotation);
-        setText(el(&quot;pae-top-dim-inner-label&quot;), insideDimLabel.x, insideDimLabel.y, `${side - 2 * insetOffsetFeet} ft`, shortRotation);
-
-        const perpendicularInset = insetOffsetFeet * Math.sin(angle);
-        const perpendicularInner = (side - 2 * insetOffsetFeet) * Math.sin(angle);
-        const perpendicularY = centerY - 48;
-        setLine(el(&quot;pae-perp-inset-left&quot;), leftX, perpendicularY, leftInsetX, perpendicularY);
-        setLine(el(&quot;pae-perp-inner&quot;), leftInsetX, perpendicularY, rightInsetX, perpendicularY);
-        setLine(el(&quot;pae-perp-inset-right&quot;), rightInsetX, perpendicularY, rightX, perpendicularY);
-        setText(el(&quot;pae-right-angle-method-label&quot;), leftX - 10, perpendicularY + 4, &quot;Right angle method&quot;);
-        el(&quot;pae-perp-square-left&quot;).setAttribute(
-          &quot;d&quot;,
-          `M ${leftX} ${perpendicularY - 8} L ${leftX + 8} ${perpendicularY - 8} L ${leftX + 8} ${perpendicularY}`
-        );
-        el(&quot;pae-perp-square-right&quot;).setAttribute(
-          &quot;d&quot;,
-          `M ${rightX} ${perpendicularY - 8} L ${rightX - 8} ${perpendicularY - 8} L ${rightX - 8} ${perpendicularY}`
-        );
-        setText(
-          el(&quot;pae-perp-inset-left-label&quot;),
-          (leftX + leftInsetX) / 2,
-          perpendicularY - 10,
-          `${perpendicularInset.toFixed(2)} ft`
-        );
-        setText(
-          el(&quot;pae-perp-inner-label&quot;),
-          (leftInsetX + rightInsetX) / 2,
-          perpendicularY - 10,
-          `${perpendicularInner.toFixed(2)} ft`
-        );
-        setText(
-          el(&quot;pae-perp-inset-right-label&quot;),
-          (rightInsetX + rightX) / 2,
-          perpendicularY - 10,
-          `${perpendicularInset.toFixed(2)} ft`
-        );
-
-        const staticAY = centerY + 48;
-        const staticAStartX = rightX;
-        const staticAEndX = rightX - 65 * scale;
-        setLine(el(&quot;pae-static-a&quot;), staticAStartX, staticAY, staticAEndX, staticAY);
-        setText(el(&quot;pae-static-a-label&quot;), (staticAStartX + staticAEndX) / 2, staticAY - 9, &quot;A · 65 ft&quot;);
-
-        const staticBY = centerY + 94;
-        const staticBStartX = rightInsetX;
-        const staticBEndX = rightInsetX - 50 * scale;
-        setLine(el(&quot;pae-static-b&quot;), staticBStartX, staticBY, staticBEndX, staticBY);
-        setText(el(&quot;pae-static-b-label&quot;), (staticBStartX + staticBEndX) / 2, staticBY - 9, &quot;B · 50 ft&quot;);
-        const overlapY = (staticAY + staticBY) / 2;
-        const overlapFeet = Math.abs(staticBEndX - staticAEndX) / scale;
-        setLine(el(&quot;pae-overlap-span&quot;), staticAEndX, overlapY, staticBEndX, overlapY);
-        setLine(el(&quot;pae-overlap-extension&quot;), staticBEndX, overlapY, leftInsetX, overlapY);
-        setLine(el(&quot;pae-overlap-witness-a&quot;), staticAEndX, staticAY + 4, staticAEndX, overlapY + 4);
-        setText(
-          el(&quot;pae-overlap-label&quot;),
-          Math.min(staticAEndX, staticBEndX) - 8,
-          overlapY + 4,
-          `Overlap · ${overlapFeet.toFixed(2)} ft`
-        );
-
-        el(&quot;pae-calc-perp-insets&quot;).textContent = `15 × sin(${angleDegrees.toFixed(2)}°) = ${perpendicularInset.toFixed(2)} ft each`;
-        el(&quot;pae-calc-perp-inner&quot;).textContent = `50 × sin(${angleDegrees.toFixed(2)}°) = ${perpendicularInner.toFixed(2)} ft`;
-        el(&quot;pae-calc-overlap&quot;).textContent = `|65 − (50 + 15 × sin(${angleDegrees.toFixed(2)}°))| = ${overlapFeet.toFixed(2)} ft`;
-
-        const arcRadius = 28;
-        const arcStartX = rightX;
-        const arcStartY = rightTopY + arcRadius;
-        const endAngle = (90 + angleDegrees) * Math.PI / 180;
-        const arcEndX = rightX + arcRadius * Math.cos(endAngle);
-        const arcEndY = rightTopY + arcRadius * Math.sin(endAngle);
-        el(&quot;pae-angle-arc&quot;).setAttribute(&quot;d&quot;, `M ${arcStartX} ${arcStartY} A ${arcRadius} ${arcRadius} 0 0 1 ${arcEndX} ${arcEndY}`);
-        const labelAngle = (90 + angleDegrees / 2) * Math.PI / 180;
-        setText(el(&quot;pae-angle-label&quot;), rightX + 42 * Math.cos(labelAngle), rightTopY + 42 * Math.sin(labelAngle), `${angleDegrees.toFixed(2)}°`);
-
-        setText(el(&quot;pae-bottom-side-label&quot;), (leftX + rightX) / 2, (leftBottomY + rightBottomY) / 2 + 17, &quot;80 ft&quot;, shortRotation);
-        setText(el(&quot;pae-right-side-label&quot;), rightX + 13, (rightTopY + rightBottomY) / 2, &quot;165.93 ft&quot;, 90);
-
-        angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
-      }
-
-      angleInput.addEventListener(&quot;input&quot;, () =&gt; {
-        const angle = Number(angleInput.value);
-        draw(angle);
-      });
-
-      snap90Button.addEventListener(&quot;click&quot;, () =&gt; {
-        angleInput.value = &quot;90&quot;;
-        draw(90);
-      });
-
-      snap11023Button.addEventListener(&quot;click&quot;, () =&gt; {
-        angleInput.value = &quot;110.23&quot;;
-        draw(110.23);
-      });
-
-      mobileLayout.addEventListener(&quot;change&quot;, syncMobileViewport);
-      syncMobileViewport();
-      draw(Number(angleInput.value));
-    })();
-  &lt;/script&gt;
-&lt;/div&gt;
-
-&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-(() =&gt; {
-  if (window.FloatingUIDOM == null) {
-    return;
-  }
-  const { autoUpdate, computePosition, flip, offset, shift, size } =
-    window.FloatingUIDOM;
-  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
-  const tooltipId = `codex-visualization-tooltip-${
-    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
-  }`;
-  const tooltipGap = 5;
-  const hoverDelay = 700;
-  const skipDelay = 300;
-  let activeTrigger = null;
-  let pendingTrigger = null;
-  let tooltip = null;
-  let openTimeout = null;
-  let autoUpdateCleanup = null;
-  let positionRequest = 0;
-  let skipDelayUntil = 0;
-
-  const getTrigger = (target) =&gt;
-    target?.nodeType === Node.ELEMENT_NODE
-      ? target.closest(&quot;[data-tooltip]&quot;)
-      : null;
-  const containsTarget = (trigger, target) =&gt;
-    target?.nodeType != null &amp;&amp; trigger.contains(target);
-  const getContent = (trigger) =&gt;
-    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
-  const getPlacement = (trigger) =&gt; {
-    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
-    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
-  };
-  const getTooltip = () =&gt; {
-    if (tooltip == null) {
-      tooltip = document.createElement(&quot;div&quot;);
-      tooltip.id = tooltipId;
-      tooltip.className = &quot;tooltip&quot;;
-      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
-    }
-    return tooltip;
-  };
-  const setDescribedBy = (trigger, described) =&gt; {
-    const ids = new Set(
-      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
-        .split(/\s+/)
-        .filter(Boolean),
-    );
-    if (described) {
-      ids.add(tooltipId);
-    } else {
-      ids.delete(tooltipId);
-    }
-    if (ids.size === 0) {
-      trigger.removeAttribute(&quot;aria-describedby&quot;);
-    } else {
-      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
-    }
-  };
-  const clearOpenTimeout = () =&gt; {
-    if (openTimeout != null) {
-      window.clearTimeout(openTimeout);
-      openTimeout = null;
-    }
-    pendingTrigger = null;
-  };
-  const closeTooltip = (activateSkipDelay = true) =&gt; {
-    clearOpenTimeout();
-    positionRequest += 1;
-    autoUpdateCleanup?.();
-    autoUpdateCleanup = null;
-    if (activeTrigger == null) {
-      return;
-    }
-    setDescribedBy(activeTrigger, false);
-    activeTrigger = null;
-    tooltip?.remove();
-    if (activateSkipDelay) {
-      skipDelayUntil = Date.now() + skipDelay;
-    }
-  };
-  const updatePosition = (trigger, floating) =&gt; {
-    const request = ++positionRequest;
-    void computePosition(trigger, floating, {
-      middleware: [
-        offset(tooltipGap),
-        flip({ padding: tooltipGap }),
-        shift({ padding: tooltipGap }),
-        size({
-          padding: tooltipGap,
-          apply({ availableHeight, availableWidth, elements }) {
-            elements.floating.style.setProperty(
-              &quot;--tooltip-available-width&quot;,
-              `${Math.max(0, availableWidth)}px`,
-            );
-            elements.floating.style.setProperty(
-              &quot;--tooltip-available-height&quot;,
-              `${Math.max(0, availableHeight)}px`,
-            );
-          },
-        }),
-      ],
-      placement: getPlacement(trigger),
-      strategy: &quot;fixed&quot;,
-    })
-      .then(({ x, y }) =&gt; {
-        if (activeTrigger !== trigger || request !== positionRequest) {
-          return;
-        }
-        const scale = window.devicePixelRatio || 1;
-        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
-        floating.style.visibility = &quot;visible&quot;;
-      })
-      .catch(() =&gt; {
-        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
-          closeTooltip(false);
-        }
-      });
-  };
-  const openTooltip = (trigger) =&gt; {
-    const content = getContent(trigger);
-    if (!trigger.isConnected || content.length === 0) {
-      return;
-    }
-    clearOpenTimeout();
-    if (activeTrigger === trigger) {
-      return;
-    }
-    closeTooltip();
-    const floating = getTooltip();
-    floating.textContent = content;
-    floating.style.visibility = &quot;hidden&quot;;
-    floating.style.transform = &quot;translate(0, 0)&quot;;
-    document.body.appendChild(floating);
-    activeTrigger = trigger;
-    setDescribedBy(trigger, true);
-    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
-      updatePosition(trigger, floating);
-    });
-  };
-  const requestOpen = (trigger, immediate = false) =&gt; {
-    if (
-      getContent(trigger).length === 0 ||
-      activeTrigger === trigger ||
-      pendingTrigger === trigger
-    ) {
-      return;
-    }
-    clearOpenTimeout();
-    pendingTrigger = trigger;
-    const delay =
-      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
-        ? 0
-        : hoverDelay;
-    if (delay === 0) {
-      openTooltip(trigger);
-      return;
-    }
-    openTimeout = window.setTimeout(() =&gt; {
-      openTimeout = null;
-      pendingTrigger = null;
-      openTooltip(trigger);
-    }, delay);
-  };
-  const handlePointerOpen = (event) =&gt; {
-    if (event.pointerType === &quot;touch&quot;) {
-      return;
-    }
-    const trigger = getTrigger(event.target);
-    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
-      return;
-    }
-    requestOpen(trigger);
-  };
-  const handleLeave = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
-      return;
-    }
-    if (activeTrigger === trigger || pendingTrigger === trigger) {
-      closeTooltip();
-    }
-  };
-  const handleFocusIn = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (trigger?.matches(&quot;:focus-visible&quot;)) {
-      requestOpen(trigger, true);
-    }
-  };
-  const handleKeyDown = (event) =&gt; {
-    if (event.key === &quot;Escape&quot;) {
-      closeTooltip();
-    }
-  };
-  const handleContextMenu = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (activeTrigger === trigger || pendingTrigger === trigger) {
-      closeTooltip();
-    }
-  };
-  const destroy = () =&gt; {
-    closeTooltip(false);
-    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
-    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
-    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
-    document.removeEventListener(&quot;focusout&quot;, handleLeave);
-    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
-    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
-    tooltip = null;
-  };
-
-  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
-  document.addEventListener(&quot;pointerout&quot;, handleLeave);
-  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
-  document.addEventListener(&quot;focusout&quot;, handleLeave);
-  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
-  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
-  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
-})();
-&lt;/script&gt;
-&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-(() =&gt; {
-  const initialize = () =&gt; {
-    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
-  };
-  if (globalThis.lucide != null) {
-    initialize();
-    return;
-  }
-  document
-    .getElementById(&quot;codex-visualization-lucide&quot;)
-    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
-})();
-&lt;/script&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;
-"></iframe>
 </body>
 </html>

@@ -1,0 +1,10 @@
+{
+  "name": "parallelogram-angle-explorer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=geometry.mjs --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100"
+  }
+}
