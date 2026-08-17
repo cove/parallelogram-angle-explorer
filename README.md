@@ -13,4 +13,4 @@ npm test
 npm run coverage
 ```
 
-The coverage command enforces 100% line, function, and branch coverage for the shared geometry module.
+The coverage command enforces 100% line, function, and branch coverage for both the shared geometry module and the renderer. Tests include every slider step, boundary-adjacent values, invalid inputs, rounding thresholds, symmetry, presets, slider events, and the mobile viewport switch.

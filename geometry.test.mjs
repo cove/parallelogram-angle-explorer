@@ -96,6 +96,79 @@ test("supports both slider boundaries without negative zero", () => {
   assert.equal(flat.formulas.overlap.endsWith("15.00 ft"), true);
 });
 
+test("supports values immediately inside both slider boundaries", () => {
+  for (const angle of [1.000001, 179.999999]) {
+    const diagram = calculateDiagram(angle);
+    assert.equal(diagram.angleDegrees, angle);
+    assert.ok(Number.isFinite(diagram.measurements.perpendicularWidth));
+    assert.ok(Number.isFinite(diagram.measurements.overlap));
+  }
+});
+
+test("rounds displayed overlap values on both sides of a half-cent threshold", () => {
+  const threshold = Math.asin(1 - 0.005 / DIMENSIONS.inset) * 180 / Math.PI;
+  const roundsUp = calculateDiagram(threshold - 0.000001);
+  const roundsDown = calculateDiagram(threshold + 0.000001);
+
+  assert.ok(roundsUp.measurements.overlap > 0.005);
+  assert.ok(roundsDown.measurements.overlap < 0.005);
+  assert.equal(roundsUp.formulas.overlap.endsWith("0.01 ft"), true);
+  assert.equal(roundsDown.formulas.overlap.endsWith("0.00 ft"), true);
+});
+
+test("preserves geometry invariants at every slider step", () => {
+  for (let hundredths = 100; hundredths <= 18000; hundredths += 1) {
+    const angle = hundredths / 100;
+    const diagram = calculateDiagram(angle);
+    const { measurements } = diagram;
+
+    approximately(
+      measurements.perpendicularInset * 2 + measurements.perpendicularInner,
+      measurements.perpendicularWidth,
+      1e-8,
+    );
+    assert.ok(measurements.perpendicularWidth >= 0);
+    assert.ok(measurements.perpendicularWidth <= DIMENSIONS.side);
+    assert.ok(measurements.overlap >= 0);
+    assert.ok(measurements.overlap <= DIMENSIONS.inset + 1e-8);
+    assert.equal(diagram.shape.length, 4);
+    assert.equal(diagram.topDimensions.left.x2, diagram.topDimensions.inner.x1);
+    assert.equal(diagram.topDimensions.inner.x2, diagram.topDimensions.right.x1);
+    assert.equal(diagram.perpendicular.left.x2, diagram.perpendicular.inner.x1);
+    assert.equal(diagram.perpendicular.inner.x2, diagram.perpendicular.right.x1);
+
+    const numericValues = [];
+    const collectNumbers = (value) => {
+      if (typeof value === "number") {
+        numericValues.push(value);
+      } else if (Array.isArray(value)) {
+        value.forEach(collectNumbers);
+      } else if (value && typeof value === "object") {
+        Object.values(value).forEach(collectNumbers);
+      }
+    };
+    collectNumbers(diagram);
+    assert.equal(numericValues.every(Number.isFinite), true);
+  }
+});
+
+test("is symmetric around 90 degrees across the supported range", () => {
+  for (let hundredths = 100; hundredths <= 9000; hundredths += 25) {
+    const angle = hundredths / 100;
+    const mirrorAngle = 180 - angle;
+    const forward = calculateDiagram(angle);
+    const mirror = calculateDiagram(mirrorAngle);
+
+    approximately(
+      forward.measurements.perpendicularWidth,
+      mirror.measurements.perpendicularWidth,
+      1e-8,
+    );
+    approximately(forward.measurements.overlap, mirror.measurements.overlap, 1e-8);
+    approximately(forward.projection, -mirror.projection, 1e-8);
+  }
+});
+
 test("returns a complete, internally connected drawing model", () => {
   const diagram = calculateDiagram(PRESET_ANGLES.initial);
 
@@ -118,7 +191,19 @@ test("returns a complete, internally connected drawing model", () => {
 });
 
 test("rejects invalid angle values", () => {
-  for (const invalid of [Number.NaN, Number.POSITIVE_INFINITY, 0, 180.01, "90"]) {
+  for (const invalid of [
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    -1,
+    0,
+    0.999999,
+    180.000001,
+    180.01,
+    null,
+    undefined,
+    "90",
+  ]) {
     assert.throws(
       () => calculateDiagram(invalid),
       new RangeError("angle must be a finite number from 1 through 180 degrees"),

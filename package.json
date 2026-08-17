@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "coverage": "node --test --experimental-test-coverage --test-coverage-include=geometry.mjs --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100"
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=geometry.mjs --test-coverage-include=app.mjs --test-coverage-lines=100 --test-coverage-functions=100 --test-coverage-branches=100"
   }
 }
