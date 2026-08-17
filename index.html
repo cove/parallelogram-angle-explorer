@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>Parallelogram Angle Explorer</title>
-<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+<style>:root{color-scheme:light;background:rgb(255 255 255)}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
 </head>
 <body>
 <iframe sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer" title="Parallelogram Angle Explorer" srcdoc="&lt;!doctype html&gt;
@@ -1036,6 +1036,38 @@ html&gt;body{padding:0}&lt;/style&gt;
       stroke-linejoin: round;
       text-anchor: end;
     }
+    #parallelogram-angle-explorer .calculations {
+      color: #111111;
+      background: #ffffff;
+      margin: 8px 0 10px;
+    }
+    #parallelogram-angle-explorer .calculations h3 {
+      font-size: 13px;
+      margin: 0 0 5px;
+    }
+    #parallelogram-angle-explorer .calculation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 18px;
+    }
+    #parallelogram-angle-explorer .calculation {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 6px;
+      font-size: 11px;
+      line-height: 1.3;
+    }
+    #parallelogram-angle-explorer .calculation-name {
+      font-weight: 700;
+    }
+    #parallelogram-angle-explorer .calculation-formula {
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+    #parallelogram-angle-explorer .calculation-green { color: #1c6d43; }
+    #parallelogram-angle-explorer .calculation-purple { color: #7030a0; }
+    #parallelogram-angle-explorer .calculation-brown { color: #6a3d12; }
+    #parallelogram-angle-explorer .calculation-red { color: #c00000; }
     @media (max-width: 600px) {
       #parallelogram-angle-explorer {
         box-sizing: border-box;
@@ -1056,6 +1088,8 @@ html&gt;body{padding:0}&lt;/style&gt;
       #parallelogram-angle-explorer h2 {
         order: 0;
         flex: 0 0 auto;
+        font-size: 15px;
+        margin-bottom: 6px;
       }
       #parallelogram-angle-explorer #pae-svg {
         order: 1;
@@ -1065,23 +1099,36 @@ html&gt;body{padding:0}&lt;/style&gt;
         max-height: none;
       }
       #parallelogram-angle-explorer .controls {
+        order: 3;
+        flex: 0 0 auto;
+        margin: 8px 0 6px;
+      }
+      #parallelogram-angle-explorer #pae-calculations {
         order: 2;
         flex: 0 0 auto;
-        margin: 12px 0 10px;
+        margin: 5px 0;
       }
       #parallelogram-angle-explorer #pae-reset-row {
-        order: 3;
+        order: 4;
         flex: 0 0 auto;
       }
       #parallelogram-angle-explorer #pae-source-footer {
-        order: 4;
+        order: 5;
         flex: 0 0 auto;
-        margin-top: 12px;
+        margin-top: 6px;
+      }
+      #parallelogram-angle-explorer .calculation-grid {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+      #parallelogram-angle-explorer .calculation {
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 4px;
       }
     }
   &lt;/style&gt;
 
-  &lt;h2&gt;Parallelogram Angle &amp;amp; Perpendicular Distance&lt;/h2&gt;
+  &lt;h2&gt;PARALLELOGRAM ANGLE EXPLORER&lt;/h2&gt;
   &lt;div class=&quot;controls&quot;&gt;
     &lt;label&gt;
       &lt;span&gt;Slant angle θ &lt;output id=&quot;pae-angle-output&quot;&gt;69.69°&lt;/output&gt;&lt;/span&gt;
@@ -1147,6 +1194,32 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;text id=&quot;pae-right-side-label&quot; class=&quot;label&quot;&gt;165.93 ft&lt;/text&gt;
     &lt;/g&gt;
   &lt;/svg&gt;
+
+  &lt;section id=&quot;pae-calculations&quot; class=&quot;calculations&quot; aria-labelledby=&quot;pae-calculations-title&quot;&gt;
+    &lt;h3 id=&quot;pae-calculations-title&quot;&gt;Measurement calculations&lt;/h3&gt;
+    &lt;div class=&quot;calculation-grid&quot;&gt;
+      &lt;div class=&quot;calculation calculation-green&quot;&gt;
+        &lt;span class=&quot;calculation-name&quot;&gt;Shape&lt;/span&gt;
+        &lt;span class=&quot;calculation-formula&quot;&gt;15 + 50 + 15 = 80 ft; long sides = 165.93 ft&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;calculation calculation-purple&quot;&gt;
+        &lt;span class=&quot;calculation-name&quot;&gt;Outer offsets&lt;/span&gt;
+        &lt;span id=&quot;pae-calc-perp-insets&quot; class=&quot;calculation-formula&quot;&gt;15 × sin(69.69°) = 14.07 ft each&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;calculation calculation-purple&quot;&gt;
+        &lt;span class=&quot;calculation-name&quot;&gt;Inner span&lt;/span&gt;
+        &lt;span id=&quot;pae-calc-perp-inner&quot; class=&quot;calculation-formula&quot;&gt;50 × sin(69.69°) = 46.89 ft&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;calculation calculation-brown&quot;&gt;
+        &lt;span class=&quot;calculation-name&quot;&gt;A and B&lt;/span&gt;
+        &lt;span class=&quot;calculation-formula&quot;&gt;A = 65 ft; B = 50 ft&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;calculation calculation-red&quot;&gt;
+        &lt;span class=&quot;calculation-name&quot;&gt;Overlap&lt;/span&gt;
+        &lt;span id=&quot;pae-calc-overlap&quot; class=&quot;calculation-formula&quot;&gt;|65 − (50 + 15 × sin(69.69°))| = 0.93 ft&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
 
   &lt;footer id=&quot;pae-source-footer&quot; class=&quot;viz-row&quot;&gt;
     &lt;a href=&quot;https://github.com/cove/parallelogram-angle-explorer&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Source Code&lt;/a&gt;
@@ -1335,6 +1408,10 @@ html&gt;body{padding:0}&lt;/style&gt;
           overlapY + 4,
           `Overlap · ${overlapFeet.toFixed(2)} ft`
         );
+
+        el(&quot;pae-calc-perp-insets&quot;).textContent = `15 × sin(${angleDegrees.toFixed(2)}°) = ${perpendicularInset.toFixed(2)} ft each`;
+        el(&quot;pae-calc-perp-inner&quot;).textContent = `50 × sin(${angleDegrees.toFixed(2)}°) = ${perpendicularInner.toFixed(2)} ft`;
+        el(&quot;pae-calc-overlap&quot;).textContent = `|65 − (50 + 15 × sin(${angleDegrees.toFixed(2)}°))| = ${overlapFeet.toFixed(2)} ft`;
 
         const arcRadius = 28;
         const arcStartX = rightX;
