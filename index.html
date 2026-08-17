@@ -198,8 +198,13 @@
       margin: 8px 0 10px;
     }
     #parallelogram-angle-explorer .calculations h3 {
-      font-size: 13px;
-      margin: 0 0 5px;
+      font-size: 15px;
+      margin: 0 0 2px;
+    }
+    #parallelogram-angle-explorer .calculation-note {
+      margin: 0 0 8px;
+      color: #444444;
+      font-size: 12px;
     }
     #parallelogram-angle-explorer .calculation-grid {
       display: grid;
@@ -209,9 +214,9 @@
     #parallelogram-angle-explorer .calculation {
       display: grid;
       grid-template-columns: max-content minmax(0, 1fr);
-      gap: 6px;
-      font-size: 11px;
-      line-height: 1.3;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.45;
     }
     #parallelogram-angle-explorer .calculation-name {
       font-weight: 700;
@@ -219,6 +224,12 @@
     #parallelogram-angle-explorer .calculation-formula {
       font-variant-numeric: tabular-nums;
       overflow-wrap: anywhere;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    #parallelogram-angle-explorer .calculation-result {
+      margin-left: 4px;
+      font-weight: 700;
     }
     #parallelogram-angle-explorer .calculation-green { color: #1c6d43; }
     #parallelogram-angle-explorer .calculation-purple { color: #7030a0; }
@@ -278,8 +289,11 @@
         gap: 2px;
       }
       #parallelogram-angle-explorer .calculation {
-        grid-template-columns: 80px minmax(0, 1fr);
-        gap: 4px;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 6px;
+      }
+      #parallelogram-angle-explorer .calculation-formula {
+        font-size: 12px;
       }
     }
   </style>
@@ -353,26 +367,27 @@
 
   <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
     <h3 id="pae-calculations-title">Measurement calculations</h3>
+    <p class="calculation-note">All angles use degrees (°).</p>
     <div class="calculation-grid">
       <div class="calculation calculation-green">
         <span class="calculation-name">Shape</span>
-        <span id="pae-calc-shape" class="calculation-formula">Calculating…</span>
+        <span class="calculation-formula"><span id="pae-calc-shape-expression">Calculating…</span><strong id="pae-calc-shape-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-purple">
         <span class="calculation-name">Outer offsets</span>
-        <span id="pae-calc-perp-insets" class="calculation-formula">Calculating…</span>
+        <span class="calculation-formula"><span id="pae-calc-perp-insets-expression">Calculating…</span><strong id="pae-calc-perp-insets-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-purple">
         <span class="calculation-name">Inner span</span>
-        <span id="pae-calc-perp-inner" class="calculation-formula">Calculating…</span>
+        <span class="calculation-formula"><span id="pae-calc-perp-inner-expression">Calculating…</span><strong id="pae-calc-perp-inner-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-brown">
         <span class="calculation-name">A and B</span>
-        <span id="pae-calc-fixed-arrows" class="calculation-formula">Calculating…</span>
+        <span class="calculation-formula"><span id="pae-calc-fixed-arrows-expression">Calculating…</span><strong id="pae-calc-fixed-arrows-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-red">
         <span class="calculation-name">Overlap</span>
-        <span id="pae-calc-overlap" class="calculation-formula">Calculating…</span>
+        <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
       </div>
     </div>
   </section>

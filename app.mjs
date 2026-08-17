@@ -37,6 +37,11 @@ export function initializeApp(documentRef, windowRef) {
     return `${commands.join(" ")}${close ? " Z" : ""}`;
   }
 
+  function setFormula(id, formula) {
+    element(`${id}-expression`).textContent = formula.expression;
+    element(`${id}-result`).textContent = formula.result;
+  }
+
   function draw(angleDegrees) {
     const diagram = calculateDiagram(angleDegrees);
 
@@ -137,11 +142,11 @@ export function initializeApp(documentRef, windowRef) {
       90,
     );
 
-    element("pae-calc-shape").textContent = diagram.formulas.shape;
-    element("pae-calc-perp-insets").textContent = diagram.formulas.outerOffsets;
-    element("pae-calc-perp-inner").textContent = diagram.formulas.innerSpan;
-    element("pae-calc-fixed-arrows").textContent = diagram.formulas.fixedArrows;
-    element("pae-calc-overlap").textContent = diagram.formulas.overlap;
+    setFormula("pae-calc-shape", diagram.formulas.shape);
+    setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
+    setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
+    setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
+    setFormula("pae-calc-overlap", diagram.formulas.overlap);
     angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
   }
 

@@ -38,12 +38,19 @@ test("calculates the initial 69.69 degree example", () => {
   approximately(diagram.measurements.perpendicularInner, 46.89141843166073);
   approximately(diagram.measurements.perpendicularWidth, 75.02626949065717);
   approximately(diagram.measurements.overlap, 0.9325744705018165);
-  assert.equal(diagram.formulas.outerOffsets, "15 × sin(69.69°) = 14.07 ft each");
-  assert.equal(diagram.formulas.innerSpan, "50 × sin(69.69°) = 46.89 ft");
+  assert.deepEqual(diagram.formulas.outerOffsets, {
+    expression: "15 ft × sin(69.69°)",
+    result: "= 14.07 ft each",
+  });
+  assert.deepEqual(diagram.formulas.innerSpan, {
+    expression: "50 ft × sin(69.69°)",
+    result: "= 46.89 ft",
+  });
   assert.equal(
-    diagram.formulas.overlap,
-    "|65 − (50 + 15 × sin(69.69°))| = 0.93 ft",
+    diagram.formulas.overlap.expression,
+    "|65 ft − (50 ft + 15 ft × sin(69.69°))|",
   );
+  assert.equal(diagram.formulas.overlap.result, "= 0.93 ft");
 });
 
 test("produces exact right-angle measurements at 90 degrees", () => {
@@ -59,14 +66,21 @@ test("produces exact right-angle measurements at 90 degrees", () => {
   assert.equal(diagram.measurements.overlap, 0);
   assert.equal(diagram.shape[0].y, diagram.shape[1].y);
   assert.equal(diagram.shape[2].y, diagram.shape[3].y);
-  assert.equal(diagram.formulas.shape, "15 + 50 + 15 = 80 ft; long sides = 165.93 ft");
-  assert.equal(diagram.formulas.fixedArrows, "A = 65 ft; B = 50 ft");
-  assert.equal(diagram.formulas.outerOffsets, "15 × sin(90.00°) = 15.00 ft each");
-  assert.equal(diagram.formulas.innerSpan, "50 × sin(90.00°) = 50.00 ft");
+  assert.deepEqual(diagram.formulas.shape, {
+    expression: "15 ft + 50 ft + 15 ft",
+    result: "= 80 ft; long sides = 165.93 ft",
+  });
+  assert.deepEqual(diagram.formulas.fixedArrows, {
+    expression: "A = 65 ft",
+    result: "· B = 50 ft",
+  });
+  assert.equal(diagram.formulas.outerOffsets.result, "= 15.00 ft each");
+  assert.equal(diagram.formulas.innerSpan.result, "= 50.00 ft");
   assert.equal(
-    diagram.formulas.overlap,
-    "|65 − (50 + 15 × sin(90.00°))| = 0.00 ft",
+    diagram.formulas.overlap.expression,
+    "|65 ft − (50 ft + 15 ft × sin(90.00°))|",
   );
+  assert.equal(diagram.formulas.overlap.result, "= 0.00 ft");
 });
 
 test("calculates the reverse 110.23 degree preset", () => {
@@ -78,7 +92,7 @@ test("calculates the reverse 110.23 degree preset", () => {
   approximately(diagram.measurements.overlap, 0.9253185538948083);
   assert.ok(diagram.projection < 0);
   assert.ok(diagram.shape[0].y < diagram.shape[1].y);
-  assert.equal(diagram.formulas.innerSpan, "50 × sin(110.23°) = 46.92 ft");
+  assert.equal(diagram.formulas.innerSpan.result, "= 46.92 ft");
 });
 
 test("supports both slider boundaries without negative zero", () => {
@@ -92,8 +106,8 @@ test("supports both slider boundaries without negative zero", () => {
   assert.equal(flat.measurements.perpendicularInner, 0);
   assert.equal(flat.measurements.perpendicularWidth, 0);
   approximately(flat.measurements.overlap, 15);
-  assert.equal(flat.formulas.outerOffsets, "15 × sin(180.00°) = 0.00 ft each");
-  assert.equal(flat.formulas.overlap.endsWith("15.00 ft"), true);
+  assert.equal(flat.formulas.outerOffsets.result, "= 0.00 ft each");
+  assert.equal(flat.formulas.overlap.result, "= 15.00 ft");
 });
 
 test("supports values immediately inside both slider boundaries", () => {
@@ -112,8 +126,8 @@ test("rounds displayed overlap values on both sides of a half-cent threshold", (
 
   assert.ok(roundsUp.measurements.overlap > 0.005);
   assert.ok(roundsDown.measurements.overlap < 0.005);
-  assert.equal(roundsUp.formulas.overlap.endsWith("0.01 ft"), true);
-  assert.equal(roundsDown.formulas.overlap.endsWith("0.00 ft"), true);
+  assert.equal(roundsUp.formulas.overlap.result, "= 0.01 ft");
+  assert.equal(roundsDown.formulas.overlap.result, "= 0.00 ft");
 });
 
 test("preserves geometry invariants at every slider step", () => {

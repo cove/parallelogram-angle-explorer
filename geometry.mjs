@@ -188,11 +188,26 @@ export function calculateDiagram(angleDegrees) {
     rightSideLabel: point(rightX + 13, (rightTop.y + rightBottom.y) / 2),
     measurements,
     formulas: {
-      shape: "15 + 50 + 15 = 80 ft; long sides = 165.93 ft",
-      outerOffsets: `15 × sin(${angleDegrees.toFixed(2)}°) = ${formatFeet(perpendicularInset)} ft each`,
-      innerSpan: `50 × sin(${angleDegrees.toFixed(2)}°) = ${formatFeet(perpendicularInner)} ft`,
-      fixedArrows: "A = 65 ft; B = 50 ft",
-      overlap: `|65 − (50 + 15 × sin(${angleDegrees.toFixed(2)}°))| = ${formatFeet(overlap)} ft`,
+      shape: {
+        expression: "15 ft + 50 ft + 15 ft",
+        result: "= 80 ft; long sides = 165.93 ft",
+      },
+      outerOffsets: {
+        expression: `15 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularInset)} ft each`,
+      },
+      innerSpan: {
+        expression: `50 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularInner)} ft`,
+      },
+      fixedArrows: {
+        expression: "A = 65 ft",
+        result: "· B = 50 ft",
+      },
+      overlap: {
+        expression: `|65 ft − (50 ft + 15 ft × sin(${angleDegrees.toFixed(2)}°))|`,
+        result: `= ${formatFeet(overlap)} ft`,
+      },
     },
   };
 }
