@@ -200,10 +200,7 @@ test("renders the second right-angle area diagram", async () => {
   // The middle band is whatever the two squared-off strips leave behind.
   assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "0");
-  assert.equal(
-    nodes.get("pae-area-middle-label").textContent,
-    "45.03 ft left for the 50 ft middle",
-  );
+  assert.equal(nodes.get("pae-area-middle-label").textContent, "45.03 ft");
   assert.equal(nodes.get("pae-area-calc-middle-result").textContent, "= 45.03 ft for a 50 ft middle");
   assert.equal(
     nodes.get("pae-area-calc-middle-short-result").textContent,
@@ -255,10 +252,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.match(nodes.get(`pae-area-corner-${corner}`).textContent, /lap · 0\.00 ft$/);
   }
-  assert.equal(
-    nodes.get("pae-area-middle-label").textContent,
-    "50.00 ft left for the 50 ft middle",
-  );
+  assert.equal(nodes.get("pae-area-middle-label").textContent, "50.00 ft");
   assert.equal(
     nodes.get("pae-area-strip-right").getAttribute("y"),
     nodes.get("pae-area-strip-left").getAttribute("y"),
