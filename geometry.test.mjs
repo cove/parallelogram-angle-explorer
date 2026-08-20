@@ -318,6 +318,38 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.ok(areas.labels.leftStrip.y > (leftTop.y + leftBottom.y) / 2);
 });
 
+test("the middle only measures a full 50 ft when the shape is square on", () => {
+  const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
+  assert.equal(square.measurements.middle, DIMENSIONS.innerSpan);
+  assert.equal(square.measurements.middleShort, 0);
+  assert.equal(square.stripsCollide, false);
+  assert.equal(square.formulas.middle.expression, "80.00 ft − 15 ft − 15 ft");
+  assert.equal(square.formulas.middle.result, "= 50.00 ft for a 50 ft middle");
+  assert.equal(square.formulas.middleShort.result, "= 0.00 ft short in the middle");
+
+  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  approximately(
+    areas.measurements.middle,
+    areas.measurements.perpendicularWidth - DIMENSIONS.inset * 2,
+  );
+  approximately(areas.middleArea.x, areas.strips.left.x + areas.strips.left.width);
+  approximately(
+    areas.middleArea.x + areas.middleArea.width,
+    areas.strips.right.x,
+  );
+  assert.equal(areas.formulas.middleShort.result, "= 4.97 ft short in the middle");
+
+  // Leaned far enough the strips cross, and the middle is gone entirely.
+  const steep = calculateRightAngleAreas(20);
+  assert.equal(steep.stripsCollide, true);
+  assert.ok(steep.measurements.middle < 0);
+  approximately(steep.middleArea.x, steep.strips.right.x);
+  approximately(
+    steep.middleArea.x + steep.middleArea.width,
+    steep.strips.left.x + steep.strips.left.width,
+  );
+});
+
 test("the strips hang over the top and bottom at every angle but 90", () => {
   for (let angle = 1; angle <= 180; angle += 0.25) {
     const areas = calculateRightAngleAreas(angle);

@@ -192,8 +192,8 @@
       text-anchor: end;
     }
     #parallelogram-angle-explorer .area-shape { fill: none; stroke: #111111; stroke-width: 2.2; }
-    #parallelogram-angle-explorer .area-a { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
-    #parallelogram-angle-explorer .area-b { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
+    #parallelogram-angle-explorer .area-middle { fill: #258a53; fill-opacity: 0.22; stroke: none; }
+    #parallelogram-angle-explorer .area-middle-collide { fill: #c00000; fill-opacity: 0.45; stroke: none; }
     #parallelogram-angle-explorer .area-overlap { fill: #c00000; fill-opacity: 0.34; stroke: none; }
     #parallelogram-angle-explorer .area-strip {
       fill: none;
@@ -202,6 +202,15 @@
       stroke-dasharray: 6 4;
     }
     #parallelogram-angle-explorer .area-strip-spill { fill: #c00000; fill-opacity: 0.5; stroke: none; }
+    #parallelogram-angle-explorer text.area-middle-label {
+      fill: #1c6d43;
+      font-size: 12px;
+      font-weight: 700;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
     #parallelogram-angle-explorer text.area-overlap-start { text-anchor: start; }
     #parallelogram-angle-explorer text.area-overlap-end { text-anchor: end; }
     #parallelogram-angle-explorer .area-far-edge-witness {
@@ -484,10 +493,10 @@
     </div>
   </section>
 
-  <h2 id="pae-area-heading">RIGHT-ANGLE AREAS MEASURED FROM THE RIGHT SIDE</h2>
+  <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. A 15 foot strip is squared off each side; because their ends are cut at a right angle to the side while the top and bottom edges lean, the right strip runs over the top edge and the left strip runs under the bottom edge, and both of those slivers are shaded red.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. A 15 foot strip is squared off each side; because their ends are cut at a right angle to the side while the top and bottom edges lean, the right strip runs over the top edge and the left strip runs under the bottom edge, and both of those slivers are shaded red. Between the two strips, the green band is what is left for the middle 50 feet; it falls short of 50 at every angle but 90 degrees, and on a steep lean the two strips collide and that clash is shaded red instead.</desc>
     <defs>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
@@ -500,9 +509,8 @@
     <g id="pae-area-scale" transform="translate(-93 0) scale(1.3)">
     <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
     <g clip-path="url(#pae-area-clip)">
-      <rect id="pae-area-a" class="area-a"></rect>
-      <rect id="pae-area-b" class="area-b"></rect>
-
+      <rect id="pae-area-middle" class="area-middle"></rect>
+      <rect id="pae-area-middle-collide" class="area-middle-collide"></rect>
     </g>
     <g mask="url(#pae-area-outside)">
       <rect id="pae-area-strip-right-spill" class="area-strip-spill"></rect>
@@ -515,9 +523,10 @@
     <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <path id="pae-area-square-a" class="area-square"></path>
     <path id="pae-area-square-b" class="area-square"></path>
-    <text id="pae-area-title-label" class="label area-title-label">Both areas turned 90° off the right side</text>
+    <text id="pae-area-title-label" class="label area-title-label">15 ft squared off each side, 50 ft in the middle</text>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
+    <text id="pae-area-middle-label" class="label area-middle-label">45.03 ft left for the 50 ft middle</text>
     <text id="pae-area-strip-right-label" class="label area-label">15 ft</text>
     <text id="pae-area-strip-left-label" class="label area-label">15 ft</text>
     <text id="pae-area-overlap-label" class="label area-overlap-label area-overlap-end">Overlaps the top · 5.55 ft</text>
@@ -535,7 +544,7 @@
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">A 15 ft strip squared off each side keeps square ends, but the top and bottom edges lean away from them — so the right strip runs over the top and the left strip runs under the bottom. Both red slivers close only when the shape is square on.</p>
+    <p class="calculation-note">A 15 ft strip is squared off each side, leaving the middle for the 50 ft. Square ends run over the top and under the bottom edge, and the two strips eat so much width that the middle comes up short of 50 ft — on a steep lean they collide outright. Everything lines up only at 90°.</p>
     <div class="calculation-grid">
       <div class="calculation calculation-purple">
         <span class="calculation-name">Method</span>
@@ -544,6 +553,14 @@
       <div class="calculation calculation-purple">
         <span class="calculation-name">Width at 90°</span>
         <span class="calculation-formula"><span id="pae-area-calc-width-expression">Calculating…</span><strong id="pae-area-calc-width-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-green">
+        <span class="calculation-name">Middle left</span>
+        <span class="calculation-formula"><span id="pae-area-calc-middle-expression">Calculating…</span><strong id="pae-area-calc-middle-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-red">
+        <span class="calculation-name">Middle short by</span>
+        <span class="calculation-formula"><span id="pae-area-calc-middle-short-expression">Calculating…</span><strong id="pae-area-calc-middle-short-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-red">
         <span class="calculation-name">Strip overhang</span>

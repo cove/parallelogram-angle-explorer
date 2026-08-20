@@ -258,6 +258,21 @@ export function calculateRightAngleAreas(angleDegrees) {
   // Laying 15 + 50 + 15 out at a right angle to the side needs a full 80 ft of
   // horizontal room, but the shape only offers 80 × sin(theta) of it.
   const perpendicularWidth = base.measurements.perpendicularWidth;
+
+  // Whatever the two 15 ft strips leave between them has to serve as the
+  // middle 50 ft. Squared off the sides they eat more room than 15 ft each,
+  // so the middle comes up short, and on a steep lean they even collide.
+  const middleStart = strips.left.x + stripWidth;
+  const middleEnd = strips.right.x;
+  const middleFeet = perpendicularWidth - DIMENSIONS.inset * 2;
+  const middleShortFeet = DIMENSIONS.innerSpan - middleFeet;
+  const middleArea = {
+    x: Math.min(middleStart, middleEnd),
+    y: topY,
+    width: Math.abs(middleEnd - middleStart),
+    height,
+  };
+  const stripsCollide = middleFeet < 0;
   const chainMark = (feet) => rightX - feet * SCALE;
   // The chain rides the perpendicular off the top corner, so it shows where a
   // right-angle measurement puts the marks against the real top edge.
@@ -301,6 +316,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     areaA,
     areaB,
     strips,
+    middleArea,
+    stripsCollide,
     chain,
     farEdgeWitness,
     dimensions: { a: dimensionA, b: dimensionB },
@@ -318,6 +335,7 @@ export function calculateRightAngleAreas(angleDegrees) {
         leftBottom.y - 7,
       ),
       // Kept clear of the A and B arrows that sit across the middle.
+      middle: point(middleArea.x + middleArea.width / 2, topY + height / 2 + 4),
       rightStrip: point(
         rightX - stripWidth / 2,
         rightTop.y + (rightBottom.y - rightTop.y) / 4,
@@ -334,6 +352,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     measurements: {
       perpendicularWidth,
       overhang: overhangFeet,
+      middle: middleFeet,
+      middleShort: middleShortFeet,
     },
     formulas: {
       method: {
@@ -343,6 +363,14 @@ export function calculateRightAngleAreas(angleDegrees) {
       width: {
         expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularWidth)} ft across`,
+      },
+      middle: {
+        expression: `${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.inset} ft − ${DIMENSIONS.inset} ft`,
+        result: `= ${formatFeet(middleFeet)} ft for a ${DIMENSIONS.innerSpan} ft middle`,
+      },
+      middleShort: {
+        expression: `${DIMENSIONS.innerSpan} ft − ${formatFeet(middleFeet)} ft`,
+        result: `= ${formatFeet(middleShortFeet)} ft short in the middle`,
       },
       overhang: {
         expression: `${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)| ÷ sin(${angleDegrees.toFixed(2)}°)`,
