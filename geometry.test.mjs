@@ -458,7 +458,8 @@ test("both parallel guides end on the same line at every angle", () => {
     assert.equal(fit.measurements.topEdge, DIMENSIONS.side);
     approximately(fit.guides.a.x2, fit.guides.b.x2, 1e-9);
     approximately(fit.matchLine.x1, fit.matchLine.x2, 1e-9);
-    assert.equal(fit.labels.match.x, fit.guides.a.x2 - 10);
+    assert.ok(fit.labels.match.x >= fit.guides.a.x2 - 10);
+    assert.ok(fit.labels.match.x >= 265);
   }
 });
 

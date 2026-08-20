@@ -14,6 +14,8 @@ Live site: https://cove.github.io/parallelogram-angle-explorer/
 
 The browser and tests both import `geometry.mjs`, which is the single source of truth for every geometry and measurement calculation.
 
+Each diagram carries its own slant-angle slider and all three move together, so a phone reader can drive the geometry from wherever they are on the page.
+
 ```sh
 npm test
 npm run coverage

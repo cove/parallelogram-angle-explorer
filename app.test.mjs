@@ -63,7 +63,9 @@ async function createHarness() {
     assert.ok(node, `missing fixture for ${selector}`);
     return node;
   };
-  nodes.get("pae-angle").value = "69.69";
+  for (const id of ["pae-angle", "pae-area-angle", "pae-fit-angle"]) {
+    nodes.get(id).value = "69.69";
+  }
 
   const documentRef = {
     getElementById(id) {
@@ -139,7 +141,7 @@ test("switches the SVG viewport at the mobile breakpoint", async () => {
   const { controller, mediaQuery, nodes } = await createHarness();
 
   mediaQuery.setMatches(true);
-  assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "88 0 444 676");
+  assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "70 0 480 676");
 
   mediaQuery.matches = false;
   controller.syncMobileViewport();
@@ -280,7 +282,7 @@ test("keeps both diagrams on the same mobile viewport", async () => {
   const { mediaQuery, nodes } = await createHarness();
 
   mediaQuery.setMatches(true);
-  assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "88 0 444 676");
+  assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "70 0 480 676");
 });
 
 test("renders the third parallel-to-the-top diagram", async () => {
@@ -297,7 +299,7 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-strip-left-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "A · 65 ft along the top");
   assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "B · 50 ft along the top");
-  assert.equal(nodes.get("pae-fit-match-label").textContent, "Both end here · 0.00 ft gap");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "Ends match · 0.00 ft");
   assert.equal(
     nodes.get("pae-fit-title-label").textContent,
     "Lines drawn parallel to the 80 ft top edge",
@@ -321,7 +323,7 @@ test("keeps the parallel guides matched after the angle changes", async () => {
   slider.dispatch("input");
 
   assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "0 0 620 676");
-  assert.equal(nodes.get("pae-fit-match-label").textContent, "Both end here · 0.00 ft gap");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "Ends match · 0.00 ft");
   assert.equal(
     nodes.get("pae-fit-guide-a").getAttribute("x2"),
     nodes.get("pae-fit-guide-b").getAttribute("x2"),
@@ -333,5 +335,40 @@ test("keeps all three diagrams on the same mobile viewport", async () => {
   const { mediaQuery, nodes } = await createHarness();
 
   mediaQuery.setMatches(true);
-  assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "88 0 444 676");
+  assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "70 0 480 676");
+});
+
+test("keeps the three sliders in step", async () => {
+  const { nodes } = await createHarness();
+  const sliders = ["pae-angle", "pae-area-angle", "pae-fit-angle"].map((id) => nodes.get(id));
+  const outputs = ["pae-angle-output", "pae-area-angle-output", "pae-fit-angle-output"]
+    .map((id) => nodes.get(id));
+
+  // Dragging the second diagram's slider moves the other two with it.
+  sliders[1].value = "34.5";
+  sliders[1].dispatch("input");
+  for (const slider of sliders) {
+    assert.equal(slider.value, "34.5");
+  }
+  for (const output of outputs) {
+    assert.equal(output.textContent, "34.50°");
+  }
+  assert.equal(nodes.get("pae-angle-label").textContent, "34.50°");
+
+  // And so does the third.
+  sliders[2].value = "128.75";
+  sliders[2].dispatch("input");
+  for (const slider of sliders) {
+    assert.equal(slider.value, "128.75");
+  }
+  assert.equal(nodes.get("pae-fit-angle-output").textContent, "128.75°");
+
+  // The presets drive all three too.
+  nodes.get("pae-snap-90").dispatch("click");
+  for (const slider of sliders) {
+    assert.equal(slider.value, "90");
+  }
+  for (const output of outputs) {
+    assert.equal(output.textContent, "90.00°");
+  }
 });
