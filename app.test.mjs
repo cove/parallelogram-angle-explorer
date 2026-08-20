@@ -151,7 +151,7 @@ test("switches the SVG viewport at the mobile breakpoint", async () => {
 });
 
 test("renders the second right-angle area diagram", async () => {
-  const { controller, nodes } = await createHarness();
+  const { controller, nodes } = await createHarness("./overlaps.html");
 
   assert.equal(typeof controller.drawAreas, "function");
   assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "0 0 620 676");
@@ -220,7 +220,7 @@ test("renders the second right-angle area diagram", async () => {
 });
 
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
-  const { controller, nodes } = await createHarness();
+  const { controller, nodes } = await createHarness("./overlaps.html");
 
   assert.equal(nodes.get("pae-area-chain-right-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50 ft");
@@ -280,15 +280,15 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "1");
 });
 
-test("keeps both diagrams on the same mobile viewport", async () => {
-  const { mediaQuery, nodes } = await createHarness();
+test("keeps both right-angle diagrams on the same mobile viewport", async () => {
+  const { mediaQuery, nodes } = await createHarness("./overlaps.html");
 
   mediaQuery.setMatches(true);
   assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "70 0 480 676");
 });
 
 test("renders the third parallel-to-the-top diagram", async () => {
-  const { controller, nodes } = await createHarness();
+  const { controller, nodes } = await createHarness("./overlaps.html");
 
   assert.equal(typeof controller.drawParallel, "function");
   assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "0 0 620 676");
@@ -318,8 +318,8 @@ test("renders the third parallel-to-the-top diagram", async () => {
 });
 
 test("keeps the parallel guides matched after the angle changes", async () => {
-  const { nodes } = await createHarness();
-  const slider = nodes.get("pae-angle");
+  const { nodes } = await createHarness("./overlaps.html");
+  const slider = nodes.get("pae-fit-angle");
 
   slider.value = "122.5";
   slider.dispatch("input");
@@ -333,39 +333,36 @@ test("keeps the parallel guides matched after the angle changes", async () => {
   assert.equal(nodes.get("pae-fit-match-line").getAttribute("x1"), nodes.get("pae-fit-match-line").getAttribute("x2"));
 });
 
-test("keeps all three diagrams on the same mobile viewport", async () => {
-  const { mediaQuery, nodes } = await createHarness();
+test("keeps the parallel diagram on the same mobile viewport", async () => {
+  const { mediaQuery, nodes } = await createHarness("./overlaps.html");
 
   mediaQuery.setMatches(true);
   assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "70 0 480 676");
 });
 
-test("keeps the three sliders in step", async () => {
-  const { nodes } = await createHarness();
-  const sliders = ["pae-angle", "pae-area-angle", "pae-fit-angle"].map((id) => nodes.get(id));
-  const outputs = ["pae-angle-output", "pae-area-angle-output", "pae-fit-angle-output"]
-    .map((id) => nodes.get(id));
+test("keeps the right-angle page's two sliders in step", async () => {
+  const { nodes } = await createHarness("./overlaps.html");
+  const sliders = ["pae-area-angle", "pae-fit-angle"].map((id) => nodes.get(id));
+  const outputs = ["pae-area-angle-output", "pae-fit-angle-output"].map((id) => nodes.get(id));
 
-  // Dragging the second diagram's slider moves the other two with it.
-  sliders[1].value = "34.5";
-  sliders[1].dispatch("input");
+  // Dragging either diagram's slider moves the other with it.
+  sliders[0].value = "34.5";
+  sliders[0].dispatch("input");
   for (const slider of sliders) {
     assert.equal(slider.value, "34.5");
   }
   for (const output of outputs) {
     assert.equal(output.textContent, "34.50°");
   }
-  assert.equal(nodes.get("pae-angle-label").textContent, "34.50°");
 
-  // And so does the third.
-  sliders[2].value = "128.75";
-  sliders[2].dispatch("input");
+  sliders[1].value = "128.75";
+  sliders[1].dispatch("input");
   for (const slider of sliders) {
     assert.equal(slider.value, "128.75");
   }
-  assert.equal(nodes.get("pae-fit-angle-output").textContent, "128.75°");
+  assert.equal(nodes.get("pae-area-angle-output").textContent, "128.75°");
 
-  // The presets drive all three too.
+  // The presets drive both too.
   nodes.get("pae-snap-90").dispatch("click");
   for (const slider of sliders) {
     assert.equal(slider.value, "90");
@@ -375,11 +372,18 @@ test("keeps the three sliders in step", async () => {
   }
 });
 
-test("drives the standalone overlaps page with only the area diagram", async () => {
+test("each page carries only its own diagrams", async () => {
+  // The recorded measurements stand alone; the right-angle method and the
+  // parallel-to-the-top answer to it travel together on the second page.
+  const recorded = await createHarness();
+  assert.equal(recorded.nodes.has("pae-svg"), true);
+  assert.equal(recorded.nodes.has("pae-area-svg"), false);
+  assert.equal(recorded.nodes.has("pae-fit-svg"), false);
+
   const { controller, nodes, mediaQuery } = await createHarness("./overlaps.html");
 
   assert.equal(nodes.has("pae-svg"), false);
-  assert.equal(nodes.has("pae-fit-svg"), false);
+  assert.equal(nodes.has("pae-fit-svg"), true);
   assert.equal(nodes.get("pae-area-angle-output").textContent, "69.69°");
   assert.equal(nodes.get("pae-area-corner-mt").textContent, "Overlap · 22.22 ft");
   assert.match(nodes.get("pae-area-shape").getAttribute("d"), /^M .+ Z$/);

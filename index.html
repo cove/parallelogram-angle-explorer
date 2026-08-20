@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="referrer" content="no-referrer">
-  <title>Parallelogram Angle Explorer</title>
+  <title>Assessor Measurements Check</title>
   <style>
     :root {
       color-scheme: light;
@@ -444,7 +444,7 @@
     }
   </style>
 
-  <h2>PARALLELOGRAM ANGLE EXPLORER</h2>
+  <h2>ASSESSOR MEASUREMENTS</h2>
   <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
@@ -544,188 +544,8 @@
     </details>
   </section>
 
-  <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
-  <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
-    <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. A 15 foot strip is squared off each side and the 50 foot middle carries on from the right strip with the same square ends. Because those ends are cut square while the top and bottom edges lean, each part runs past one edge, shaded red, and stops short of the other, leaving a gap of unclaimed shape, left white. The middle runs furthest from the side it was squared off, so its wedges are the deepest. Measured this way the middle also comes up short of 50 feet, and on a steep lean the two strips collide. Everything lines up only when the shape is square on at 90 degrees.</desc>
-    <defs>
-      <clipPath id="pae-area-clip">
-        <path id="pae-area-clip-shape"></path>
-      </clipPath>
-      <mask id="pae-area-outside" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="676">
-        <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
-        <path id="pae-area-mask-shape" fill="#000000"></path>
-      </mask>
-      <mask id="pae-area-off-strips" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="676">
-        <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
-        <rect id="pae-area-mask-strip-right" fill="#000000"></rect>
-        <rect id="pae-area-mask-strip-left" fill="#000000"></rect>
-        <rect id="pae-area-mask-middle" fill="#000000"></rect>
-      </mask>
-    </defs>
-    <g id="pae-area-scale" transform="translate(-93 0) scale(1.3)">
-    <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
-    <g clip-path="url(#pae-area-clip)">
-      <rect id="pae-area-middle" class="area-middle"></rect>
-      <rect id="pae-area-middle-collide" class="area-middle-collide"></rect>
-      <rect id="pae-area-strip-right-fill" class="area-strip-fill"></rect>
-      <rect id="pae-area-strip-left-fill" class="area-strip-fill"></rect>
-    </g>
-    <g clip-path="url(#pae-area-clip)" mask="url(#pae-area-off-strips)">
-      <rect id="pae-area-strip-right-gap" class="area-strip-gap"></rect>
-      <rect id="pae-area-strip-left-gap" class="area-strip-gap"></rect>
-      <rect id="pae-area-middle-gap" class="area-strip-gap"></rect>
-    </g>
-    <g mask="url(#pae-area-outside)">
-      <rect id="pae-area-strip-right-spill" class="area-strip-spill"></rect>
-      <rect id="pae-area-strip-left-spill" class="area-strip-spill"></rect>
-      <rect id="pae-area-middle-spill" class="area-strip-spill"></rect>
-    </g>
-    <rect id="pae-area-strip-right" class="area-strip"></rect>
-    <rect id="pae-area-strip-left" class="area-strip"></rect>
-    <rect id="pae-area-left-overlap-a" class="area-overlap"></rect>
-    <rect id="pae-area-left-overlap-b" class="area-overlap"></rect>
-    <path id="pae-area-shape" class="area-shape"></path>
-    <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <path id="pae-area-square-a" class="area-square"></path>
-    <path id="pae-area-square-b" class="area-square"></path>
-    <text id="pae-area-title-label" class="label area-title-label">15 ft squared off each side, 50 ft in the middle</text>
-    <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
-    <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
-    <text id="pae-area-strip-right-label" class="label area-label">15 ft</text>
-    <text id="pae-area-strip-left-label" class="label area-label">15 ft</text>
-    <text id="pae-area-corner-rt" class="label area-corner-label area-overlap-start">Overlap · 5.55 ft</text>
-    <text id="pae-area-corner-rb" class="label area-corner-label area-overlap-start">Gap · 5.55 ft</text>
-    <text id="pae-area-corner-lt" class="label area-corner-label area-overlap-end">Gap · 5.55 ft</text>
-    <text id="pae-area-corner-mt" class="label area-corner-label">Overlap · 22.22 ft</text>
-    <text id="pae-area-corner-mb" class="label area-corner-label">Gap · 22.22 ft</text>
-    <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <path id="pae-area-square-chain" class="area-square"></path>
-    <line id="pae-area-far-edge-witness" class="area-far-edge-witness"></line>
-    <text id="pae-area-chain-right-label" class="label area-label">15 ft</text>
-    <text id="pae-area-chain-inner-label" class="label area-label">50 ft</text>
-    <text id="pae-area-chain-left-label" class="label area-label">15 ft</text>
-    <text id="pae-area-corner-lb" class="label area-corner-label area-overlap-end">Overlap · 5.55 ft</text>
-    </g>
-  </svg>
-
-  <div class="controls" id="pae-area-controls">
-    <label>
-      <span>Slant angle θ <output id="pae-area-angle-output">110.23°</output></span>
-      <input id="pae-area-angle" type="range" min="1" max="180" step="0.01" value="110.23" aria-label="Slant angle in degrees">
-    </label>
-  </div>
-
-  <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
-    <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">Every part — 15, 50, 15 — is measured square to the sides, but the top and bottom edges lean. So every part <strong>overlaps</strong> past one edge (red: ground the parcel does not have) and leaves a <strong>gap</strong> at the other (white: ground nothing claims). Both grow the further a part reaches from its side, and both close only at 90°.</p>
-    <details class="math-details">
-      <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
-      <div class="calculation-grid">
-        <div class="calculation calculation-purple">
-          <span class="calculation-name">Method</span>
-          <span class="calculation-formula"><span id="pae-area-calc-method-expression">Calculating…</span><strong id="pae-area-calc-method-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-purple">
-          <span class="calculation-name">Width at 90°</span>
-          <span class="calculation-formula"><span id="pae-area-calc-width-expression">Calculating…</span><strong id="pae-area-calc-width-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-green">
-          <span class="calculation-name">Middle left</span>
-          <span class="calculation-formula"><span id="pae-area-calc-middle-expression">Calculating…</span><strong id="pae-area-calc-middle-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-red">
-          <span class="calculation-name">Middle short by</span>
-          <span class="calculation-formula"><span id="pae-area-calc-middle-short-expression">Calculating…</span><strong id="pae-area-calc-middle-short-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-black">
-          <span class="calculation-name">Middle gap</span>
-          <span class="calculation-formula"><span id="pae-area-calc-middle-ends-expression">Calculating…</span><strong id="pae-area-calc-middle-ends-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-black">
-          <span class="calculation-name">Strip gap</span>
-          <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-red">
-          <span class="calculation-name">Overlap</span>
-          <span class="calculation-formula"><span id="pae-area-calc-left-overlap-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-purple">
-          <span class="calculation-name">Room needed</span>
-          <span class="calculation-formula"><span id="pae-area-calc-chain-expression">Calculating…</span><strong id="pae-area-calc-chain-result" class="calculation-result"></strong></span>
-        </div>
-      </div>
-    </details>
-  </section>
-
-  <h2 id="pae-fit-heading">LINES PARALLEL TO THE TOP EDGE — EVERYTHING FITS</h2>
-  <svg id="pae-fit-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-fit-svg-title pae-fit-svg-desc">
-    <title id="pae-fit-svg-title">The 65 and 50 foot lines drawn parallel to the top edge</title>
-    <desc id="pae-fit-svg-desc">The same parallelogram with the 65 foot and 50 foot lines drawn parallel to the 80 foot top edge instead of at a right angle to the side. A starts at the right corner and reaches 65 feet; B starts 15 feet along and reaches 50 feet. Because 15 plus 50 equals 65, both lines end on the same line at every angle, and 65 plus the remaining 15 feet fills the whole 80 foot side with no overlap and nothing left over.</desc>
-    <defs>
-      <clipPath id="pae-fit-clip">
-        <path id="pae-fit-clip-shape"></path>
-      </clipPath>
-    </defs>
-    <g id="pae-fit-scale" transform="translate(-93 0) scale(1.3)">
-    <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
-    <g clip-path="url(#pae-fit-clip)">
-      <rect id="pae-fit-strip-right" class="fit-strip-outer"></rect>
-      <rect id="pae-fit-strip-inner" class="fit-strip-inner"></rect>
-      <rect id="pae-fit-strip-left" class="fit-strip-outer"></rect>
-    </g>
-    <path id="pae-fit-shape" class="shape"></path>
-    <line id="pae-fit-match-line" class="fit-match-line"></line>
-    <line id="pae-fit-guide-a" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
-    <line id="pae-fit-guide-b" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
-    <text id="pae-fit-title-label" class="label area-title-label">Lines drawn parallel to the 80 ft top edge</text>
-    <text id="pae-fit-strip-right-label" class="label fit-label">15 ft</text>
-    <text id="pae-fit-strip-inner-label" class="label fit-label">50 ft</text>
-    <text id="pae-fit-strip-left-label" class="label fit-label">15 ft</text>
-    <text id="pae-fit-guide-a-label" class="label fit-label">A · 65 ft along the top</text>
-    <text id="pae-fit-guide-b-label" class="label fit-label">B · 50 ft along the top</text>
-    <text id="pae-fit-match-label" class="label fit-match-label">Ends match · 0.00 ft</text>
-    </g>
-  </svg>
-
-  <div class="controls" id="pae-fit-controls">
-    <label>
-      <span>Slant angle θ <output id="pae-fit-angle-output">110.23°</output></span>
-      <input id="pae-fit-angle" type="range" min="1" max="180" step="0.01" value="110.23" aria-label="Slant angle in degrees">
-    </label>
-  </div>
-
-  <section id="pae-fit-calculations" class="calculations" aria-labelledby="pae-fit-calculations-title">
-    <h3 id="pae-fit-calculations-title">Parallel-to-the-top calculations</h3>
-    <p class="calculation-note">Measured along the top edge, a foot stays a foot at any angle, so 15 + 50 + 15 fills the 80 ft side exactly — A and B meet end to end instead of overlapping.</p>
-    <details class="math-details">
-      <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
-      <div class="calculation-grid">
-        <div class="calculation calculation-green">
-          <span class="calculation-name">Method</span>
-          <span class="calculation-formula"><span id="pae-fit-calc-method-expression">Calculating…</span><strong id="pae-fit-calc-method-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-green">
-          <span class="calculation-name">B reaches</span>
-          <span class="calculation-formula"><span id="pae-fit-calc-reach-expression">Calculating…</span><strong id="pae-fit-calc-reach-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-green">
-          <span class="calculation-name">Full side</span>
-          <span class="calculation-formula"><span id="pae-fit-calc-total-expression">Calculating…</span><strong id="pae-fit-calc-total-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-green">
-          <span class="calculation-name">Gap or overlap</span>
-          <span class="calculation-formula"><span id="pae-fit-calc-gap-expression">Calculating…</span><strong id="pae-fit-calc-gap-result" class="calculation-result"></strong></span>
-        </div>
-      </div>
-    </details>
-  </section>
-
   <footer id="pae-source-footer" class="viz-row">
-    <a href="./overlaps.html">Overlaps only</a>
+    <a href="./overlaps.html">The right-angle problem</a>
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
