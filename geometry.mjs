@@ -238,13 +238,34 @@ export function calculateRightAngleAreas(angleDegrees) {
   const overlapFeet = Math.min(DIMENSIONS.arrowA, DIMENSIONS.arrowB);
   const overlapArea = bandRect(overlapFeet);
 
-  // A band longer than the perpendicular width also runs past the far edge.
+  // Laying 15 + 50 + 15 out at a right angle to the side needs a full 80 ft of
+  // horizontal room, but the shape only offers 80 × sin(theta) of it.
   const perpendicularWidth = base.measurements.perpendicularWidth;
-  const beyondFeet = Math.max(0, DIMENSIONS.arrowA - perpendicularWidth);
+  const chainMark = (feet) => rightX - feet * SCALE;
+  const chainY = Math.max(leftTop.y, rightTop.y) + 44;
+  const chain = {
+    rightInset: line(point(rightX, chainY), point(chainMark(DIMENSIONS.inset), chainY)),
+    inner: line(
+      point(chainMark(DIMENSIONS.inset), chainY),
+      point(chainMark(DIMENSIONS.inset + DIMENSIONS.innerSpan), chainY),
+    ),
+    leftInset: line(
+      point(chainMark(DIMENSIONS.inset + DIMENSIONS.innerSpan), chainY),
+      point(chainMark(DIMENSIONS.side), chainY),
+    ),
+  };
+  const chainLabel = ({ x1, x2 }) => point((x1 + x2) / 2, chainY - 9);
+  const farEdgeWitness = line(
+    point(leftTop.x, chainY - 14),
+    point(leftTop.x, leftBottom.y),
+  );
+
+  // Everything left of the far edge is the part that cannot fit on the shape.
+  const beyondFeet = Math.max(0, DIMENSIONS.side - perpendicularWidth);
   // The spill is drawn against the far edge itself, so it lines up with the
   // slanted left side instead of floating past the corners.
   const beyondArea = {
-    x: rightX - DIMENSIONS.arrowA * SCALE,
+    x: chainMark(DIMENSIONS.side),
     y: leftTop.y,
     width: beyondFeet * SCALE,
     height: leftBottom.y - leftTop.y,
@@ -272,16 +293,22 @@ export function calculateRightAngleAreas(angleDegrees) {
     areaB,
     overlapArea,
     beyondArea,
+    chain,
+    farEdgeWitness,
     dimensions: { a: dimensionA, b: dimensionB },
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
       b: rightAngleSquare(bandY(34), 1),
+      chain: rightAngleSquare(chainY, 1),
     },
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
       overlap: point((rightX + overlapArea.x) / 2, bandY(0) + 4),
       beyond: point(beyondArea.x + beyondArea.width / 2, leftTop.y - AREA_LABEL_INSET),
+      chainRightInset: chainLabel(chain.rightInset),
+      chainInner: chainLabel(chain.inner),
+      chainLeftInset: chainLabel(chain.leftInset),
       title: point(CENTER_X, topY - 14),
     },
     measurements: {
@@ -302,9 +329,13 @@ export function calculateRightAngleAreas(angleDegrees) {
         expression: `min(${DIMENSIONS.arrowA} ft, ${DIMENSIONS.arrowB} ft)`,
         result: `= ${formatFeet(overlapFeet)} ft, always overlapping`,
       },
+      chain: {
+        expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft + ${DIMENSIONS.inset} ft`,
+        result: `= ${DIMENSIONS.side} ft of room needed at 90°`,
+      },
       beyond: {
-        expression: `max(0, ${DIMENSIONS.arrowA} ft − ${formatFeet(perpendicularWidth)} ft)`,
-        result: `= ${formatFeet(beyondFeet)} ft past the far edge`,
+        expression: `${DIMENSIONS.side} ft − ${formatFeet(perpendicularWidth)} ft`,
+        result: `= ${formatFeet(beyondFeet)} ft off the far edge`,
       },
     },
   };

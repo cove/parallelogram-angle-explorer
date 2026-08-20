@@ -167,18 +167,41 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(overlap, areaB);
 });
 
-test("hides the far-edge spill until a shallow angle creates one", async () => {
+test("steps the 15, 50 and 15 chain off the side and shades the spill", async () => {
   const { controller, nodes } = await createHarness();
 
+  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50 ft");
+  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft of room needed at 90°");
+  assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
+  assert.equal(
+    nodes.get("pae-area-chain-right").getAttribute("x2"),
+    nodes.get("pae-area-chain-inner").getAttribute("x1"),
+  );
+  assert.equal(
+    nodes.get("pae-area-chain-inner").getAttribute("x2"),
+    nodes.get("pae-area-chain-left").getAttribute("x1"),
+  );
+
+  // At 69.69° the last step lands 4.97 ft off the far edge.
+  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 4.97 ft");
+  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 4.97 ft off the far edge");
+  assert.equal(
+    nodes.get("pae-area-chain-left").getAttribute("x2"),
+    nodes.get("pae-area-beyond").getAttribute("x"),
+  );
+
+  // Square on there is nothing to shade.
+  controller.draw(90);
   assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 0.00 ft past the far edge");
+  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 0.00 ft");
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Past far edge · 13.58 ft");
-  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 13.58 ft past the far edge");
+  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 28.58 ft");
 });
 
 test("keeps both diagrams on the same mobile viewport", async () => {

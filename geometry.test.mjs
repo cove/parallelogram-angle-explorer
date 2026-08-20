@@ -267,22 +267,51 @@ test("the shorter right-angle area always overlaps the longer one", () => {
   }
 });
 
-test("flags the part of the longer area that runs past the far edge", () => {
+test("steps 15, 50 and 15 off the side and flags what runs off the edge", () => {
   const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
   assert.equal(square.measurements.beyond, 0);
   assert.equal(square.beyondArea.width, 0);
-  assert.equal(square.formulas.beyond.expression, "max(0, 65 ft − 80.00 ft)");
-  assert.equal(square.formulas.beyond.result, "= 0.00 ft past the far edge");
+  assert.equal(square.formulas.chain.expression, "15 ft + 50 ft + 15 ft");
+  assert.equal(square.formulas.chain.result, "= 80 ft of room needed at 90°");
+  assert.equal(square.formulas.beyond.expression, "80 ft − 80.00 ft");
+  assert.equal(square.formulas.beyond.result, "= 0.00 ft off the far edge");
 
-  const shallow = calculateRightAngleAreas(40);
-  const [leftTop, , , leftBottom] = shallow.shape;
-  approximately(shallow.measurements.beyond, 65 - 80 * Math.sin(40 * Math.PI / 180));
-  approximately(shallow.beyondArea.x, shallow.areaA.x);
-  approximately(shallow.beyondArea.y, leftTop.y);
-  approximately(shallow.beyondArea.height, leftBottom.y - leftTop.y);
-  approximately(shallow.labels.beyond.x, shallow.beyondArea.x + shallow.beyondArea.width / 2);
-  assert.ok(shallow.labels.beyond.y < leftTop.y);
-  assert.match(shallow.formulas.beyond.result, /^= 13\.58 ft past the far edge$/);
+  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const [leftTop, rightTop, , leftBottom] = areas.shape;
+  const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
+
+  // The three steps run back to back from the right side, 15 + 50 + 15.
+  approximately(areas.chain.rightInset.x1, rightTop.x);
+  approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
+  approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
+  approximately(span(areas.chain.rightInset), DIMENSIONS.inset);
+  approximately(span(areas.chain.inner), DIMENSIONS.innerSpan);
+  approximately(span(areas.chain.leftInset), DIMENSIONS.inset);
+  for (const segment of Object.values(areas.chain)) {
+    assert.equal(segment.y1, segment.y2);
+  }
+  assert.ok(areas.chain.rightInset.y1 > Math.max(leftTop.y, rightTop.y));
+  approximately(areas.labels.chainInner.x, (areas.chain.inner.x1 + areas.chain.inner.x2) / 2);
+
+  // The last step lands past the far edge, and that gap is the spill.
+  approximately(areas.chain.leftInset.x2, areas.beyondArea.x);
+  approximately(areas.beyondArea.x + areas.beyondArea.width, leftTop.x);
+  approximately(areas.measurements.beyond, DIMENSIONS.side - areas.measurements.perpendicularWidth);
+  approximately(areas.beyondArea.y, leftTop.y);
+  approximately(areas.beyondArea.height, leftBottom.y - leftTop.y);
+  assert.equal(areas.farEdgeWitness.x1, leftTop.x);
+  assert.equal(areas.farEdgeWitness.x2, leftTop.x);
+  assert.equal(areas.formulas.beyond.result, "= 4.97 ft off the far edge");
+  assert.equal(areas.squares.chain.length, 3);
+});
+
+test("a right-angle 15 + 50 + 15 never fits unless the shape is square on", () => {
+  for (let angle = 1; angle <= 180; angle += 0.25) {
+    const areas = calculateRightAngleAreas(angle);
+    const fits = Math.abs(angle - PRESET_ANGLES.rightAngle) < 1e-9;
+    assert.equal(areas.measurements.beyond === 0, fits);
+    assert.ok(areas.measurements.beyond >= 0);
+  }
 });
 
 test("rejects invalid angles for the right-angle areas too", () => {
