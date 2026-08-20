@@ -253,7 +253,7 @@ export function initializeApp(documentRef, windowRef) {
       const node = element(`pae-area-corner-${corner}`);
       node.setAttribute("opacity", feet > 0 ? "1" : "0");
       // Inline so it wins over the shared label colour in the stylesheet.
-      node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#a3520f"}`);
+      node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#4b5563"}`);
       setText(
         node,
         position,
