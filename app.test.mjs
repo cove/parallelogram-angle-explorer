@@ -99,7 +99,7 @@ test("renders the initial state from the shared geometry module", async () => {
   );
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "65 ft overlap · 4.04 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
