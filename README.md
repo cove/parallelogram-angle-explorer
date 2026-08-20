@@ -2,9 +2,9 @@
 
 Interactive parallelogram geometry showing adjustable skew, perpendicular measurements, fixed guide lengths, and overlap. Its note also records that 14.07 / 50.72 / 15.21 cannot be reproduced at any angle, and leaves the slider to demonstrate it.
 
-The first diagram is the forced assessor measurements: measured straight across instead of along the side, every distance comes out shorter than it really is, while the fixed 65 ft and 50 ft calls do not — so instead of meeting end to end they overlap.
+The first diagram is the forced assessor measurements.
 
-A second diagram measures every part — 15, 50, 15 — square to the sides, but the top and bottom edges lean. So every part overlaps past one edge (red: ground the parcel does not have) and leaves a gap at the other (gray: ground nothing claims). Both grow the further a part reaches from its side, and both close only at 90°, where the middle also measures a full 50 ft.
+A second diagram measures every part — 15, 50, 15 — square to the sides, but the top and bottom edges lean. So every part overlaps past one edge (red: ground the parcel does not have) and leaves a gap at the other (white: ground nothing claims). Both grow the further a part reaches from its side, and both close only at 90°, where the middle also measures a full 50 ft.
 
 A third diagram draws the same 65 ft and 50 ft lines parallel to the 80 ft top edge. Measured that way a foot stays a foot at any angle, so 15 + 50 = 65 puts both lines' far ends on one line and 65 + 15 fills the whole side — no overlap and nothing left over.
 
