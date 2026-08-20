@@ -325,6 +325,15 @@
       margin-left: 4px;
       font-weight: 700;
     }
+    #parallelogram-angle-explorer .record-checks {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    #parallelogram-angle-explorer .record-checks li {
+      margin-bottom: 4px;
+    }
     #parallelogram-angle-explorer .calculation-green { color: #1c6d43; }
     #parallelogram-angle-explorer .calculation-purple { color: #7030a0; }
     #parallelogram-angle-explorer .calculation-brown { color: #6a3d12; }
@@ -378,6 +387,10 @@
         order: 7;
         flex: 0 0 auto;
         margin-top: 6px;
+      }
+      #parallelogram-angle-explorer #pae-record-check {
+        order: 2;
+        flex: 0 0 auto;
       }
       #parallelogram-angle-explorer #pae-fit-svg,
       #parallelogram-angle-explorer #pae-fit-calculations,
@@ -476,7 +489,7 @@
 
   <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
     <h3 id="pae-calculations-title">Measurement calculations</h3>
-    <p class="calculation-note">Forced square to the side, every distance along the 80 ft top edge shrinks by sin θ — the two 15s and the 50 all read short. The fixed 65 ft and 50 ft calls do not shrink with them, so instead of meeting end to end they <strong>overlap</strong>. Only at 90° does nothing shrink and the overlap close.</p>
+    <p class="calculation-note">Measure square to a leaning side and every distance along the 80 ft top edge comes out <strong>smaller than it really is</strong> — its true length times sin θ. The fixed 65 ft and 50 ft calls don't shrink with it, so instead of meeting end to end they <strong>overlap</strong>. Only at 90° does nothing shrink and the overlap close.</p>
     <div class="calculation-grid">
       <div class="calculation calculation-green">
         <span class="calculation-name">Shape</span>
@@ -499,6 +512,17 @@
         <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
       </div>
     </div>
+  </section>
+
+  <section id="pae-record-check" class="calculations" aria-labelledby="pae-record-check-title">
+    <h3 id="pae-record-check-title">Why 14.07 · 50.72 · 15.21 can't be reproduced</h3>
+    <p class="calculation-note">Those three recorded figures add to exactly 80.00 ft. No single measurement produces them, for four separate reasons.</p>
+    <ul class="record-checks">
+      <li><strong>Squaring can only make a distance shorter.</strong> Measured square to a leaning side, a length comes out at its true length times sin θ, and sin θ is never more than 1. But 50.72 ft is <em>longer</em> than the 50 ft it stands for, and 15.21 ft is longer than 15 ft. There is no angle that produces either one.</li>
+      <li><strong>The total gives it away.</strong> Three squared measurements add up to 80 × sin θ, which is less than 80 ft at every angle except 90°. These add to exactly 80.00 ft — so nothing was shortened at all. Yet if the parcel really were square on, the three would have to read 15.00, 50.00 and 15.00.</li>
+      <li><strong>The two ends can't differ.</strong> Both ends are the same 15 ft. Squared off at the same angle they must come out equal — and 14.07 is not 15.21.</li>
+      <li><strong>Only one of the three fits.</strong> 14.07 ft is exactly 15 ft × sin(69.72°), a properly squared 15 ft. The other two match no angle, so the set can't come from one survey — drag the slider and you can land 14.07, but 50.72 and 15.21 never appear.</li>
+    </ul>
   </section>
 
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
