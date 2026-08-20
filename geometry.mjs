@@ -250,7 +250,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     width: DIMENSIONS.arrowB * SCALE,
     height,
   };
-  const abOverlapFeet = Math.abs(DIMENSIONS.arrowA - areaBEndFeet);
 
   // A 15 ft strip squared off each side keeps square ends, but the top and
   // bottom edges lean away from those ends, so each strip runs past the shape.
@@ -323,6 +322,8 @@ export function calculateRightAngleAreas(angleDegrees) {
 
 
   const bandY = (offset) => topY + height / 2 + offset;
+  // How tall a shaded run alongside one of the A and B lines is drawn.
+  const BAND_HALF_HEIGHT = 11;
   const dimensionA = line(
     point(rightX, bandY(-34)),
     point(areaA.x, bandY(-34)),
@@ -336,17 +337,25 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(x - 9, y + 9 * direction),
     point(x, y + 9 * direction),
   ];
-  // The two far ends and the stretch between them: ground both A and B claim.
-  const abOverlapY = bandY(0);
-  const abOverlap = {
-    span: line(point(areaA.x, abOverlapY), point(areaB.x, abOverlapY)),
-    witnessA: line(point(areaA.x, bandY(-34)), point(areaA.x, abOverlapY)),
-    witnessB: line(point(areaB.x, bandY(34)), point(areaB.x, abOverlapY)),
-    label: point(
-      Math.max(Math.min(areaA.x, areaB.x) - 8, LEFT_LABEL_LIMIT),
-      abOverlapY + 4,
-    ),
-    feet: abOverlapFeet,
+  // Either line can reach so far in that it runs past the inner edge of the
+  // left 15 ft strip and starts claiming ground that strip already claims.
+  const leftStripInnerFeet = perpendicularWidth - DIMENSIONS.inset;
+  const leftStripInnerX = strips.left.x + stripWidth;
+  const stripEncroachment = (endFeet, y) => {
+    const feet = Math.max(0, endFeet - leftStripInnerFeet);
+    return {
+      feet,
+      rect: {
+        x: leftStripInnerX - feet * SCALE,
+        y: y - BAND_HALF_HEIGHT,
+        width: feet * SCALE,
+        height: BAND_HALF_HEIGHT * 2,
+      },
+    };
+  };
+  const leftStripOverlaps = {
+    a: stripEncroachment(DIMENSIONS.arrowA, bandY(-34)),
+    b: stripEncroachment(areaBEndFeet, bandY(34)),
   };
 
   return {
@@ -368,7 +377,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     chain,
     farEdgeWitness,
     dimensions: { a: dimensionA, b: dimensionB },
-    abOverlap,
+    leftStripOverlaps,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
       b: rightAngleSquare(bandY(34), 1, rightX - areaBStartFeet * SCALE),
@@ -408,12 +417,13 @@ export function calculateRightAngleAreas(angleDegrees) {
       middle: middleFeet,
       middleShort: middleShortFeet,
       middleEnds: middleEndFeet,
-      abOverlap: abOverlapFeet,
+      leftStripOverlapA: leftStripOverlaps.a.feet,
+      leftStripOverlapB: leftStripOverlaps.b.feet,
     },
     formulas: {
-      abOverlap: {
-        expression: `|65 ft − (50 ft + 15 ft × sin(${angleDegrees.toFixed(2)}°))|`,
-        result: `= ${formatFeet(abOverlapFeet)} ft claimed twice`,
+      leftStripOverlap: {
+        expression: `past ${formatFeet(leftStripInnerFeet)} ft, where the left 15 ft strip starts`,
+        result: `A by ${formatFeet(leftStripOverlaps.a.feet)} ft · B by ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       method: {
         expression: "both areas start at the right side, turned 90°",

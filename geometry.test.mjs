@@ -260,15 +260,7 @@ test("measures both right-angle areas from the right side", () => {
     rightTop.x - DIMENSIONS.inset * Math.sin(EXAMPLE_ANGLE * Math.PI / 180) * scale,
   );
   approximately(areas.areaA.width / areas.areaB.width, DIMENSIONS.arrowA / DIMENSIONS.arrowB);
-  approximately(
-    areas.measurements.abOverlap,
-    Math.abs(
-      DIMENSIONS.arrowA
-        - (DIMENSIONS.arrowB + DIMENSIONS.inset * Math.sin(EXAMPLE_ANGLE * Math.PI / 180)),
-    ),
-  );
-  approximately(areas.abOverlap.span.x1, areas.areaA.x);
-  approximately(areas.abOverlap.span.x2, areas.areaB.x);
+  approximately(areas.abOverlapPlaceholder ?? 0, 0);
   approximately(areas.areaA.y, Math.min(leftTop.y, rightTop.y));
   approximately(areas.areaA.height, Math.max(leftBottom.y, rightBottom.y) - areas.areaA.y);
   assert.equal(areas.strips.right.width, areas.strips.left.width);
@@ -489,17 +481,37 @@ test("rejects invalid angles for the parallel diagram too", () => {
   assert.throws(() => calculateParallelAreas("90"), RangeError);
 });
 
-test("A and B claim the same ground until the shape is square on", () => {
+test("shades where A and B run into the left 15 ft strip", () => {
+  // Square on there is exactly 15 + 50 + 15 of room, so neither line reaches
+  // past the left strip and nothing is shaded.
   const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
-  approximately(square.measurements.abOverlap, 0);
-  approximately(square.abOverlap.span.x1, square.abOverlap.span.x2);
+  approximately(square.measurements.leftStripOverlapA, 0);
+  approximately(square.measurements.leftStripOverlapB, 0);
+  approximately(square.leftStripOverlaps.a.rect.width, 0);
 
   const leaning = calculateRightAngleAreas(PRESET_ANGLES.reverse);
   const sine = Math.sin(PRESET_ANGLES.reverse * Math.PI / 180);
-  approximately(leaning.measurements.abOverlap, Math.abs(65 - (50 + 15 * sine)));
-  assert.ok(leaning.measurements.abOverlap > 0);
+  const stripStart = DIMENSIONS.side * sine - DIMENSIONS.inset;
+  approximately(leaning.measurements.leftStripOverlapA, DIMENSIONS.arrowA - stripStart);
+  approximately(
+    leaning.measurements.leftStripOverlapB,
+    DIMENSIONS.arrowB + DIMENSIONS.inset * sine - stripStart,
+  );
+  assert.ok(leaning.measurements.leftStripOverlapA > leaning.measurements.leftStripOverlapB);
+
+  // Each shaded run ends where the left strip begins and reaches back along
+  // its own line, in the same units the bands are drawn in.
+  const scale = leaning.areaA.width / DIMENSIONS.arrowA;
+  const stripInnerX = leaning.strips.left.x + leaning.strips.left.width;
+  for (const key of ["a", "b"]) {
+    const { rect, feet } = leaning.leftStripOverlaps[key];
+    approximately(rect.x + rect.width, stripInnerX);
+    approximately(rect.width, feet * scale);
+    assert.ok(rect.height > 0);
+  }
   assert.equal(
-    leaning.formulas.abOverlap.result,
-    `= ${leaning.measurements.abOverlap.toFixed(2)} ft claimed twice`,
+    leaning.formulas.leftStripOverlap.result,
+    `A by ${leaning.measurements.leftStripOverlapA.toFixed(2)} ft`
+      + ` · B by ${leaning.measurements.leftStripOverlapB.toFixed(2)} ft`,
   );
 });
