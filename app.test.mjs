@@ -186,6 +186,15 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-strip-left-spill").getAttribute("width"),
     nodes.get("pae-area-strip-left").getAttribute("width"),
   );
+  // The shaded length covers the same rectangle as the outline.
+  for (const side of ["right", "left"]) {
+    for (const attribute of ["x", "y", "width", "height"]) {
+      assert.equal(
+        nodes.get(`pae-area-strip-${side}-fill`).getAttribute(attribute),
+        nodes.get(`pae-area-strip-${side}`).getAttribute(attribute),
+      );
+    }
+  }
   assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
 
   // The middle band is whatever the two squared-off strips leave behind.
