@@ -153,14 +153,14 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
   assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
-  assert.equal(
-    nodes.get("pae-area-overlap-label").textContent,
-    "Overlaps the top · 5.55 ft",
-  );
-  assert.equal(
-    nodes.get("pae-area-under-label").textContent,
-    "Overlaps the bottom · 5.55 ft",
-  );
+  // Leaning right: the strips run past the top-right and bottom-left, and
+  // stop short at the other two corners.
+  assert.equal(nodes.get("pae-area-corner-rt").textContent, "Overlap · 5.55 ft");
+  assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 5.55 ft");
+  assert.equal(nodes.get("pae-area-corner-rb").textContent, "Underlap · 5.55 ft");
+  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Underlap · 5.55 ft");
+  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
+  assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #a3520f");
   assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
   assert.equal(
@@ -171,7 +171,7 @@ test("renders the second right-angle area diagram", async () => {
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
     nodes.get("pae-area-calc-overhang-result").textContent,
-    "= 5.55 ft past the top and the bottom",
+    "= 5.55 ft over one edge, short of the other",
   );
   // The mask uses the same outline, so only the overhang shows red.
   assert.equal(
@@ -225,14 +225,28 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
     nodes.get("pae-area-strip-right").getAttribute("height"),
     nodes.get("pae-area-strip-left").getAttribute("height"),
   );
-  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-under-label").getAttribute("opacity"), "1");
+  for (const corner of ["rt", "rb", "lt", "lb"]) {
+    assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "1");
+  }
+  // The uncovered sliver is masked by the strip it belongs to.
+  assert.equal(
+    nodes.get("pae-area-mask-strip-right").getAttribute("x"),
+    nodes.get("pae-area-strip-right").getAttribute("x"),
+  );
+  assert.equal(
+    nodes.get("pae-area-strip-left-gap").getAttribute("x"),
+    nodes.get("pae-area-strip-left").getAttribute("x"),
+  );
 
   // Square on, the ends line up with the edges and nothing hangs over.
   controller.draw(90);
-  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-under-label").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlaps the top · 0.00 ft");
+  for (const corner of ["rt", "rb", "lt", "lb"]) {
+    assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "0");
+  }
+  // Hidden at 90 degrees, and every corner measures nothing either way.
+  for (const corner of ["rt", "rb", "lt", "lb"]) {
+    assert.match(nodes.get(`pae-area-corner-${corner}`).textContent, /lap · 0\.00 ft$/);
+  }
   assert.equal(
     nodes.get("pae-area-middle-label").textContent,
     "50.00 ft left for the 50 ft middle",
@@ -243,7 +257,14 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   );
 
   controller.draw(40);
-  assert.equal(nodes.get("pae-area-under-label").textContent, "Overlaps the bottom · 17.88 ft");
+  assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 17.88 ft");
+  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Underlap · 17.88 ft");
+
+  // Past 90 degrees the lean flips, and so does each corner's role.
+  controller.draw(110.23);
+  assert.equal(nodes.get("pae-area-corner-rt").textContent, "Underlap · 5.53 ft");
+  assert.equal(nodes.get("pae-area-corner-rb").textContent, "Overlap · 5.53 ft");
+  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #a3520f");
 
   // Leaned far enough, the two strips run into each other.
   controller.draw(20);

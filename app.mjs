@@ -191,12 +191,16 @@ export function initializeApp(documentRef, windowRef) {
         ? `Strips collide · ${Math.abs(areas.measurements.middle).toFixed(2)} ft`
         : `${areas.measurements.middle.toFixed(2)} ft left for the ${DIMENSIONS.innerSpan} ft middle`,
     );
-    // Outline, shaded length inside the shape, and the spill past its edges.
-    const stripParts = ["", "-fill", "-spill"];
-    for (const part of stripParts) {
+    // Outline, shaded length inside the shape, the spill past its edges, and
+    // the mask that turns each strip into a hole for the underlap slivers.
+    for (const part of ["", "-fill", "-spill"]) {
       setRect(element(`pae-area-strip-right${part}`), areas.strips.right);
       setRect(element(`pae-area-strip-left${part}`), areas.strips.left);
     }
+    setRect(element("pae-area-mask-strip-right"), areas.strips.right);
+    setRect(element("pae-area-mask-strip-left"), areas.strips.left);
+    setRect(element("pae-area-strip-right-gap"), areas.stripColumns.right);
+    setRect(element("pae-area-strip-left-gap"), areas.stripColumns.left);
     setText(element("pae-area-strip-right-label"), areas.labels.rightStrip, `${DIMENSIONS.inset} ft`, 90);
     setText(element("pae-area-strip-left-label"), areas.labels.leftStrip, `${DIMENSIONS.inset} ft`, 90);
 
@@ -232,21 +236,25 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.b,
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
-    // Square on, the strip ends line up with the edges and nothing hangs over.
+    // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
-    for (const id of ["pae-area-overlap-label", "pae-area-under-label"]) {
-      element(id).setAttribute("opacity", overhang > 0 ? "1" : "0");
+    const corners = [
+      ["rt", areas.labels.rightTop, areas.leansRight],
+      ["rb", areas.labels.rightBottom, !areas.leansRight],
+      ["lt", areas.labels.leftTop, !areas.leansRight],
+      ["lb", areas.labels.leftBottom, areas.leansRight],
+    ];
+    for (const [corner, position, isOverlap] of corners) {
+      const node = element(`pae-area-corner-${corner}`);
+      node.setAttribute("opacity", overhang > 0 ? "1" : "0");
+      // Inline so it wins over the shared label colour in the stylesheet.
+      node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#a3520f"}`);
+      setText(
+        node,
+        position,
+        `${isOverlap ? "Overlap" : "Underlap"} · ${overhang.toFixed(2)} ft`,
+      );
     }
-    setText(
-      element("pae-area-overlap-label"),
-      areas.labels.overTop,
-      `Overlaps the top · ${overhang.toFixed(2)} ft`,
-    );
-    setText(
-      element("pae-area-under-label"),
-      areas.labels.underBottom,
-      `Overlaps the bottom · ${overhang.toFixed(2)} ft`,
-    );
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
