@@ -1,6 +1,6 @@
 # Parallelogram Angle Explorer
 
-Interactive parallelogram geometry showing adjustable skew, perpendicular measurements, fixed guide lengths, and overlap. The first diagram is labelled as the forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side.
+Interactive parallelogram geometry showing adjustable skew, perpendicular measurements, fixed guide lengths, and overlap. The first diagram is the forced assessor measurements: forced square to the side, every distance along the 80 ft top edge shrinks by sin θ, while the fixed 65 ft and 50 ft calls do not — so instead of meeting end to end they overlap.
 
 A second diagram measures every part — 15, 50, 15 — square to the sides, but the top and bottom edges lean. So every part overlaps past one edge (red: ground the parcel does not have) and leaves a gap at the other (amber: ground nothing claims). Both grow the further a part reaches from its side, and both close only at 90°, where the middle also measures a full 50 ft.
 
