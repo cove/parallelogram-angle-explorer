@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateDiagram, DIMENSIONS, PRESET_ANGLES } from "./geometry.mjs";
+import {
+  calculateDiagram,
+  calculateParallelAreas,
+  calculateRightAngleAreas,
+  DIMENSIONS,
+  PRESET_ANGLES,
+} from "./geometry.mjs";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -223,4 +229,119 @@ test("rejects invalid angle values", () => {
       new RangeError("angle must be a finite number from 1 through 180 degrees"),
     );
   }
+});
+
+test("measures both right-angle areas from the right side", () => {
+  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
+
+  // Both bands end on the right side and run back at a right angle to it.
+  approximately(areas.areaA.x + areas.areaA.width, rightTop.x);
+  approximately(areas.areaB.x + areas.areaB.width, rightTop.x);
+  approximately(areas.areaA.width / areas.areaB.width, DIMENSIONS.arrowA / DIMENSIONS.arrowB);
+  approximately(areas.areaA.y, Math.min(leftTop.y, rightTop.y));
+  approximately(areas.areaA.height, Math.max(leftBottom.y, rightBottom.y) - areas.areaA.y);
+  assert.deepEqual(areas.overlapArea, areas.areaB);
+  approximately(areas.dimensions.a.x1, rightTop.x);
+  approximately(areas.dimensions.a.x2, areas.areaA.x);
+  approximately(areas.dimensions.b.x2, areas.areaB.x);
+  assert.equal(areas.dimensions.a.y1, areas.dimensions.a.y2);
+  assert.equal(areas.squares.a.length, 3);
+  assert.equal(areas.squares.b.length, 3);
+  assert.ok(areas.squares.a[1].y < areas.squares.a[0].y);
+  assert.ok(areas.squares.b[1].y > areas.squares.b[0].y);
+  assert.equal(areas.angleDegrees, PRESET_ANGLES.initial);
+  assert.equal(areas.formulas.method.result, "· A = 65 ft · B = 50 ft");
+  assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
+  assert.equal(areas.formulas.width.result, "= 75.03 ft across");
+  assert.equal(areas.formulas.overlap.expression, "min(65 ft, 50 ft)");
+  assert.equal(areas.formulas.overlap.result, "= 50.00 ft, always overlapping");
+});
+
+test("the shorter right-angle area always overlaps the longer one", () => {
+  for (let angle = 1; angle <= 180; angle += 0.25) {
+    const areas = calculateRightAngleAreas(angle);
+    assert.equal(areas.measurements.overlap, DIMENSIONS.arrowB);
+    assert.ok(areas.overlapArea.width > 0);
+    assert.ok(areas.overlapArea.x >= areas.areaA.x - 1e-9);
+  }
+});
+
+test("flags the part of the longer area that runs past the far edge", () => {
+  const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
+  assert.equal(square.measurements.beyond, 0);
+  assert.equal(square.beyondArea.width, 0);
+  assert.equal(square.formulas.beyond.expression, "max(0, 65 ft − 80.00 ft)");
+  assert.equal(square.formulas.beyond.result, "= 0.00 ft past the far edge");
+
+  const shallow = calculateRightAngleAreas(40);
+  const [leftTop, , , leftBottom] = shallow.shape;
+  approximately(shallow.measurements.beyond, 65 - 80 * Math.sin(40 * Math.PI / 180));
+  approximately(shallow.beyondArea.x, shallow.areaA.x);
+  approximately(shallow.beyondArea.y, leftTop.y);
+  approximately(shallow.beyondArea.height, leftBottom.y - leftTop.y);
+  approximately(shallow.labels.beyond.x, shallow.beyondArea.x + shallow.beyondArea.width / 2);
+  assert.ok(shallow.labels.beyond.y < leftTop.y);
+  assert.match(shallow.formulas.beyond.result, /^= 13\.58 ft past the far edge$/);
+});
+
+test("rejects invalid angles for the right-angle areas too", () => {
+  assert.throws(() => calculateRightAngleAreas(0), RangeError);
+  assert.throws(() => calculateRightAngleAreas(Number.NaN), RangeError);
+});
+
+test("draws the 65 and 50 ft lines parallel to the top edge", () => {
+  const fit = calculateParallelAreas(PRESET_ANGLES.initial);
+  const [leftTop, rightTop, rightBottom, leftBottom] = fit.shape;
+  const topLength = Math.hypot(leftTop.x - rightTop.x, leftTop.y - rightTop.y);
+  const length = ({ x1, y1, x2, y2 }) => Math.hypot(x2 - x1, y2 - y1);
+  const direction = ({ x1, y1, x2, y2 }) => Math.atan2(y2 - y1, x2 - x1);
+
+  // The top edge is exactly 80 ft long, so both guides keep their true length.
+  approximately(topLength / 1.72, DIMENSIONS.side, 1e-9);
+  approximately(length(fit.guides.a) / 1.72, DIMENSIONS.arrowA, 1e-9);
+  approximately(length(fit.guides.b) / 1.72, DIMENSIONS.innerSpan, 1e-9);
+  approximately(
+    direction(fit.guides.a),
+    Math.atan2(leftTop.y - rightTop.y, leftTop.x - rightTop.x),
+  );
+  approximately(direction(fit.guides.b), direction(fit.guides.a));
+
+  assert.equal(fit.rotation, PRESET_ANGLES.initial - 90);
+  approximately(fit.strips.rightInset.x + fit.strips.rightInset.width, rightTop.x);
+  approximately(fit.strips.leftInset.x, leftTop.x);
+  approximately(
+    fit.strips.rightInset.width + fit.strips.inner.width + fit.strips.leftInset.width,
+    rightTop.x - leftTop.x,
+  );
+  approximately(fit.strips.rightInset.width, fit.strips.leftInset.width);
+  approximately(fit.strips.rightInset.y, Math.min(leftTop.y, rightTop.y));
+  approximately(
+    fit.strips.inner.height,
+    Math.max(leftBottom.y, rightBottom.y) - fit.strips.inner.y,
+  );
+  assert.equal(fit.formulas.method.result, "· no sine, no shrink");
+  assert.equal(fit.formulas.reach.expression, "15 ft + 50 ft");
+  assert.equal(fit.formulas.reach.result, "= 65.00 ft, exactly where A ends");
+  assert.equal(fit.formulas.total.expression, "65 ft + 15 ft");
+  assert.equal(fit.formulas.total.result, "= 80.00 ft, the whole side");
+  assert.equal(fit.formulas.gap.expression, "|65 ft − (15 ft + 50 ft)|");
+  assert.equal(fit.formulas.gap.result, "= 0.00 ft at every angle");
+});
+
+test("both parallel guides end on the same line at every angle", () => {
+  for (let angle = 1; angle <= 180; angle += 0.25) {
+    const fit = calculateParallelAreas(angle);
+    assert.equal(fit.measurements.gap, 0);
+    assert.equal(fit.measurements.reach, DIMENSIONS.arrowA);
+    assert.equal(fit.measurements.topEdge, DIMENSIONS.side);
+    approximately(fit.guides.a.x2, fit.guides.b.x2, 1e-9);
+    approximately(fit.matchLine.x1, fit.matchLine.x2, 1e-9);
+    assert.equal(fit.labels.match.x, fit.guides.a.x2 - 10);
+  }
+});
+
+test("rejects invalid angles for the parallel diagram too", () => {
+  assert.throws(() => calculateParallelAreas(181), RangeError);
+  assert.throws(() => calculateParallelAreas("90"), RangeError);
 });

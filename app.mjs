@@ -1,4 +1,10 @@
-import { calculateDiagram, DIMENSIONS, PRESET_ANGLES } from "./geometry.mjs";
+import {
+  calculateDiagram,
+  calculateParallelAreas,
+  calculateRightAngleAreas,
+  DIMENSIONS,
+  PRESET_ANGLES,
+} from "./geometry.mjs";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -7,11 +13,16 @@ export function initializeApp(documentRef, windowRef) {
   const snap11023Button = root.querySelector("#pae-snap-11023");
   const angleOutput = root.querySelector("#pae-angle-output");
   const svg = root.querySelector("#pae-svg");
+  const areaSvg = root.querySelector("#pae-area-svg");
+  const fitSvg = root.querySelector("#pae-fit-svg");
   const mobileLayout = windowRef.matchMedia("(max-width: 600px)");
   const element = (id) => root.querySelector(`#${id}`);
 
   function syncMobileViewport() {
-    svg.setAttribute("viewBox", mobileLayout.matches ? "88 0 444 676" : "0 0 620 676");
+    const viewBox = mobileLayout.matches ? "88 0 444 676" : "0 0 620 676";
+    svg.setAttribute("viewBox", viewBox);
+    areaSvg.setAttribute("viewBox", viewBox);
+    fitSvg.setAttribute("viewBox", viewBox);
   }
 
   function setLine(node, coordinates) {
@@ -28,6 +39,12 @@ export function initializeApp(documentRef, windowRef) {
       "transform",
       `rotate(${rotation.toFixed(2)} ${position.x.toFixed(2)} ${position.y.toFixed(2)})`,
     );
+  }
+
+  function setRect(node, rect) {
+    for (const attribute of ["x", "y", "width", "height"]) {
+      node.setAttribute(attribute, rect[attribute].toFixed(2));
+    }
   }
 
   function pathFromPoints(points, close = false) {
@@ -148,6 +165,124 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
     angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
+    drawAreas(angleDegrees);
+    drawParallel(angleDegrees);
+  }
+
+  function drawAreas(angleDegrees) {
+    const areas = calculateRightAngleAreas(angleDegrees);
+
+    const shapePath = pathFromPoints(areas.shape, true);
+    element("pae-area-shape").setAttribute("d", shapePath);
+    element("pae-area-clip-shape").setAttribute("d", shapePath);
+
+    setRect(element("pae-area-a"), areas.areaA);
+    setRect(element("pae-area-b"), areas.areaB);
+    setRect(element("pae-area-overlap"), areas.overlapArea);
+    setRect(element("pae-area-beyond"), areas.beyondArea);
+
+    setLine(element("pae-area-dim-a"), areas.dimensions.a);
+    setLine(element("pae-area-dim-b"), areas.dimensions.b);
+    element("pae-area-square-a").setAttribute("d", pathFromPoints(areas.squares.a));
+    element("pae-area-square-b").setAttribute("d", pathFromPoints(areas.squares.b));
+
+    setText(
+      element("pae-area-title-label"),
+      areas.labels.title,
+      "Both areas turned 90° off the right side",
+    );
+    setText(
+      element("pae-area-a-label"),
+      areas.labels.a,
+      `A · ${DIMENSIONS.arrowA} ft at 90°`,
+    );
+    setText(
+      element("pae-area-b-label"),
+      areas.labels.b,
+      `B · ${DIMENSIONS.arrowB} ft at 90°`,
+    );
+    setText(
+      element("pae-area-overlap-label"),
+      areas.labels.overlap,
+      `Overlapping · ${areas.measurements.overlap.toFixed(2)} ft`,
+    );
+
+    // The far-edge spill only exists at shallow angles, so hide it otherwise.
+    const beyondVisible = areas.measurements.beyond > 0;
+    element("pae-area-beyond").setAttribute("opacity", beyondVisible ? "1" : "0");
+    element("pae-area-beyond-label").setAttribute("opacity", beyondVisible ? "1" : "0");
+    setText(
+      element("pae-area-beyond-label"),
+      areas.labels.beyond,
+      `Past far edge · ${areas.measurements.beyond.toFixed(2)} ft`,
+    );
+
+    setFormula("pae-area-calc-method", areas.formulas.method);
+    setFormula("pae-area-calc-width", areas.formulas.width);
+    setFormula("pae-area-calc-overlap", areas.formulas.overlap);
+    setFormula("pae-area-calc-beyond", areas.formulas.beyond);
+  }
+
+  function drawParallel(angleDegrees) {
+    const fit = calculateParallelAreas(angleDegrees);
+
+    const shapePath = pathFromPoints(fit.shape, true);
+    element("pae-fit-shape").setAttribute("d", shapePath);
+    element("pae-fit-clip-shape").setAttribute("d", shapePath);
+
+    setRect(element("pae-fit-strip-right"), fit.strips.rightInset);
+    setRect(element("pae-fit-strip-inner"), fit.strips.inner);
+    setRect(element("pae-fit-strip-left"), fit.strips.leftInset);
+
+    setLine(element("pae-fit-guide-a"), fit.guides.a);
+    setLine(element("pae-fit-guide-b"), fit.guides.b);
+    setLine(element("pae-fit-match-line"), fit.matchLine);
+
+    setText(
+      element("pae-fit-title-label"),
+      fit.labels.title,
+      `Lines drawn parallel to the ${DIMENSIONS.side} ft top edge`,
+    );
+    setText(
+      element("pae-fit-strip-right-label"),
+      fit.labels.rightInset,
+      `${DIMENSIONS.inset} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-strip-inner-label"),
+      fit.labels.inner,
+      `${DIMENSIONS.innerSpan} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-strip-left-label"),
+      fit.labels.leftInset,
+      `${DIMENSIONS.inset} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-guide-a-label"),
+      fit.labels.a,
+      `A · ${DIMENSIONS.arrowA} ft along the top`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-guide-b-label"),
+      fit.labels.b,
+      `B · ${DIMENSIONS.innerSpan} ft along the top`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-match-label"),
+      fit.labels.match,
+      `Both end here · ${fit.measurements.gap.toFixed(2)} ft gap`,
+    );
+
+    setFormula("pae-fit-calc-method", fit.formulas.method);
+    setFormula("pae-fit-calc-reach", fit.formulas.reach);
+    setFormula("pae-fit-calc-total", fit.formulas.total);
+    setFormula("pae-fit-calc-gap", fit.formulas.gap);
   }
 
   angleInput.addEventListener("input", () => draw(Number(angleInput.value)));
@@ -163,5 +298,5 @@ export function initializeApp(documentRef, windowRef) {
   syncMobileViewport();
   draw(Number(angleInput.value));
 
-  return { draw, syncMobileViewport };
+  return { draw, drawAreas, drawParallel, syncMobileViewport };
 }

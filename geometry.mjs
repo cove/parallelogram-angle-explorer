@@ -211,3 +211,197 @@ export function calculateDiagram(angleDegrees) {
     },
   };
 }
+
+const AREA_LABEL_INSET = 12;
+
+export function calculateRightAngleAreas(angleDegrees) {
+  const base = calculateDiagram(angleDegrees);
+  const [leftTop, rightTop, rightBottom, leftBottom] = base.shape;
+  const rightX = rightTop.x;
+  const topY = Math.min(leftTop.y, rightTop.y);
+  const bottomY = Math.max(leftBottom.y, rightBottom.y);
+  const height = bottomY - topY;
+
+  // Both areas are measured at a right angle to the right side, so each one
+  // starts at the right edge and runs horizontally back into the shape.
+  const bandRect = (widthFeet) => ({
+    x: rightX - widthFeet * SCALE,
+    y: topY,
+    width: widthFeet * SCALE,
+    height,
+  });
+  const areaA = bandRect(DIMENSIONS.arrowA);
+  const areaB = bandRect(DIMENSIONS.arrowB);
+
+  // Measured from the same side, the shorter band always sits inside the
+  // longer one, so the overlap is the shorter of the two and never vanishes.
+  const overlapFeet = Math.min(DIMENSIONS.arrowA, DIMENSIONS.arrowB);
+  const overlapArea = bandRect(overlapFeet);
+
+  // A band longer than the perpendicular width also runs past the far edge.
+  const perpendicularWidth = base.measurements.perpendicularWidth;
+  const beyondFeet = Math.max(0, DIMENSIONS.arrowA - perpendicularWidth);
+  // The spill is drawn against the far edge itself, so it lines up with the
+  // slanted left side instead of floating past the corners.
+  const beyondArea = {
+    x: rightX - DIMENSIONS.arrowA * SCALE,
+    y: leftTop.y,
+    width: beyondFeet * SCALE,
+    height: leftBottom.y - leftTop.y,
+  };
+
+  const bandY = (offset) => topY + height / 2 + offset;
+  const dimensionA = line(
+    point(rightX, bandY(-34)),
+    point(areaA.x, bandY(-34)),
+  );
+  const dimensionB = line(
+    point(rightX, bandY(34)),
+    point(areaB.x, bandY(34)),
+  );
+  const rightAngleSquare = (y, direction) => [
+    point(rightX - 9, y),
+    point(rightX - 9, y + 9 * direction),
+    point(rightX, y + 9 * direction),
+  ];
+
+  return {
+    angleDegrees,
+    shape: base.shape,
+    areaA,
+    areaB,
+    overlapArea,
+    beyondArea,
+    dimensions: { a: dimensionA, b: dimensionB },
+    squares: {
+      a: rightAngleSquare(bandY(-34), -1),
+      b: rightAngleSquare(bandY(34), 1),
+    },
+    labels: {
+      a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
+      b: point((rightX + areaB.x) / 2, bandY(34) + 17),
+      overlap: point((rightX + overlapArea.x) / 2, bandY(0) + 4),
+      beyond: point(beyondArea.x + beyondArea.width / 2, leftTop.y - AREA_LABEL_INSET),
+      title: point(CENTER_X, topY - 14),
+    },
+    measurements: {
+      perpendicularWidth,
+      overlap: overlapFeet,
+      beyond: beyondFeet,
+    },
+    formulas: {
+      method: {
+        expression: "both areas start at the right side, turned 90°",
+        result: `· A = ${DIMENSIONS.arrowA} ft · B = ${DIMENSIONS.arrowB} ft`,
+      },
+      width: {
+        expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularWidth)} ft across`,
+      },
+      overlap: {
+        expression: `min(${DIMENSIONS.arrowA} ft, ${DIMENSIONS.arrowB} ft)`,
+        result: `= ${formatFeet(overlapFeet)} ft, always overlapping`,
+      },
+      beyond: {
+        expression: `max(0, ${DIMENSIONS.arrowA} ft − ${formatFeet(perpendicularWidth)} ft)`,
+        result: `= ${formatFeet(beyondFeet)} ft past the far edge`,
+      },
+    },
+  };
+}
+
+export function calculateParallelAreas(angleDegrees) {
+  const base = calculateDiagram(angleDegrees);
+  const [leftTop, rightTop, rightBottom, leftBottom] = base.shape;
+  const rightX = rightTop.x;
+  const leftX = leftTop.x;
+  const topY = Math.min(leftTop.y, rightTop.y);
+  const bottomY = Math.max(leftBottom.y, rightBottom.y);
+  const height = bottomY - topY;
+
+  // Walking the top edge is the one direction where a foot is a foot at any
+  // angle: the edge is exactly 80 ft long however far the shape leans.
+  const alongTop = (feet) => point(
+    rightTop.x - base.sine * feet * SCALE,
+    rightTop.y + base.cosine * feet * SCALE,
+  );
+  const rightInsetMark = alongTop(DIMENSIONS.inset);
+  const innerMark = alongTop(DIMENSIONS.inset + DIMENSIONS.innerSpan);
+
+  const stripRect = (startX, endX) => ({
+    x: Math.min(startX, endX),
+    y: topY,
+    width: Math.abs(endX - startX),
+    height,
+  });
+  const strips = {
+    rightInset: stripRect(rightInsetMark.x, rightX),
+    inner: stripRect(innerMark.x, rightInsetMark.x),
+    leftInset: stripRect(leftX, innerMark.x),
+  };
+
+  const stripLabel = (start, end) => point(
+    (start.x + end.x) / 2,
+    (start.y + end.y) / 2 + 34,
+  );
+  const guide = (start, feet) => line(
+    start,
+    point(start.x - base.sine * feet * SCALE, start.y + base.cosine * feet * SCALE),
+  );
+  const guideA = guide(point(rightTop.x, rightTop.y + 118), DIMENSIONS.arrowA);
+  const guideB = guide(
+    point(rightInsetMark.x, rightInsetMark.y + 188),
+    DIMENSIONS.innerSpan,
+  );
+
+  // A starts at the corner and B starts 15 ft along, so 15 + 50 = 65 puts both
+  // far ends on the same line no matter how the shape leans.
+  const gap = Math.abs(
+    DIMENSIONS.arrowA - (DIMENSIONS.inset + DIMENSIONS.innerSpan),
+  );
+  const matchLine = line(
+    point(guideA.x2, guideA.y2),
+    point(guideB.x2, guideB.y2),
+  );
+
+  return {
+    angleDegrees,
+    shape: base.shape,
+    rotation: base.shortRotation,
+    strips,
+    guides: { a: guideA, b: guideB },
+    matchLine,
+    labels: {
+      rightInset: stripLabel(rightInsetMark, rightTop),
+      inner: stripLabel(innerMark, rightInsetMark),
+      leftInset: stripLabel(leftTop, innerMark),
+      a: point((guideA.x1 + guideA.x2) / 2, (guideA.y1 + guideA.y2) / 2 - 9),
+      b: point((guideB.x1 + guideB.x2) / 2, (guideB.y1 + guideB.y2) / 2 - 9),
+      match: point(guideA.x2 - 10, (guideA.y2 + guideB.y2) / 2),
+      title: point(CENTER_X, topY - 14),
+    },
+    measurements: {
+      topEdge: DIMENSIONS.side,
+      reach: DIMENSIONS.inset + DIMENSIONS.innerSpan,
+      gap,
+    },
+    formulas: {
+      method: {
+        expression: "A and B run parallel to the 80 ft top edge",
+        result: "· no sine, no shrink",
+      },
+      reach: {
+        expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
+        result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where A ends`,
+      },
+      total: {
+        expression: `${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
+        result: `= ${formatFeet(DIMENSIONS.side)} ft, the whole side`,
+      },
+      gap: {
+        expression: `|${DIMENSIONS.arrowA} ft − (${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft)|`,
+        result: `= ${formatFeet(gap)} ft at every angle`,
+      },
+    },
+  };
+}
