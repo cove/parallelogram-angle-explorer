@@ -325,15 +325,6 @@
       margin-left: 4px;
       font-weight: 700;
     }
-    #parallelogram-angle-explorer .record-checks {
-      margin: 0;
-      padding-left: 18px;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-    #parallelogram-angle-explorer .record-checks li {
-      margin-bottom: 4px;
-    }
     #parallelogram-angle-explorer .calculation-green { color: #1c6d43; }
     #parallelogram-angle-explorer .calculation-purple { color: #7030a0; }
     #parallelogram-angle-explorer .calculation-brown { color: #6a3d12; }
@@ -516,13 +507,7 @@
 
   <section id="pae-record-check" class="calculations" aria-labelledby="pae-record-check-title">
     <h3 id="pae-record-check-title">The figures can't be reproduced at any angle</h3>
-    <p class="calculation-note">The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft. No setting of the slider produces them, for four separate reasons.</p>
-    <ul class="record-checks">
-      <li><strong>Squaring can only make a distance shorter.</strong> Measured square to a leaning side, a length comes out at its true length times sin θ, and sin θ is never more than 1. But 50.72 ft is <em>longer</em> than the 50 ft it stands for, and 15.21 ft is longer than 15 ft. There is no angle that produces either one.</li>
-      <li><strong>The total gives it away.</strong> Three squared measurements add up to 80 × sin θ, which is less than 80 ft at every angle except 90°. These add to exactly 80.00 ft — so nothing was shortened at all. Yet if the parcel really were square on, the three would have to read 15.00, 50.00 and 15.00.</li>
-      <li><strong>The two ends can't differ.</strong> Both ends are the same 15 ft. Squared off at the same angle they must come out equal — and 14.07 is not 15.21.</li>
-      <li><strong>Only one of the three fits.</strong> 14.07 ft is exactly 15 ft × sin(69.72°), a properly squared 15 ft. The other two match no angle, so the set can't come from one survey — drag the slider and you can land 14.07, but 50.72 and 15.21 never appear.</li>
-    </ul>
+    <p class="calculation-note">The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft. Drag the angle through its whole range and check the measurements above: no setting produces them.</p>
   </section>
 
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
