@@ -325,7 +325,7 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   approximately(areas.labels.rightStrip.x, rightTop.x - areas.strips.right.width / 2);
   approximately(areas.labels.leftStrip.x, leftTop.x + areas.strips.left.width / 2);
   // Corner labels sit outside their strip, and the lean decides which corner
-  // is an overlap and which is an underlap.
+  // is an overlap and which is a gap.
   assert.equal(areas.leansRight, true);
   assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
   assert.ok(areas.labels.rightTop.x > rightTop.x);

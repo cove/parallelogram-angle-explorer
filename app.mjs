@@ -191,7 +191,7 @@ export function initializeApp(documentRef, windowRef) {
     element("pae-area-middle").setAttribute("opacity", areas.stripsCollide ? "0" : "1");
     element("pae-area-middle-collide").setAttribute("opacity", areas.stripsCollide ? "1" : "0");
     // Outline, shaded length inside the shape, the spill past its edges, and
-    // the mask that turns each strip into a hole for the underlap slivers.
+    // the mask that turns each strip into a hole for the gap slivers.
     for (const part of ["", "-fill", "-spill"]) {
       setRect(element(`pae-area-strip-right${part}`), areas.strips.right);
       setRect(element(`pae-area-strip-left${part}`), areas.strips.left);
@@ -257,7 +257,7 @@ export function initializeApp(documentRef, windowRef) {
       setText(
         node,
         position,
-        `${isOverlap ? "Overlap" : "Underlap"} · ${feet.toFixed(2)} ft`,
+        `${isOverlap ? "Overlap" : "Gap"} · ${feet.toFixed(2)} ft`,
       );
     }
 
