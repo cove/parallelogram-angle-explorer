@@ -356,7 +356,6 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftTop: point(leftTop.x - 6, leftTop.y - 8),
       leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
       // Kept clear of the A and B arrows that sit across the middle.
-      middle: point(middleArea.x + middleArea.width / 2, topY + height / 2 + 4),
       rightStrip: point(
         rightX - stripWidth / 2,
         rightTop.y + (rightBottom.y - rightTop.y) / 4,
