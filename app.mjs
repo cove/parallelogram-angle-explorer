@@ -191,11 +191,11 @@ export function initializeApp(documentRef, windowRef) {
         ? `Strips collide · ${Math.abs(areas.measurements.middle).toFixed(2)} ft`
         : `${areas.measurements.middle.toFixed(2)} ft left for the ${DIMENSIONS.innerSpan} ft middle`,
     );
-    for (const id of ["pae-area-strip-right", "pae-area-strip-right-spill"]) {
-      setRect(element(id), areas.strips.right);
-    }
-    for (const id of ["pae-area-strip-left", "pae-area-strip-left-spill"]) {
-      setRect(element(id), areas.strips.left);
+    // Outline, shaded length inside the shape, and the spill past its edges.
+    const stripParts = ["", "-fill", "-spill"];
+    for (const part of stripParts) {
+      setRect(element(`pae-area-strip-right${part}`), areas.strips.right);
+      setRect(element(`pae-area-strip-left${part}`), areas.strips.left);
     }
     setText(element("pae-area-strip-right-label"), areas.labels.rightStrip, `${DIMENSIONS.inset} ft`, 90);
     setText(element("pae-area-strip-left-label"), areas.labels.leftStrip, `${DIMENSIONS.inset} ft`, 90);
