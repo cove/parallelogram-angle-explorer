@@ -175,10 +175,19 @@ export function initializeApp(documentRef, windowRef) {
     const shapePath = pathFromPoints(areas.shape, true);
     element("pae-area-shape").setAttribute("d", shapePath);
     element("pae-area-clip-shape").setAttribute("d", shapePath);
+    // The mask knocks the shape out, leaving only what the strips hang over.
+    element("pae-area-mask-shape").setAttribute("d", shapePath);
 
     setRect(element("pae-area-a"), areas.areaA);
     setRect(element("pae-area-b"), areas.areaB);
-    setRect(element("pae-area-beyond"), areas.beyondArea);
+    for (const id of ["pae-area-strip-right", "pae-area-strip-right-spill"]) {
+      setRect(element(id), areas.strips.right);
+    }
+    for (const id of ["pae-area-strip-left", "pae-area-strip-left-spill"]) {
+      setRect(element(id), areas.strips.left);
+    }
+    setText(element("pae-area-strip-right-label"), areas.labels.rightStrip, `${DIMENSIONS.inset} ft`, 90);
+    setText(element("pae-area-strip-left-label"), areas.labels.leftStrip, `${DIMENSIONS.inset} ft`, 90);
 
     setLine(element("pae-area-chain-right"), areas.chain.rightInset);
     setLine(element("pae-area-chain-inner"), areas.chain.inner);
@@ -212,35 +221,26 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.b,
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
-    // The wedge only exists while the shape leans, so hide it when square on.
-    const overTopVisible = areas.measurements.overTop > 0;
-    element("pae-area-over-top").setAttribute(
-      "d",
-      pathFromPoints(areas.overTopTriangle, true),
-    );
-    element("pae-area-over-top").setAttribute("opacity", overTopVisible ? "1" : "0");
-    element("pae-area-overlap-label").setAttribute("opacity", overTopVisible ? "1" : "0");
+    // Square on, the strip ends line up with the edges and nothing hangs over.
+    const overhang = areas.measurements.overhang;
+    for (const id of ["pae-area-overlap-label", "pae-area-under-label"]) {
+      element(id).setAttribute("opacity", overhang > 0 ? "1" : "0");
+    }
     setText(
       element("pae-area-overlap-label"),
       areas.labels.overTop,
-      `Overlapping · ${areas.measurements.overTop.toFixed(2)} ft`,
+      `Overlaps the top · ${overhang.toFixed(2)} ft`,
     );
-
-    // The chain only fits when the shape is square on, so hide the spill there.
-    const beyondVisible = areas.measurements.beyond > 0;
-    element("pae-area-beyond").setAttribute("opacity", beyondVisible ? "1" : "0");
-    element("pae-area-beyond-label").setAttribute("opacity", beyondVisible ? "1" : "0");
     setText(
-      element("pae-area-beyond-label"),
-      areas.labels.beyond,
-      `Off the far edge · ${areas.measurements.beyond.toFixed(2)} ft`,
+      element("pae-area-under-label"),
+      areas.labels.underBottom,
+      `Overlaps the bottom · ${overhang.toFixed(2)} ft`,
     );
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
-    setFormula("pae-area-calc-over-top", areas.formulas.overTop);
+    setFormula("pae-area-calc-overhang", areas.formulas.overhang);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
-    setFormula("pae-area-calc-beyond", areas.formulas.beyond);
   }
 
   function drawParallel(angleDegrees) {

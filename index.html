@@ -195,13 +195,15 @@
     #parallelogram-angle-explorer .area-a { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
     #parallelogram-angle-explorer .area-b { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
     #parallelogram-angle-explorer .area-overlap { fill: #c00000; fill-opacity: 0.34; stroke: none; }
-    #parallelogram-angle-explorer .area-beyond {
-      fill: #c00000;
-      fill-opacity: 0.34;
-      stroke: #c00000;
-      stroke-width: 1.2;
-      stroke-dasharray: 5 4;
+    #parallelogram-angle-explorer .area-strip {
+      fill: none;
+      stroke: #7030a0;
+      stroke-width: 1.4;
+      stroke-dasharray: 6 4;
     }
+    #parallelogram-angle-explorer .area-strip-spill { fill: #c00000; fill-opacity: 0.5; stroke: none; }
+    #parallelogram-angle-explorer text.area-overlap-start { text-anchor: start; }
+    #parallelogram-angle-explorer text.area-overlap-end { text-anchor: end; }
     #parallelogram-angle-explorer .area-far-edge-witness {
       fill: none;
       stroke: #111111;
@@ -485,11 +487,15 @@
   <h2 id="pae-area-heading">RIGHT-ANGLE AREAS MEASURED FROM THE RIGHT SIDE</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. The steps start level with the top corner, so the wedge between that level line and the falling top edge is shaded red as the part that goes over the top.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. A 15 foot strip is squared off each side; because their ends are cut at a right angle to the side while the top and bottom edges lean, the right strip runs over the top edge and the left strip runs under the bottom edge, and both of those slivers are shaded red.</desc>
     <defs>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
       </clipPath>
+      <mask id="pae-area-outside" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="676">
+        <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
+        <path id="pae-area-mask-shape" fill="#000000"></path>
+      </mask>
     </defs>
     <g id="pae-area-scale" transform="translate(-93 0) scale(1.3)">
     <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
@@ -498,8 +504,12 @@
       <rect id="pae-area-b" class="area-b"></rect>
 
     </g>
-    <path id="pae-area-over-top" class="area-overlap"></path>
-    <rect id="pae-area-beyond" class="area-beyond"></rect>
+    <g mask="url(#pae-area-outside)">
+      <rect id="pae-area-strip-right-spill" class="area-strip-spill"></rect>
+      <rect id="pae-area-strip-left-spill" class="area-strip-spill"></rect>
+    </g>
+    <rect id="pae-area-strip-right" class="area-strip"></rect>
+    <rect id="pae-area-strip-left" class="area-strip"></rect>
     <path id="pae-area-shape" class="area-shape"></path>
     <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -508,7 +518,9 @@
     <text id="pae-area-title-label" class="label area-title-label">Both areas turned 90° off the right side</text>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
-    <text id="pae-area-overlap-label" class="label area-overlap-label">Overlapping · 27.77 ft</text>
+    <text id="pae-area-strip-right-label" class="label area-label">15 ft</text>
+    <text id="pae-area-strip-left-label" class="label area-label">15 ft</text>
+    <text id="pae-area-overlap-label" class="label area-overlap-label area-overlap-end">Overlaps the top · 5.55 ft</text>
     <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -517,13 +529,13 @@
     <text id="pae-area-chain-right-label" class="label area-label">15 ft</text>
     <text id="pae-area-chain-inner-label" class="label area-label">50 ft</text>
     <text id="pae-area-chain-left-label" class="label area-label">15 ft</text>
-    <text id="pae-area-beyond-label" class="label area-overlap-label">Off the far edge · 0.00 ft</text>
+    <text id="pae-area-under-label" class="label area-overlap-label area-overlap-start">Overlaps the bottom · 5.55 ft</text>
     </g>
   </svg>
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">Stepping 15 + 50 + 15 off at 90° from the right side starts level with the top corner, but the top edge falls away from that line — the red wedge is the part that runs over the top, and it only closes when the shape is square on.</p>
+    <p class="calculation-note">A 15 ft strip squared off each side keeps square ends, but the top and bottom edges lean away from them — so the right strip runs over the top and the left strip runs under the bottom. Both red slivers close only when the shape is square on.</p>
     <div class="calculation-grid">
       <div class="calculation calculation-purple">
         <span class="calculation-name">Method</span>
@@ -534,16 +546,12 @@
         <span class="calculation-formula"><span id="pae-area-calc-width-expression">Calculating…</span><strong id="pae-area-calc-width-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-red">
-        <span class="calculation-name">Over the top</span>
-        <span class="calculation-formula"><span id="pae-area-calc-over-top-expression">Calculating…</span><strong id="pae-area-calc-over-top-result" class="calculation-result"></strong></span>
+        <span class="calculation-name">Strip overhang</span>
+        <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-purple">
         <span class="calculation-name">Room needed</span>
         <span class="calculation-formula"><span id="pae-area-calc-chain-expression">Calculating…</span><strong id="pae-area-calc-chain-result" class="calculation-result"></strong></span>
-      </div>
-      <div class="calculation calculation-red">
-        <span class="calculation-name">Off the far edge</span>
-        <span class="calculation-formula"><span id="pae-area-calc-beyond-expression">Calculating…</span><strong id="pae-area-calc-beyond-result" class="calculation-result"></strong></span>
       </div>
     </div>
   </section>

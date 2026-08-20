@@ -233,11 +233,27 @@ export function calculateRightAngleAreas(angleDegrees) {
   const areaA = bandRect(DIMENSIONS.arrowA);
   const areaB = bandRect(DIMENSIONS.arrowB);
 
-  // Stepping off at 90 degrees from the side starts at the top corner and runs
-  // level, but the top edge falls away from that line. Everything caught
-  // between the two is the part that goes over the top of the shape.
-  const overTopFeet = DIMENSIONS.side * Math.abs(base.cosine);
-  const overTopTriangle = [rightTop, point(leftTop.x, rightTop.y), leftTop];
+  // A 15 ft strip squared off each side keeps square ends, but the top and
+  // bottom edges lean away from those ends, so each strip runs past the shape.
+  const stripWidth = DIMENSIONS.inset * SCALE;
+  const strips = {
+    right: {
+      x: rightX - stripWidth,
+      y: rightTop.y,
+      width: stripWidth,
+      height: rightBottom.y - rightTop.y,
+    },
+    left: {
+      x: leftTop.x,
+      y: leftTop.y,
+      width: stripWidth,
+      height: leftBottom.y - leftTop.y,
+    },
+  };
+  // How far a square end runs past the leaning edge, measured along the side.
+  const overhangFeet = base.sine === 0
+    ? 0
+    : DIMENSIONS.inset * Math.abs(base.cosine) / base.sine;
 
   // Laying 15 + 50 + 15 out at a right angle to the side needs a full 80 ft of
   // horizontal room, but the shape only offers 80 × sin(theta) of it.
@@ -263,16 +279,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(leftTop.x, leftBottom.y),
   );
 
-  // Everything left of the far edge is the part that cannot fit on the shape.
-  const beyondFeet = Math.max(0, DIMENSIONS.side - perpendicularWidth);
-  // The spill is drawn against the far edge itself, so it lines up with the
-  // slanted left side instead of floating past the corners.
-  const beyondArea = {
-    x: chainMark(DIMENSIONS.side),
-    y: leftTop.y,
-    width: beyondFeet * SCALE,
-    height: leftBottom.y - leftTop.y,
-  };
 
   const bandY = (offset) => topY + height / 2 + offset;
   const dimensionA = line(
@@ -294,8 +300,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     shape: base.shape,
     areaA,
     areaB,
-    overTopTriangle,
-    beyondArea,
+    strips,
     chain,
     farEdgeWitness,
     dimensions: { a: dimensionA, b: dimensionB },
@@ -307,13 +312,19 @@ export function calculateRightAngleAreas(angleDegrees) {
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
-      overTop: point(
-        (rightTop.x + leftTop.x * 2) / 3,
-        (rightTop.y * 2 + leftTop.y) / 3 + 4,
+      overTop: point(rightX - stripWidth - AREA_LABEL_INSET, rightTop.y + 15),
+      underBottom: point(
+        leftTop.x + stripWidth + AREA_LABEL_INSET,
+        leftBottom.y - 7,
       ),
-      beyond: point(
-        beyondArea.x + beyondArea.width / 2,
-        leftBottom.y + AREA_LABEL_INSET + 4,
+      // Kept clear of the A and B arrows that sit across the middle.
+      rightStrip: point(
+        rightX - stripWidth / 2,
+        rightTop.y + (rightBottom.y - rightTop.y) / 4,
+      ),
+      leftStrip: point(
+        leftTop.x + stripWidth / 2,
+        leftTop.y + (leftBottom.y - leftTop.y) * 3 / 4,
       ),
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
@@ -322,8 +333,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
     measurements: {
       perpendicularWidth,
-      overTop: overTopFeet,
-      beyond: beyondFeet,
+      overhang: overhangFeet,
     },
     formulas: {
       method: {
@@ -334,17 +344,13 @@ export function calculateRightAngleAreas(angleDegrees) {
         expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularWidth)} ft across`,
       },
-      overTop: {
-        expression: `${DIMENSIONS.side} ft × |cos(${angleDegrees.toFixed(2)}°)|`,
-        result: `= ${formatFeet(overTopFeet)} ft over the top edge`,
+      overhang: {
+        expression: `${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)| ÷ sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(overhangFeet)} ft past the top and the bottom`,
       },
       chain: {
         expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft + ${DIMENSIONS.inset} ft`,
         result: `= ${DIMENSIONS.side} ft of room needed at 90°`,
-      },
-      beyond: {
-        expression: `${DIMENSIONS.side} ft − ${formatFeet(perpendicularWidth)} ft`,
-        result: `= ${formatFeet(beyondFeet)} ft off the far edge`,
       },
     },
   };
