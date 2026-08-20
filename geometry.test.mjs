@@ -258,7 +258,10 @@ test("measures both right-angle areas from the right side", () => {
     areas.formulas.overhang.expression,
     "15 ft × |cos(69.69°)| ÷ sin(69.69°)",
   );
-  assert.equal(areas.formulas.overhang.result, "= 5.55 ft past the top and the bottom");
+  assert.equal(
+    areas.formulas.overhang.result,
+    "= 5.55 ft over one edge, short of the other",
+  );
 });
 
 test("steps 15, 50 and 15 off the side at a right angle", () => {
@@ -312,8 +315,19 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   );
   approximately(areas.labels.rightStrip.x, rightTop.x - areas.strips.right.width / 2);
   approximately(areas.labels.leftStrip.x, leftTop.x + areas.strips.left.width / 2);
-  assert.ok(areas.labels.overTop.x < areas.strips.right.x);
-  assert.ok(areas.labels.underBottom.x > areas.strips.left.x + areas.strips.left.width);
+  // Corner labels sit outside their strip, and the lean decides which corner
+  // is an overlap and which is an underlap.
+  assert.equal(areas.leansRight, true);
+  assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
+  assert.ok(areas.labels.rightTop.x > rightTop.x);
+  assert.ok(areas.labels.rightBottom.x > rightTop.x);
+  assert.ok(areas.labels.leftTop.x < leftTop.x);
+  assert.ok(areas.labels.leftBottom.x < leftTop.x);
+
+  // The uncovered slivers are measured off the same strip columns.
+  approximately(areas.stripColumns.right.x, areas.strips.right.x);
+  approximately(areas.stripColumns.left.width, areas.strips.left.width);
+  assert.ok(areas.stripColumns.right.height > areas.strips.right.height);
   assert.ok(areas.labels.rightStrip.y < (rightTop.y + rightBottom.y) / 2);
   assert.ok(areas.labels.leftStrip.y > (leftTop.y + leftBottom.y) / 2);
 });
@@ -365,7 +379,10 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
 test("a flattened shape leaves nothing for the strips to hang over", () => {
   const flat = calculateRightAngleAreas(180);
   assert.equal(flat.measurements.overhang, 0);
-  assert.equal(flat.formulas.overhang.result, "= 0.00 ft past the top and the bottom");
+  assert.equal(
+    flat.formulas.overhang.result,
+    "= 0.00 ft over one edge, short of the other",
+  );
 });
 
 test("rejects invalid angles for the right-angle areas too", () => {

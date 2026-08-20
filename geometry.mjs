@@ -316,6 +316,13 @@ export function calculateRightAngleAreas(angleDegrees) {
     areaA,
     areaB,
     strips,
+    // Which way the shape leans decides which end of a strip runs past its
+    // edge and which end stops short of it.
+    leansRight: base.cosine > 0,
+    stripColumns: {
+      right: { x: strips.right.x, y: topY, width: stripWidth, height },
+      left: { x: strips.left.x, y: topY, width: stripWidth, height },
+    },
     middleArea,
     stripsCollide,
     chain,
@@ -329,11 +336,12 @@ export function calculateRightAngleAreas(angleDegrees) {
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
-      overTop: point(rightX - stripWidth - AREA_LABEL_INSET, rightTop.y + 15),
-      underBottom: point(
-        leftTop.x + stripWidth + AREA_LABEL_INSET,
-        leftBottom.y - 7,
-      ),
+      // One label per corner: each strip end either runs past its edge or
+      // stops short of it, and which is which flips with the lean.
+      rightTop: point(rightX + 6, rightTop.y + 15),
+      rightBottom: point(rightX + 6, rightBottom.y + 15),
+      leftTop: point(leftTop.x - 6, leftTop.y - 8),
+      leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
       // Kept clear of the A and B arrows that sit across the middle.
       middle: point(middleArea.x + middleArea.width / 2, topY + height / 2 + 4),
       rightStrip: point(
@@ -374,7 +382,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       },
       overhang: {
         expression: `${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)| ÷ sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(overhangFeet)} ft past the top and the bottom`,
+        result: `= ${formatFeet(overhangFeet)} ft over one edge, short of the other`,
       },
       chain: {
         expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft + ${DIMENSIONS.inset} ft`,
