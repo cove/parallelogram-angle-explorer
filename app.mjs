@@ -189,7 +189,7 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.middle,
       areas.stripsCollide
         ? `Strips collide · ${Math.abs(areas.measurements.middle).toFixed(2)} ft`
-        : `${areas.measurements.middle.toFixed(2)} ft left for the ${DIMENSIONS.innerSpan} ft middle`,
+        : `${areas.measurements.middle.toFixed(2)} ft`,
     );
     // Outline, shaded length inside the shape, the spill past its edges, and
     // the mask that turns each strip into a hole for the underlap slivers.
