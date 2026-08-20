@@ -211,3 +211,101 @@ export function calculateDiagram(angleDegrees) {
     },
   };
 }
+
+const AREA_LABEL_INSET = 12;
+
+export function calculateRightAngleAreas(angleDegrees) {
+  const base = calculateDiagram(angleDegrees);
+  const [leftTop, rightTop, rightBottom, leftBottom] = base.shape;
+  const rightX = rightTop.x;
+  const topY = Math.min(leftTop.y, rightTop.y);
+  const bottomY = Math.max(leftBottom.y, rightBottom.y);
+  const height = bottomY - topY;
+
+  // Both areas are measured at a right angle to the right side, so each one
+  // starts at the right edge and runs horizontally back into the shape.
+  const bandRect = (widthFeet) => ({
+    x: rightX - widthFeet * SCALE,
+    y: topY,
+    width: widthFeet * SCALE,
+    height,
+  });
+  const areaA = bandRect(DIMENSIONS.arrowA);
+  const areaB = bandRect(DIMENSIONS.arrowB);
+
+  // Measured from the same side, the shorter band always sits inside the
+  // longer one, so the overlap is the shorter of the two and never vanishes.
+  const overlapFeet = Math.min(DIMENSIONS.arrowA, DIMENSIONS.arrowB);
+  const overlapArea = bandRect(overlapFeet);
+
+  // A band longer than the perpendicular width also runs past the far edge.
+  const perpendicularWidth = base.measurements.perpendicularWidth;
+  const beyondFeet = Math.max(0, DIMENSIONS.arrowA - perpendicularWidth);
+  // The spill is drawn against the far edge itself, so it lines up with the
+  // slanted left side instead of floating past the corners.
+  const beyondArea = {
+    x: rightX - DIMENSIONS.arrowA * SCALE,
+    y: leftTop.y,
+    width: beyondFeet * SCALE,
+    height: leftBottom.y - leftTop.y,
+  };
+
+  const bandY = (offset) => topY + height / 2 + offset;
+  const dimensionA = line(
+    point(rightX, bandY(-34)),
+    point(areaA.x, bandY(-34)),
+  );
+  const dimensionB = line(
+    point(rightX, bandY(34)),
+    point(areaB.x, bandY(34)),
+  );
+  const rightAngleSquare = (y, direction) => [
+    point(rightX - 9, y),
+    point(rightX - 9, y + 9 * direction),
+    point(rightX, y + 9 * direction),
+  ];
+
+  return {
+    angleDegrees,
+    shape: base.shape,
+    areaA,
+    areaB,
+    overlapArea,
+    beyondArea,
+    dimensions: { a: dimensionA, b: dimensionB },
+    squares: {
+      a: rightAngleSquare(bandY(-34), -1),
+      b: rightAngleSquare(bandY(34), 1),
+    },
+    labels: {
+      a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
+      b: point((rightX + areaB.x) / 2, bandY(34) + 17),
+      overlap: point((rightX + overlapArea.x) / 2, bandY(0) + 4),
+      beyond: point(beyondArea.x + beyondArea.width / 2, leftTop.y - AREA_LABEL_INSET),
+      title: point(CENTER_X, topY - 14),
+    },
+    measurements: {
+      perpendicularWidth,
+      overlap: overlapFeet,
+      beyond: beyondFeet,
+    },
+    formulas: {
+      method: {
+        expression: "both areas start at the right side, turned 90°",
+        result: `· A = ${DIMENSIONS.arrowA} ft · B = ${DIMENSIONS.arrowB} ft`,
+      },
+      width: {
+        expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularWidth)} ft across`,
+      },
+      overlap: {
+        expression: `min(${DIMENSIONS.arrowA} ft, ${DIMENSIONS.arrowB} ft)`,
+        result: `= ${formatFeet(overlapFeet)} ft, always overlapping`,
+      },
+      beyond: {
+        expression: `max(0, ${DIMENSIONS.arrowA} ft − ${formatFeet(perpendicularWidth)} ft)`,
+        result: `= ${formatFeet(beyondFeet)} ft past the far edge`,
+      },
+    },
+  };
+}

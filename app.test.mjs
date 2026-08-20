@@ -141,3 +141,49 @@ test("switches the SVG viewport at the mobile breakpoint", async () => {
   controller.syncMobileViewport();
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
 });
+
+test("renders the second right-angle area diagram", async () => {
+  const { controller, nodes } = await createHarness();
+
+  assert.equal(typeof controller.drawAreas, "function");
+  assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "0 0 620 676");
+  assert.equal(
+    nodes.get("pae-area-shape").getAttribute("d"),
+    nodes.get("pae-area-clip-shape").getAttribute("d"),
+  );
+  assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
+  assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
+  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlapping · 50.00 ft");
+  assert.equal(nodes.get("pae-area-title-label").textContent, "Both areas turned 90° off the right side");
+  assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
+  assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
+  assert.equal(nodes.get("pae-area-calc-overlap-result").textContent, "= 50.00 ft, always overlapping");
+  assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
+
+  const areaA = Number(nodes.get("pae-area-a").getAttribute("width"));
+  const areaB = Number(nodes.get("pae-area-b").getAttribute("width"));
+  const overlap = Number(nodes.get("pae-area-overlap").getAttribute("width"));
+  assert.ok(areaA > areaB);
+  assert.equal(overlap, areaB);
+});
+
+test("hides the far-edge spill until a shallow angle creates one", async () => {
+  const { controller, nodes } = await createHarness();
+
+  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 0.00 ft past the far edge");
+
+  controller.draw(40);
+  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Past far edge · 13.58 ft");
+  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 13.58 ft past the far edge");
+});
+
+test("keeps both diagrams on the same mobile viewport", async () => {
+  const { mediaQuery, nodes } = await createHarness();
+
+  mediaQuery.setMatches(true);
+  assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "88 0 444 676");
+});
