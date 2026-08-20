@@ -506,7 +506,7 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. A 15 foot strip is squared off each side; because their ends are cut at a right angle to the side while the top and bottom edges lean, the right strip runs over the top edge and the left strip runs under the bottom edge, and both of those slivers are shaded red. At the other end of each strip the square end stops short of the edge instead, leaving a matching sliver of the shape uncovered, shaded amber. Between the two strips, the green band is what is left for the middle 50 feet; it falls short of 50 at every angle but 90 degrees, and on a steep lean the two strips collide and that clash is shaded red instead.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. A 15 foot strip is squared off each side; because their ends are cut at a right angle to the side while the top and bottom edges lean, the right strip runs over the top edge and the left strip runs under the bottom edge, and both of those slivers are shaded red. At the other end of each strip the square end stops short of the edge instead, leaving a matching sliver of the shape uncovered, shaded amber. The middle 50 feet carries on from the right strip with the same square ends, so it runs over one edge and short of the other by even more. Between the two strips, the green band is what is left for the middle 50 feet; it falls short of 50 at every angle but 90 degrees, and on a steep lean the two strips collide and that clash is shaded red instead.</desc>
     <defs>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
@@ -519,6 +519,7 @@
         <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
         <rect id="pae-area-mask-strip-right" fill="#000000"></rect>
         <rect id="pae-area-mask-strip-left" fill="#000000"></rect>
+        <rect id="pae-area-mask-middle" fill="#000000"></rect>
       </mask>
     </defs>
     <g id="pae-area-scale" transform="translate(-93 0) scale(1.3)">
@@ -532,10 +533,12 @@
     <g clip-path="url(#pae-area-clip)" mask="url(#pae-area-off-strips)">
       <rect id="pae-area-strip-right-gap" class="area-strip-gap"></rect>
       <rect id="pae-area-strip-left-gap" class="area-strip-gap"></rect>
+      <rect id="pae-area-middle-gap" class="area-strip-gap"></rect>
     </g>
     <g mask="url(#pae-area-outside)">
       <rect id="pae-area-strip-right-spill" class="area-strip-spill"></rect>
       <rect id="pae-area-strip-left-spill" class="area-strip-spill"></rect>
+      <rect id="pae-area-middle-spill" class="area-strip-spill"></rect>
     </g>
     <rect id="pae-area-strip-right" class="area-strip"></rect>
     <rect id="pae-area-strip-left" class="area-strip"></rect>
@@ -553,6 +556,8 @@
     <text id="pae-area-corner-rt" class="label area-corner-label area-overlap-start">Overlap · 5.55 ft</text>
     <text id="pae-area-corner-rb" class="label area-corner-label area-overlap-start">Underlap · 5.55 ft</text>
     <text id="pae-area-corner-lt" class="label area-corner-label area-overlap-end">Underlap · 5.55 ft</text>
+    <text id="pae-area-corner-mt" class="label area-corner-label">Overlap · 22.22 ft</text>
+    <text id="pae-area-corner-mb" class="label area-corner-label">Underlap · 22.22 ft</text>
     <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -586,7 +591,11 @@
         <span class="calculation-formula"><span id="pae-area-calc-middle-short-expression">Calculating…</span><strong id="pae-area-calc-middle-short-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-red">
-        <span class="calculation-name">Over / under</span>
+        <span class="calculation-name">Middle ends</span>
+        <span class="calculation-formula"><span id="pae-area-calc-middle-ends-expression">Calculating…</span><strong id="pae-area-calc-middle-ends-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-red">
+        <span class="calculation-name">Strip ends</span>
         <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-purple">

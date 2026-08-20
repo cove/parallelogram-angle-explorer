@@ -266,12 +266,19 @@ export function calculateRightAngleAreas(angleDegrees) {
   const middleEnd = strips.right.x;
   const middleFeet = perpendicularWidth - DIMENSIONS.inset * 2;
   const middleShortFeet = DIMENSIONS.innerSpan - middleFeet;
+  // The middle carries on from the right strip, so it keeps the same square
+  // ends and runs past one leaning edge and short of the other in its turn.
   const middleArea = {
     x: Math.min(middleStart, middleEnd),
-    y: topY,
+    y: strips.right.y,
     width: Math.abs(middleEnd - middleStart),
-    height,
+    height: strips.right.height,
   };
+  const middleColumn = { x: middleArea.x, y: topY, width: middleArea.width, height };
+  const middleEndFeet = base.sine === 0
+    ? 0
+    : Math.max(0, perpendicularWidth - DIMENSIONS.inset)
+      * Math.abs(base.cosine) / base.sine;
   const stripsCollide = middleFeet < 0;
   const chainMark = (feet) => rightX - feet * SCALE;
   // The chain rides the perpendicular off the top corner, so it shows where a
@@ -324,6 +331,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       left: { x: strips.left.x, y: topY, width: stripWidth, height },
     },
     middleArea,
+    middleColumn,
     stripsCollide,
     chain,
     farEdgeWitness,
@@ -340,6 +348,11 @@ export function calculateRightAngleAreas(angleDegrees) {
       // stops short of it, and which is which flips with the lean.
       rightTop: point(rightX + 6, rightTop.y + 15),
       rightBottom: point(rightX + 6, rightBottom.y + 15),
+      middleTop: point(middleArea.x + middleArea.width * 0.32, strips.right.y + 26),
+      middleBottom: point(
+        middleArea.x + middleArea.width * 0.32,
+        strips.right.y + strips.right.height + 24,
+      ),
       leftTop: point(leftTop.x - 6, leftTop.y - 8),
       leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
       // Kept clear of the A and B arrows that sit across the middle.
@@ -362,6 +375,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       overhang: overhangFeet,
       middle: middleFeet,
       middleShort: middleShortFeet,
+      middleEnds: middleEndFeet,
     },
     formulas: {
       method: {
@@ -379,6 +393,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       middleShort: {
         expression: `${DIMENSIONS.innerSpan} ft − ${formatFeet(middleFeet)} ft`,
         result: `= ${formatFeet(middleShortFeet)} ft short in the middle`,
+      },
+      middleEnds: {
+        expression: `(${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.inset} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        result: `= ${formatFeet(middleEndFeet)} ft at the middle's far end`,
       },
       overhang: {
         expression: `${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)| ÷ sin(${angleDegrees.toFixed(2)}°)`,

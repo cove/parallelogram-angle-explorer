@@ -197,6 +197,9 @@ export function initializeApp(documentRef, windowRef) {
       setRect(element(`pae-area-strip-right${part}`), areas.strips.right);
       setRect(element(`pae-area-strip-left${part}`), areas.strips.left);
     }
+    setRect(element("pae-area-mask-middle"), areas.middleArea);
+    setRect(element("pae-area-middle-spill"), areas.middleArea);
+    setRect(element("pae-area-middle-gap"), areas.middleColumn);
     setRect(element("pae-area-mask-strip-right"), areas.strips.right);
     setRect(element("pae-area-mask-strip-left"), areas.strips.left);
     setRect(element("pae-area-strip-right-gap"), areas.stripColumns.right);
@@ -238,21 +241,24 @@ export function initializeApp(documentRef, windowRef) {
     );
     // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
+    const middleEnds = areas.measurements.middleEnds;
     const corners = [
-      ["rt", areas.labels.rightTop, areas.leansRight],
-      ["rb", areas.labels.rightBottom, !areas.leansRight],
-      ["lt", areas.labels.leftTop, !areas.leansRight],
-      ["lb", areas.labels.leftBottom, areas.leansRight],
+      ["rt", areas.labels.rightTop, areas.leansRight, overhang],
+      ["rb", areas.labels.rightBottom, !areas.leansRight, overhang],
+      ["lt", areas.labels.leftTop, !areas.leansRight, overhang],
+      ["lb", areas.labels.leftBottom, areas.leansRight, overhang],
+      ["mt", areas.labels.middleTop, areas.leansRight, middleEnds],
+      ["mb", areas.labels.middleBottom, !areas.leansRight, middleEnds],
     ];
-    for (const [corner, position, isOverlap] of corners) {
+    for (const [corner, position, isOverlap, feet] of corners) {
       const node = element(`pae-area-corner-${corner}`);
-      node.setAttribute("opacity", overhang > 0 ? "1" : "0");
+      node.setAttribute("opacity", feet > 0 ? "1" : "0");
       // Inline so it wins over the shared label colour in the stylesheet.
       node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#a3520f"}`);
       setText(
         node,
         position,
-        `${isOverlap ? "Overlap" : "Underlap"} · ${overhang.toFixed(2)} ft`,
+        `${isOverlap ? "Overlap" : "Underlap"} · ${feet.toFixed(2)} ft`,
       );
     }
 
@@ -260,6 +266,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-width", areas.formulas.width);
     setFormula("pae-area-calc-middle", areas.formulas.middle);
     setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
+    setFormula("pae-area-calc-middle-ends", areas.formulas.middleEnds);
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
