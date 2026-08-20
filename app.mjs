@@ -178,8 +178,19 @@ export function initializeApp(documentRef, windowRef) {
     // The mask knocks the shape out, leaving only what the strips hang over.
     element("pae-area-mask-shape").setAttribute("d", shapePath);
 
-    setRect(element("pae-area-a"), areas.areaA);
-    setRect(element("pae-area-b"), areas.areaB);
+    // Either the middle still has room, or the two strips have run into
+    // each other and what is left is a clash rather than a middle.
+    setRect(element("pae-area-middle"), areas.middleArea);
+    setRect(element("pae-area-middle-collide"), areas.middleArea);
+    element("pae-area-middle").setAttribute("opacity", areas.stripsCollide ? "0" : "1");
+    element("pae-area-middle-collide").setAttribute("opacity", areas.stripsCollide ? "1" : "0");
+    setText(
+      element("pae-area-middle-label"),
+      areas.labels.middle,
+      areas.stripsCollide
+        ? `Strips collide · ${Math.abs(areas.measurements.middle).toFixed(2)} ft`
+        : `${areas.measurements.middle.toFixed(2)} ft left for the ${DIMENSIONS.innerSpan} ft middle`,
+    );
     for (const id of ["pae-area-strip-right", "pae-area-strip-right-spill"]) {
       setRect(element(id), areas.strips.right);
     }
@@ -209,7 +220,7 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-area-title-label"),
       areas.labels.title,
-      "Both areas turned 90° off the right side",
+      `${DIMENSIONS.inset} ft squared off each side, ${DIMENSIONS.innerSpan} ft in the middle`,
     );
     setText(
       element("pae-area-a-label"),
@@ -239,6 +250,8 @@ export function initializeApp(documentRef, windowRef) {
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
+    setFormula("pae-area-calc-middle", areas.formulas.middle);
+    setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }

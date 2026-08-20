@@ -2,7 +2,7 @@
 
 Interactive parallelogram geometry showing adjustable skew, perpendicular measurements, fixed guide lengths, and overlap.
 
-A second diagram squares a 15 ft strip off each side. Their ends are cut at a right angle to the side while the top and bottom edges lean away, so the right strip runs over the top edge and the left strip runs under the bottom edge; both overhangs are shaded red and measured. They close only when the shape is square on.
+A second diagram squares a 15 ft strip off each side and leaves the middle for the 50 ft. Square ends run over the top edge and under the bottom edge (shaded red), and the two strips eat enough width that the middle measures short of 50 ft — 45.03 ft at 69.69°. On a steep lean the strips collide outright. Everything lines up only at 90°.
 
 A third diagram draws the same 65 ft and 50 ft lines parallel to the 80 ft top edge. Measured that way a foot stays a foot at any angle, so 15 + 50 = 65 puts both lines' far ends on one line and 65 + 15 fills the whole side — no overlap and nothing left over.
 

@@ -163,7 +163,10 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-area-title-label").textContent, "Both areas turned 90° off the right side");
+  assert.equal(
+    nodes.get("pae-area-title-label").textContent,
+    "15 ft squared off each side, 50 ft in the middle",
+  );
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
@@ -185,9 +188,18 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
 
-  const areaA = Number(nodes.get("pae-area-a").getAttribute("width"));
-  const areaB = Number(nodes.get("pae-area-b").getAttribute("width"));
-  assert.ok(areaA > areaB);
+  // The middle band is whatever the two squared-off strips leave behind.
+  assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "0");
+  assert.equal(
+    nodes.get("pae-area-middle-label").textContent,
+    "45.03 ft left for the 50 ft middle",
+  );
+  assert.equal(nodes.get("pae-area-calc-middle-result").textContent, "= 45.03 ft for a 50 ft middle");
+  assert.equal(
+    nodes.get("pae-area-calc-middle-short-result").textContent,
+    "= 4.97 ft short in the middle",
+  );
 });
 
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
@@ -213,12 +225,22 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-under-label").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlaps the top · 0.00 ft");
   assert.equal(
+    nodes.get("pae-area-middle-label").textContent,
+    "50.00 ft left for the 50 ft middle",
+  );
+  assert.equal(
     nodes.get("pae-area-strip-right").getAttribute("y"),
     nodes.get("pae-area-strip-left").getAttribute("y"),
   );
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-under-label").textContent, "Overlaps the bottom · 17.88 ft");
+
+  // Leaned far enough, the two strips run into each other.
+  controller.draw(20);
+  assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-middle-label").textContent, "Strips collide · 2.64 ft");
 });
 
 test("keeps both diagrams on the same mobile viewport", async () => {
