@@ -507,7 +507,9 @@ test("shades where A and B run into the left 15 ft strip", () => {
     const { rect, feet } = leaning.leftStripOverlaps[key];
     approximately(rect.x + rect.width, stripInnerX);
     approximately(rect.width, feet * scale);
-    assert.ok(rect.height > 0);
+    // Full length of the shape, like the strip it eats into.
+    approximately(rect.y, leaning.areaA.y);
+    approximately(rect.height, leaning.areaA.height);
   }
   assert.equal(
     leaning.formulas.leftStripOverlap.result,

@@ -322,8 +322,6 @@ export function calculateRightAngleAreas(angleDegrees) {
 
 
   const bandY = (offset) => topY + height / 2 + offset;
-  // How tall a shaded run alongside one of the A and B lines is drawn.
-  const BAND_HALF_HEIGHT = 11;
   const dimensionA = line(
     point(rightX, bandY(-34)),
     point(areaA.x, bandY(-34)),
@@ -341,21 +339,23 @@ export function calculateRightAngleAreas(angleDegrees) {
   // left 15 ft strip and starts claiming ground that strip already claims.
   const leftStripInnerFeet = perpendicularWidth - DIMENSIONS.inset;
   const leftStripInnerX = strips.left.x + stripWidth;
-  const stripEncroachment = (endFeet, y) => {
+  // Each shaded run spans the whole length of the shape, the way the strip it
+  // is eating into does.
+  const stripEncroachment = (endFeet) => {
     const feet = Math.max(0, endFeet - leftStripInnerFeet);
     return {
       feet,
       rect: {
         x: leftStripInnerX - feet * SCALE,
-        y: y - BAND_HALF_HEIGHT,
+        y: topY,
         width: feet * SCALE,
-        height: BAND_HALF_HEIGHT * 2,
+        height,
       },
     };
   };
   const leftStripOverlaps = {
-    a: stripEncroachment(DIMENSIONS.arrowA, bandY(-34)),
-    b: stripEncroachment(areaBEndFeet, bandY(34)),
+    a: stripEncroachment(DIMENSIONS.arrowA),
+    b: stripEncroachment(areaBEndFeet),
   };
 
   return {
