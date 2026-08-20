@@ -209,6 +209,10 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-calc-middle-short-result").textContent,
     "= 4.97 ft short in the middle",
   );
+  assert.equal(
+    nodes.get("pae-area-calc-middle-ends-result").textContent,
+    "= 22.22 ft at the middle's far end",
+  );
 });
 
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
@@ -225,9 +229,13 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
     nodes.get("pae-area-strip-right").getAttribute("height"),
     nodes.get("pae-area-strip-left").getAttribute("height"),
   );
-  for (const corner of ["rt", "rb", "lt", "lb"]) {
+  for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "1");
   }
+  // The middle carries the same square ends further from the side, so its
+  // over and under run deeper than the strips'.
+  assert.equal(nodes.get("pae-area-corner-mt").textContent, "Overlap · 22.22 ft");
+  assert.equal(nodes.get("pae-area-corner-mb").textContent, "Underlap · 22.22 ft");
   // The uncovered sliver is masked by the strip it belongs to.
   assert.equal(
     nodes.get("pae-area-mask-strip-right").getAttribute("x"),
@@ -240,11 +248,11 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   // Square on, the ends line up with the edges and nothing hangs over.
   controller.draw(90);
-  for (const corner of ["rt", "rb", "lt", "lb"]) {
+  for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "0");
   }
   // Hidden at 90 degrees, and every corner measures nothing either way.
-  for (const corner of ["rt", "rb", "lt", "lb"]) {
+  for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.match(nodes.get(`pae-area-corner-${corner}`).textContent, /lap · 0\.00 ft$/);
   }
   assert.equal(
