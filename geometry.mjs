@@ -21,6 +21,8 @@ const LABEL_OFFSET = 8;
 const EXTENSION_START = 3;
 const EXTENSION_END = INNER_DIMENSION_OFFSET + 6;
 const ARC_RADIUS = 28;
+// Right-anchored labels stop here so the mobile viewport never clips them.
+const LEFT_LABEL_LIMIT = 250;
 
 const point = (x, y) => ({ x, y });
 const line = (start, end) => ({
@@ -136,7 +138,11 @@ export function calculateDiagram(angleDegrees) {
     overlapSpan: line(point(staticAEnd.x, overlapY), point(staticBEnd.x, overlapY)),
     overlapExtension: line(point(staticBEnd.x, overlapY), point(leftInsetTop.x, overlapY)),
     overlapWitness: line(point(staticAEnd.x, staticAY + 4), point(staticAEnd.x, overlapY + 4)),
-    overlapLabel: point(Math.min(staticAEnd.x, staticBEnd.x) - 8, overlapY + 4),
+    // Held clear of the left edge so the label is not clipped on a phone.
+    overlapLabel: point(
+      Math.max(Math.min(staticAEnd.x, staticBEnd.x) - 8, LEFT_LABEL_LIMIT),
+      overlapY + 4,
+    ),
   };
 
   const arcStart = point(rightX, rightTop.y + ARC_RADIUS);
@@ -478,7 +484,10 @@ export function calculateParallelAreas(angleDegrees) {
       leftInset: stripLabel(leftTop, innerMark),
       a: point((guideA.x1 + guideA.x2) / 2, (guideA.y1 + guideA.y2) / 2 - 9),
       b: point((guideB.x1 + guideB.x2) / 2, (guideB.y1 + guideB.y2) / 2 - 9),
-      match: point(guideA.x2 - 10, (guideA.y2 + guideB.y2) / 2),
+      match: point(
+        Math.max(guideA.x2 - 10, LEFT_LABEL_LIMIT + 15),
+        (guideA.y2 + guideB.y2) / 2,
+      ),
       title: point(CENTER_X, topY - 14),
     },
     measurements: {

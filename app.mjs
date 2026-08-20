@@ -8,10 +8,14 @@ import {
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
-  const angleInput = root.querySelector("#pae-angle");
+  // One slider per diagram, all driving the same angle, so a phone reader can
+  // reach a slider without scrolling back to the top.
+  const angleInputs = ["pae-angle", "pae-area-angle", "pae-fit-angle"]
+    .map((id) => root.querySelector(`#${id}`));
+  const angleOutputs = ["pae-angle-output", "pae-area-angle-output", "pae-fit-angle-output"]
+    .map((id) => root.querySelector(`#${id}`));
   const snap90Button = root.querySelector("#pae-snap-90");
   const snap11023Button = root.querySelector("#pae-snap-11023");
-  const angleOutput = root.querySelector("#pae-angle-output");
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
   const fitSvg = root.querySelector("#pae-fit-svg");
@@ -19,7 +23,8 @@ export function initializeApp(documentRef, windowRef) {
   const element = (id) => root.querySelector(`#${id}`);
 
   function syncMobileViewport() {
-    const viewBox = mobileLayout.matches ? "88 0 444 676" : "0 0 620 676";
+    // Wide enough that the overlap and gap labels are not clipped on a phone.
+    const viewBox = mobileLayout.matches ? "70 0 480 676" : "0 0 620 676";
     svg.setAttribute("viewBox", viewBox);
     areaSvg.setAttribute("viewBox", viewBox);
     fitSvg.setAttribute("viewBox", viewBox);
@@ -170,7 +175,9 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
-    angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
+    for (const output of angleOutputs) {
+      output.textContent = `${angleDegrees.toFixed(2)}°`;
+    }
     drawAreas(angleDegrees);
     drawParallel(angleDegrees);
   }
@@ -323,7 +330,7 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-fit-match-label"),
       fit.labels.match,
-      `Both end here · ${fit.measurements.gap.toFixed(2)} ft gap`,
+      `Ends match · ${fit.measurements.gap.toFixed(2)} ft`,
     );
 
     setFormula("pae-fit-calc-method", fit.formulas.method);
@@ -332,18 +339,21 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-fit-calc-gap", fit.formulas.gap);
   }
 
-  angleInput.addEventListener("input", () => draw(Number(angleInput.value)));
-  snap90Button.addEventListener("click", () => {
-    angleInput.value = String(PRESET_ANGLES.rightAngle);
-    draw(PRESET_ANGLES.rightAngle);
-  });
-  snap11023Button.addEventListener("click", () => {
-    angleInput.value = String(PRESET_ANGLES.reverse);
-    draw(PRESET_ANGLES.reverse);
-  });
+  function setAngle(angleDegrees) {
+    for (const input of angleInputs) {
+      input.value = String(angleDegrees);
+    }
+    draw(angleDegrees);
+  }
+
+  for (const input of angleInputs) {
+    input.addEventListener("input", () => setAngle(Number(input.value)));
+  }
+  snap90Button.addEventListener("click", () => setAngle(PRESET_ANGLES.rightAngle));
+  snap11023Button.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();
-  draw(Number(angleInput.value));
+  draw(Number(angleInputs[0].value));
 
-  return { draw, drawAreas, drawParallel, syncMobileViewport };
+  return { draw, drawAreas, drawParallel, setAngle, syncMobileViewport };
 }
