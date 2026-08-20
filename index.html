@@ -285,7 +285,41 @@
       stroke-width: 5px;
       stroke-linejoin: round;
     }
+    #parallelogram-angle-explorer .math-toggle .math-toggle-hide,
+    #parallelogram-angle-explorer .calculations[open] > .math-toggle .math-toggle-show {
+      display: none;
+    }
+    #parallelogram-angle-explorer .calculations[open] > .math-toggle .math-toggle-hide {
+      display: inline;
+    }
     #parallelogram-angle-explorer .calculation-green-strong { color: #1c6d43; }
+    #parallelogram-angle-explorer .math-toggle {
+      display: inline-block;
+      margin: 0 0 8px;
+      padding: 4px 10px;
+      color: #1a1c1f;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    #parallelogram-angle-explorer .math-toggle::-webkit-details-marker {
+      display: none;
+    }
+    #parallelogram-angle-explorer .math-toggle:hover {
+      background: #e5e7eb;
+    }
+    #parallelogram-angle-explorer .math-toggle:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    #parallelogram-angle-explorer .calculations[open] > .math-toggle {
+      margin-bottom: 10px;
+    }
     #parallelogram-angle-explorer .calculations {
       color: #111111;
       background: #ffffff;
@@ -481,7 +515,8 @@
     </g>
   </svg>
 
-  <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
+  <details id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
+    <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
     <h3 id="pae-calculations-title">Measurement calculations</h3>
     <p class="calculation-note">The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft. Drag the angle through its whole range: no setting produces those three numbers.</p>
     <div class="calculation-grid">
@@ -506,7 +541,7 @@
         <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
       </div>
     </div>
-  </section>
+  </details>
 
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <div class="controls" id="pae-area-controls">
@@ -580,7 +615,8 @@
     </g>
   </svg>
 
-  <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
+  <details id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
+    <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
     <p class="calculation-note">Every part — 15, 50, 15 — is measured square to the sides, but the top and bottom edges lean. So every part <strong>overlaps</strong> past one edge (red: ground the parcel does not have) and leaves a <strong>gap</strong> at the other (white: ground nothing claims). Both grow the further a part reaches from its side, and both close only at 90°.</p>
     <div class="calculation-grid">
@@ -613,7 +649,7 @@
         <span class="calculation-formula"><span id="pae-area-calc-chain-expression">Calculating…</span><strong id="pae-area-calc-chain-result" class="calculation-result"></strong></span>
       </div>
     </div>
-  </section>
+  </details>
 
   <h2 id="pae-fit-heading">LINES PARALLEL TO THE TOP EDGE — EVERYTHING FITS</h2>
   <div class="controls" id="pae-fit-controls">
@@ -651,7 +687,8 @@
     </g>
   </svg>
 
-  <section id="pae-fit-calculations" class="calculations" aria-labelledby="pae-fit-calculations-title">
+  <details id="pae-fit-calculations" class="calculations" aria-labelledby="pae-fit-calculations-title">
+    <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
     <h3 id="pae-fit-calculations-title">Parallel-to-the-top calculations</h3>
     <p class="calculation-note">Measured along the top edge, a foot stays a foot at any angle, so 15 + 50 + 15 fills the 80 ft side exactly — A and B meet end to end instead of overlapping.</p>
     <div class="calculation-grid">
@@ -672,7 +709,7 @@
         <span class="calculation-formula"><span id="pae-fit-calc-gap-expression">Calculating…</span><strong id="pae-fit-calc-gap-result" class="calculation-result"></strong></span>
       </div>
     </div>
-  </section>
+  </details>
 
   <footer id="pae-source-footer" class="viz-row">
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
