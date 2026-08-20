@@ -181,6 +181,18 @@ export function initializeApp(documentRef, windowRef) {
     setRect(element("pae-area-overlap"), areas.overlapArea);
     setRect(element("pae-area-beyond"), areas.beyondArea);
 
+    setLine(element("pae-area-chain-right"), areas.chain.rightInset);
+    setLine(element("pae-area-chain-inner"), areas.chain.inner);
+    setLine(element("pae-area-chain-left"), areas.chain.leftInset);
+    setLine(element("pae-area-far-edge-witness"), areas.farEdgeWitness);
+    element("pae-area-square-chain").setAttribute(
+      "d",
+      pathFromPoints(areas.squares.chain),
+    );
+    setText(element("pae-area-chain-right-label"), areas.labels.chainRightInset, `${DIMENSIONS.inset} ft`);
+    setText(element("pae-area-chain-inner-label"), areas.labels.chainInner, `${DIMENSIONS.innerSpan} ft`);
+    setText(element("pae-area-chain-left-label"), areas.labels.chainLeftInset, `${DIMENSIONS.inset} ft`);
+
     setLine(element("pae-area-dim-a"), areas.dimensions.a);
     setLine(element("pae-area-dim-b"), areas.dimensions.b);
     element("pae-area-square-a").setAttribute("d", pathFromPoints(areas.squares.a));
@@ -207,19 +219,20 @@ export function initializeApp(documentRef, windowRef) {
       `Overlapping · ${areas.measurements.overlap.toFixed(2)} ft`,
     );
 
-    // The far-edge spill only exists at shallow angles, so hide it otherwise.
+    // The chain only fits when the shape is square on, so hide the spill there.
     const beyondVisible = areas.measurements.beyond > 0;
     element("pae-area-beyond").setAttribute("opacity", beyondVisible ? "1" : "0");
     element("pae-area-beyond-label").setAttribute("opacity", beyondVisible ? "1" : "0");
     setText(
       element("pae-area-beyond-label"),
       areas.labels.beyond,
-      `Past far edge · ${areas.measurements.beyond.toFixed(2)} ft`,
+      `Off the far edge · ${areas.measurements.beyond.toFixed(2)} ft`,
     );
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
     setFormula("pae-area-calc-overlap", areas.formulas.overlap);
+    setFormula("pae-area-calc-chain", areas.formulas.chain);
     setFormula("pae-area-calc-beyond", areas.formulas.beyond);
   }
 

@@ -202,6 +202,12 @@
       stroke-width: 1.2;
       stroke-dasharray: 5 4;
     }
+    #parallelogram-angle-explorer .area-far-edge-witness {
+      fill: none;
+      stroke: #111111;
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
     #parallelogram-angle-explorer .area-dimension {
       fill: none;
       stroke: #7030a0;
@@ -479,7 +485,7 @@
   <h2 id="pae-area-heading">RIGHT-ANGLE AREAS MEASURED FROM THE RIGHT SIDE</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Because both start at the same side, the 50 foot area always sits inside the 65 foot area; that shared band is shaded red and marked as overlapping. Any part of the 65 foot area that runs past the far edge of the parallelogram is also shaded red.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. Because both start at the same side, the 50 foot area always sits inside the 65 foot area; that shared band is shaded red and marked as overlapping.</desc>
     <defs>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
@@ -502,7 +508,15 @@
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
     <text id="pae-area-overlap-label" class="label area-overlap-label">Overlapping · 50.00 ft</text>
-    <text id="pae-area-beyond-label" class="label area-overlap-label">Past far edge · 0.00 ft</text>
+    <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <path id="pae-area-square-chain" class="area-square"></path>
+    <line id="pae-area-far-edge-witness" class="area-far-edge-witness"></line>
+    <text id="pae-area-chain-right-label" class="label area-label">15 ft</text>
+    <text id="pae-area-chain-inner-label" class="label area-label">50 ft</text>
+    <text id="pae-area-chain-left-label" class="label area-label">15 ft</text>
+    <text id="pae-area-beyond-label" class="label area-overlap-label">Off the far edge · 0.00 ft</text>
     </g>
   </svg>
 
@@ -522,8 +536,12 @@
         <span class="calculation-name">Overlapping</span>
         <span class="calculation-formula"><span id="pae-area-calc-overlap-expression">Calculating…</span><strong id="pae-area-calc-overlap-result" class="calculation-result"></strong></span>
       </div>
+      <div class="calculation calculation-purple">
+        <span class="calculation-name">Room needed</span>
+        <span class="calculation-formula"><span id="pae-area-calc-chain-expression">Calculating…</span><strong id="pae-area-calc-chain-result" class="calculation-result"></strong></span>
+      </div>
       <div class="calculation calculation-red">
-        <span class="calculation-name">Past far edge</span>
+        <span class="calculation-name">Off the far edge</span>
         <span class="calculation-formula"><span id="pae-area-calc-beyond-expression">Calculating…</span><strong id="pae-area-calc-beyond-result" class="calculation-result"></strong></span>
       </div>
     </div>
