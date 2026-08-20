@@ -155,14 +155,34 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
   assert.equal(
     nodes.get("pae-area-overlap-label").textContent,
-    "Overlapping · 27.77 ft",
+    "Overlaps the top · 5.55 ft",
   );
-  assert.equal(nodes.get("pae-area-over-top").getAttribute("opacity"), "1");
-  assert.match(nodes.get("pae-area-over-top").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
+  assert.equal(
+    nodes.get("pae-area-under-label").textContent,
+    "Overlaps the bottom · 5.55 ft",
+  );
+  assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-title-label").textContent, "Both areas turned 90° off the right side");
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
-  assert.equal(nodes.get("pae-area-calc-over-top-result").textContent, "= 27.77 ft over the top edge");
+  assert.equal(
+    nodes.get("pae-area-calc-overhang-result").textContent,
+    "= 5.55 ft past the top and the bottom",
+  );
+  // The mask uses the same outline, so only the overhang shows red.
+  assert.equal(
+    nodes.get("pae-area-mask-shape").getAttribute("d"),
+    nodes.get("pae-area-shape").getAttribute("d"),
+  );
+  assert.equal(
+    nodes.get("pae-area-strip-right-spill").getAttribute("x"),
+    nodes.get("pae-area-strip-right").getAttribute("x"),
+  );
+  assert.equal(
+    nodes.get("pae-area-strip-left-spill").getAttribute("width"),
+    nodes.get("pae-area-strip-left").getAttribute("width"),
+  );
   assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
 
   const areaA = Number(nodes.get("pae-area-a").getAttribute("width"));
@@ -170,7 +190,7 @@ test("renders the second right-angle area diagram", async () => {
   assert.ok(areaA > areaB);
 });
 
-test("steps the 15, 50 and 15 chain off the side and shades the spill", async () => {
+test("squares a 15 ft strip off each side and shades what hangs over", async () => {
   const { controller, nodes } = await createHarness();
 
   assert.equal(nodes.get("pae-area-chain-right-label").textContent, "15 ft");
@@ -178,39 +198,27 @@ test("steps the 15, 50 and 15 chain off the side and shades the spill", async ()
   assert.equal(nodes.get("pae-area-chain-left-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft of room needed at 90°");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
-  assert.equal(
-    nodes.get("pae-area-chain-right").getAttribute("x2"),
-    nodes.get("pae-area-chain-inner").getAttribute("x1"),
-  );
-  assert.equal(
-    nodes.get("pae-area-chain-inner").getAttribute("x2"),
-    nodes.get("pae-area-chain-left").getAttribute("x1"),
-  );
 
-  // At 69.69° the last step lands 4.97 ft off the far edge.
-  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 4.97 ft");
-  assert.equal(nodes.get("pae-area-calc-beyond-result").textContent, "= 4.97 ft off the far edge");
+  // Each strip spans its own side, so the two are the same length.
   assert.equal(
-    nodes.get("pae-area-chain-left").getAttribute("x2"),
-    nodes.get("pae-area-beyond").getAttribute("x"),
+    nodes.get("pae-area-strip-right").getAttribute("height"),
+    nodes.get("pae-area-strip-left").getAttribute("height"),
   );
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-under-label").getAttribute("opacity"), "1");
 
-  // Square on there is nothing to shade, over the top or past the edge.
+  // Square on, the ends line up with the edges and nothing hangs over.
   controller.draw(90);
-  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 0.00 ft");
-  assert.equal(nodes.get("pae-area-over-top").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-under-label").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlaps the top · 0.00 ft");
   assert.equal(
-    nodes.get("pae-area-overlap-label").textContent,
-    "Overlapping · 0.00 ft",
+    nodes.get("pae-area-strip-right").getAttribute("y"),
+    nodes.get("pae-area-strip-left").getAttribute("y"),
   );
 
   controller.draw(40);
-  assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 28.58 ft");
+  assert.equal(nodes.get("pae-area-under-label").textContent, "Overlaps the bottom · 17.88 ft");
 });
 
 test("keeps both diagrams on the same mobile viewport", async () => {

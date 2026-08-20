@@ -241,7 +241,7 @@ test("measures both right-angle areas from the right side", () => {
   approximately(areas.areaA.width / areas.areaB.width, DIMENSIONS.arrowA / DIMENSIONS.arrowB);
   approximately(areas.areaA.y, Math.min(leftTop.y, rightTop.y));
   approximately(areas.areaA.height, Math.max(leftBottom.y, rightBottom.y) - areas.areaA.y);
-  assert.equal(areas.overTopTriangle.length, 3);
+  assert.equal(areas.strips.right.width, areas.strips.left.width);
   approximately(areas.dimensions.a.x1, rightTop.x);
   approximately(areas.dimensions.a.x2, areas.areaA.x);
   approximately(areas.dimensions.b.x2, areas.areaB.x);
@@ -254,38 +254,20 @@ test("measures both right-angle areas from the right side", () => {
   assert.equal(areas.formulas.method.result, "· A = 65 ft · B = 50 ft");
   assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
   assert.equal(areas.formulas.width.result, "= 75.03 ft across");
-  assert.equal(areas.formulas.overTop.expression, "80 ft × |cos(69.69°)|");
-  assert.equal(areas.formulas.overTop.result, "= 27.77 ft over the top edge");
+  assert.equal(
+    areas.formulas.overhang.expression,
+    "15 ft × |cos(69.69°)| ÷ sin(69.69°)",
+  );
+  assert.equal(areas.formulas.overhang.result, "= 5.55 ft past the top and the bottom");
 });
 
-test("the wedge over the top only closes when the shape is square on", () => {
-  for (let angle = 1; angle <= 180; angle += 0.25) {
-    const areas = calculateRightAngleAreas(angle);
-    const [rightTop, level, farCorner] = areas.overTopTriangle;
-    const squareOn = Math.abs(angle - PRESET_ANGLES.rightAngle) < 1e-9;
-
-    // The wedge runs from the top corner along the level line to the far corner.
-    assert.equal(rightTop.y, level.y);
-    assert.equal(level.x, farCorner.x);
-    approximately(areas.measurements.overTop, Math.abs(level.y - farCorner.y) / 1.72);
-    assert.equal(areas.measurements.overTop === 0, squareOn);
-  }
-});
-
-test("steps 15, 50 and 15 off the side and flags what runs off the edge", () => {
-  const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
-  assert.equal(square.measurements.beyond, 0);
-  assert.equal(square.beyondArea.width, 0);
-  assert.equal(square.formulas.chain.expression, "15 ft + 50 ft + 15 ft");
-  assert.equal(square.formulas.chain.result, "= 80 ft of room needed at 90°");
-  assert.equal(square.formulas.beyond.expression, "80 ft − 80.00 ft");
-  assert.equal(square.formulas.beyond.result, "= 0.00 ft off the far edge");
-
+test("steps 15, 50 and 15 off the side at a right angle", () => {
   const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
-  const [leftTop, rightTop, , leftBottom] = areas.shape;
+  const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
-  // The three steps run back to back from the right side, 15 + 50 + 15.
+  assert.equal(areas.formulas.chain.expression, "15 ft + 50 ft + 15 ft");
+  assert.equal(areas.formulas.chain.result, "= 80 ft of room needed at 90°");
   approximately(areas.chain.rightInset.x1, rightTop.x);
   approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
   approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
@@ -297,26 +279,61 @@ test("steps 15, 50 and 15 off the side and flags what runs off the edge", () => 
   }
   assert.equal(areas.chain.rightInset.y1, rightTop.y);
   approximately(areas.labels.chainInner.x, (areas.chain.inner.x1 + areas.chain.inner.x2) / 2);
-
-  // The last step lands past the far edge, and that gap is the spill.
-  approximately(areas.chain.leftInset.x2, areas.beyondArea.x);
-  approximately(areas.beyondArea.x + areas.beyondArea.width, leftTop.x);
-  approximately(areas.measurements.beyond, DIMENSIONS.side - areas.measurements.perpendicularWidth);
-  approximately(areas.beyondArea.y, leftTop.y);
-  approximately(areas.beyondArea.height, leftBottom.y - leftTop.y);
   assert.equal(areas.farEdgeWitness.x1, leftTop.x);
   assert.equal(areas.farEdgeWitness.x2, leftTop.x);
-  assert.equal(areas.formulas.beyond.result, "= 4.97 ft off the far edge");
   assert.equal(areas.squares.chain.length, 3);
+  approximately(areas.measurements.perpendicularWidth, DIMENSIONS.side * Math.sin(
+    PRESET_ANGLES.initial * Math.PI / 180,
+  ));
 });
 
-test("a right-angle 15 + 50 + 15 never fits unless the shape is square on", () => {
+test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
+  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
+
+  // Each strip hugs its own side and is 15 ft wide measured square off it.
+  approximately(areas.strips.right.x + areas.strips.right.width, rightTop.x);
+  approximately(areas.strips.left.x, leftTop.x);
+  approximately(areas.strips.right.width / 1.72, DIMENSIONS.inset);
+  approximately(areas.strips.left.width / 1.72, DIMENSIONS.inset);
+
+  // Square ends: each strip spans exactly its own side, top corner to bottom.
+  approximately(areas.strips.right.y, rightTop.y);
+  approximately(areas.strips.right.height, rightBottom.y - rightTop.y);
+  approximately(areas.strips.left.y, leftTop.y);
+  approximately(areas.strips.left.height, leftBottom.y - leftTop.y);
+  approximately(areas.strips.right.height, areas.strips.left.height);
+
+  // Those square ends sit clear of the leaning top and bottom edges.
+  const radians = PRESET_ANGLES.initial * Math.PI / 180;
+  approximately(
+    areas.measurements.overhang,
+    DIMENSIONS.inset * Math.abs(Math.cos(radians)) / Math.sin(radians),
+  );
+  approximately(areas.labels.rightStrip.x, rightTop.x - areas.strips.right.width / 2);
+  approximately(areas.labels.leftStrip.x, leftTop.x + areas.strips.left.width / 2);
+  assert.ok(areas.labels.overTop.x < areas.strips.right.x);
+  assert.ok(areas.labels.underBottom.x > areas.strips.left.x + areas.strips.left.width);
+  assert.ok(areas.labels.rightStrip.y < (rightTop.y + rightBottom.y) / 2);
+  assert.ok(areas.labels.leftStrip.y > (leftTop.y + leftBottom.y) / 2);
+});
+
+test("the strips hang over the top and bottom at every angle but 90", () => {
   for (let angle = 1; angle <= 180; angle += 0.25) {
     const areas = calculateRightAngleAreas(angle);
-    const fits = Math.abs(angle - PRESET_ANGLES.rightAngle) < 1e-9;
-    assert.equal(areas.measurements.beyond === 0, fits);
-    assert.ok(areas.measurements.beyond >= 0);
+    // 180 degrees is the flat, zero-width case and is checked on its own.
+    const squareOn = Math.abs(angle - PRESET_ANGLES.rightAngle) < 1e-9;
+    if (angle < 180) {
+      assert.equal(areas.measurements.overhang === 0, squareOn);
+    }
+    assert.ok(areas.measurements.overhang >= 0);
   }
+});
+
+test("a flattened shape leaves nothing for the strips to hang over", () => {
+  const flat = calculateRightAngleAreas(180);
+  assert.equal(flat.measurements.overhang, 0);
+  assert.equal(flat.formulas.overhang.result, "= 0.00 ft past the top and the bottom");
 });
 
 test("rejects invalid angles for the right-angle areas too", () => {

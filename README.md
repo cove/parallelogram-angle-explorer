@@ -2,7 +2,7 @@
 
 Interactive parallelogram geometry showing adjustable skew, perpendicular measurements, fixed guide lengths, and overlap.
 
-A second diagram shades the 65 ft and 50 ft areas when both are measured at 90° from the right side. Because they start at the same side, the shorter one always sits inside the longer one; that shared band is shaded red and labelled as overlapping, as is any part of the 65 ft area that runs past the far edge.
+A second diagram squares a 15 ft strip off each side. Their ends are cut at a right angle to the side while the top and bottom edges lean away, so the right strip runs over the top edge and the left strip runs under the bottom edge; both overhangs are shaded red and measured. They close only when the shape is square on.
 
 A third diagram draws the same 65 ft and 50 ft lines parallel to the 80 ft top edge. Measured that way a foot stays a foot at any angle, so 15 + 50 = 65 puts both lines' far ends on one line and 65 + 15 fills the whole side — no overlap and nothing left over.
 
