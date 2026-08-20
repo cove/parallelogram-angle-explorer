@@ -159,6 +159,12 @@ export function initializeApp(documentRef, windowRef) {
       90,
     );
 
+    setText(
+      element("pae-forced-title-label"),
+      diagram.titleLabel,
+      "Forced assessor measurements",
+    );
+
     setFormula("pae-calc-shape", diagram.formulas.shape);
     setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);

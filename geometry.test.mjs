@@ -210,6 +210,15 @@ test("returns a complete, internally connected drawing model", () => {
   assert.ok(diagram.rightSideLabel.x > diagram.shape[1].x);
 });
 
+test("titles the first diagram above its highest corner", () => {
+  for (const angle of [PRESET_ANGLES.initial, PRESET_ANGLES.rightAngle, PRESET_ANGLES.reverse]) {
+    const diagram = calculateDiagram(angle);
+    const [leftTop, rightTop] = diagram.shape;
+    assert.equal(diagram.titleLabel.x, 300);
+    approximately(diagram.titleLabel.y, Math.min(leftTop.y, rightTop.y) - 40);
+  }
+});
+
 test("rejects invalid angle values", () => {
   for (const invalid of [
     Number.NaN,

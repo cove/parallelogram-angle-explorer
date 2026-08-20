@@ -89,6 +89,10 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(typeof controller.syncMobileViewport, "function");
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
   assert.equal(nodes.get("pae-angle-output").textContent, "69.69°");
+  assert.equal(
+    nodes.get("pae-forced-title-label").textContent,
+    "Forced assessor measurements",
+  );
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
   assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 0.93 ft");
