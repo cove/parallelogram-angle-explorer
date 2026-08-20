@@ -153,18 +153,21 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
   assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
-  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlapping · 50.00 ft");
+  assert.equal(
+    nodes.get("pae-area-overlap-label").textContent,
+    "Overlapping · 27.77 ft",
+  );
+  assert.equal(nodes.get("pae-area-over-top").getAttribute("opacity"), "1");
+  assert.match(nodes.get("pae-area-over-top").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
   assert.equal(nodes.get("pae-area-title-label").textContent, "Both areas turned 90° off the right side");
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
-  assert.equal(nodes.get("pae-area-calc-overlap-result").textContent, "= 50.00 ft, always overlapping");
+  assert.equal(nodes.get("pae-area-calc-over-top-result").textContent, "= 27.77 ft over the top edge");
   assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
 
   const areaA = Number(nodes.get("pae-area-a").getAttribute("width"));
   const areaB = Number(nodes.get("pae-area-b").getAttribute("width"));
-  const overlap = Number(nodes.get("pae-area-overlap").getAttribute("width"));
   assert.ok(areaA > areaB);
-  assert.equal(overlap, areaB);
 });
 
 test("steps the 15, 50 and 15 chain off the side and shades the spill", async () => {
@@ -193,11 +196,17 @@ test("steps the 15, 50 and 15 chain off the side and shades the spill", async ()
     nodes.get("pae-area-beyond").getAttribute("x"),
   );
 
-  // Square on there is nothing to shade.
+  // Square on there is nothing to shade, over the top or past the edge.
   controller.draw(90);
   assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-beyond-label").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-beyond-label").textContent, "Off the far edge · 0.00 ft");
+  assert.equal(nodes.get("pae-area-over-top").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
+  assert.equal(
+    nodes.get("pae-area-overlap-label").textContent,
+    "Overlapping · 0.00 ft",
+  );
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-beyond").getAttribute("opacity"), "1");

@@ -241,7 +241,7 @@ test("measures both right-angle areas from the right side", () => {
   approximately(areas.areaA.width / areas.areaB.width, DIMENSIONS.arrowA / DIMENSIONS.arrowB);
   approximately(areas.areaA.y, Math.min(leftTop.y, rightTop.y));
   approximately(areas.areaA.height, Math.max(leftBottom.y, rightBottom.y) - areas.areaA.y);
-  assert.deepEqual(areas.overlapArea, areas.areaB);
+  assert.equal(areas.overTopTriangle.length, 3);
   approximately(areas.dimensions.a.x1, rightTop.x);
   approximately(areas.dimensions.a.x2, areas.areaA.x);
   approximately(areas.dimensions.b.x2, areas.areaB.x);
@@ -254,16 +254,21 @@ test("measures both right-angle areas from the right side", () => {
   assert.equal(areas.formulas.method.result, "· A = 65 ft · B = 50 ft");
   assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
   assert.equal(areas.formulas.width.result, "= 75.03 ft across");
-  assert.equal(areas.formulas.overlap.expression, "min(65 ft, 50 ft)");
-  assert.equal(areas.formulas.overlap.result, "= 50.00 ft, always overlapping");
+  assert.equal(areas.formulas.overTop.expression, "80 ft × |cos(69.69°)|");
+  assert.equal(areas.formulas.overTop.result, "= 27.77 ft over the top edge");
 });
 
-test("the shorter right-angle area always overlaps the longer one", () => {
+test("the wedge over the top only closes when the shape is square on", () => {
   for (let angle = 1; angle <= 180; angle += 0.25) {
     const areas = calculateRightAngleAreas(angle);
-    assert.equal(areas.measurements.overlap, DIMENSIONS.arrowB);
-    assert.ok(areas.overlapArea.width > 0);
-    assert.ok(areas.overlapArea.x >= areas.areaA.x - 1e-9);
+    const [rightTop, level, farCorner] = areas.overTopTriangle;
+    const squareOn = Math.abs(angle - PRESET_ANGLES.rightAngle) < 1e-9;
+
+    // The wedge runs from the top corner along the level line to the far corner.
+    assert.equal(rightTop.y, level.y);
+    assert.equal(level.x, farCorner.x);
+    approximately(areas.measurements.overTop, Math.abs(level.y - farCorner.y) / 1.72);
+    assert.equal(areas.measurements.overTop === 0, squareOn);
   }
 });
 
@@ -290,7 +295,7 @@ test("steps 15, 50 and 15 off the side and flags what runs off the edge", () => 
   for (const segment of Object.values(areas.chain)) {
     assert.equal(segment.y1, segment.y2);
   }
-  assert.ok(areas.chain.rightInset.y1 > Math.max(leftTop.y, rightTop.y));
+  assert.equal(areas.chain.rightInset.y1, rightTop.y);
   approximately(areas.labels.chainInner.x, (areas.chain.inner.x1 + areas.chain.inner.x2) / 2);
 
   // The last step lands past the far edge, and that gap is the spill.

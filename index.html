@@ -193,7 +193,7 @@
     }
     #parallelogram-angle-explorer .area-shape { fill: none; stroke: #111111; stroke-width: 2.2; }
     #parallelogram-angle-explorer .area-a { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
-    #parallelogram-angle-explorer .area-b { fill: #258a53; fill-opacity: 0.20; stroke: none; }
+    #parallelogram-angle-explorer .area-b { fill: #7030a0; fill-opacity: 0.16; stroke: none; }
     #parallelogram-angle-explorer .area-overlap { fill: #c00000; fill-opacity: 0.34; stroke: none; }
     #parallelogram-angle-explorer .area-beyond {
       fill: #c00000;
@@ -485,7 +485,7 @@
   <h2 id="pae-area-heading">RIGHT-ANGLE AREAS MEASURED FROM THE RIGHT SIDE</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. Because both start at the same side, the 50 foot area always sits inside the 65 foot area; that shared band is shaded red and marked as overlapping.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram with the 65 foot and 50 foot areas both measured at 90 degrees from the right side. Across the top, 15 feet, 50 feet and 15 feet are also stepped off at 90 degrees from that side; together they need a full 80 feet of horizontal room while the shape offers only 80 times the sine of the angle, so the last 15 foot step runs off the far edge and that spill is shaded red. The steps start level with the top corner, so the wedge between that level line and the falling top edge is shaded red as the part that goes over the top.</desc>
     <defs>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
@@ -496,8 +496,9 @@
     <g clip-path="url(#pae-area-clip)">
       <rect id="pae-area-a" class="area-a"></rect>
       <rect id="pae-area-b" class="area-b"></rect>
-      <rect id="pae-area-overlap" class="area-overlap"></rect>
+
     </g>
+    <path id="pae-area-over-top" class="area-overlap"></path>
     <rect id="pae-area-beyond" class="area-beyond"></rect>
     <path id="pae-area-shape" class="area-shape"></path>
     <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -507,7 +508,7 @@
     <text id="pae-area-title-label" class="label area-title-label">Both areas turned 90° off the right side</text>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
-    <text id="pae-area-overlap-label" class="label area-overlap-label">Overlapping · 50.00 ft</text>
+    <text id="pae-area-overlap-label" class="label area-overlap-label">Overlapping · 27.77 ft</text>
     <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -522,7 +523,7 @@
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">Both areas are measured at 90° from the right side, so the shorter one always lands inside the longer one — the red band is the part they always share.</p>
+    <p class="calculation-note">Stepping 15 + 50 + 15 off at 90° from the right side starts level with the top corner, but the top edge falls away from that line — the red wedge is the part that runs over the top, and it only closes when the shape is square on.</p>
     <div class="calculation-grid">
       <div class="calculation calculation-purple">
         <span class="calculation-name">Method</span>
@@ -533,8 +534,8 @@
         <span class="calculation-formula"><span id="pae-area-calc-width-expression">Calculating…</span><strong id="pae-area-calc-width-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-red">
-        <span class="calculation-name">Overlapping</span>
-        <span class="calculation-formula"><span id="pae-area-calc-overlap-expression">Calculating…</span><strong id="pae-area-calc-overlap-result" class="calculation-result"></strong></span>
+        <span class="calculation-name">Over the top</span>
+        <span class="calculation-formula"><span id="pae-area-calc-over-top-expression">Calculating…</span><strong id="pae-area-calc-over-top-result" class="calculation-result"></strong></span>
       </div>
       <div class="calculation calculation-purple">
         <span class="calculation-name">Room needed</span>
