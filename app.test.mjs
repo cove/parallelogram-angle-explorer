@@ -93,10 +93,7 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(typeof controller.syncMobileViewport, "function");
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
   assert.equal(nodes.get("pae-angle-output").textContent, "69.69°");
-  assert.equal(
-    nodes.get("pae-forced-title-label").textContent,
-    "Forced assessor measurements",
-  );
+  assert.equal(nodes.has("pae-forced-title-label"), false);
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
   assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
@@ -180,10 +177,7 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #111111");
   assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
-  assert.equal(
-    nodes.get("pae-area-title-label").textContent,
-    "15 ft squared off each side, 50 ft in the middle",
-  );
+  assert.equal(nodes.has("pae-area-title-label"), false);
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
@@ -311,10 +305,7 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "A · 65 ft along the top");
   assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "B · 50 ft along the top");
   assert.equal(nodes.get("pae-fit-match-label").textContent, "Ends match · 0.00 ft");
-  assert.equal(
-    nodes.get("pae-fit-title-label").textContent,
-    "Lines drawn parallel to the 80 ft top edge",
-  );
+  assert.equal(nodes.has("pae-fit-title-label"), false);
   assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
   assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
   assert.equal(nodes.get("pae-fit-calc-gap-result").textContent, "= 0.00 ft at every angle");

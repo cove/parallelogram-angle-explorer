@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=4";
+} from "./geometry.mjs?v=5";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -181,12 +181,6 @@ export function initializeApp(documentRef, windowRef) {
       90,
     );
 
-    setText(
-      element("pae-forced-title-label"),
-      diagram.titleLabel,
-      "Forced assessor measurements",
-    );
-
     setFormula("pae-calc-shape", diagram.formulas.shape);
     setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
@@ -245,11 +239,6 @@ export function initializeApp(documentRef, windowRef) {
     element("pae-area-square-a").setAttribute("d", pathFromPoints(areas.squares.a));
     element("pae-area-square-b").setAttribute("d", pathFromPoints(areas.squares.b));
 
-    setText(
-      element("pae-area-title-label"),
-      areas.labels.title,
-      `${DIMENSIONS.inset} ft squared off each side, ${DIMENSIONS.innerSpan} ft in the middle`,
-    );
     setText(
       element("pae-area-a-label"),
       areas.labels.a,
@@ -315,11 +304,6 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-fit-guide-b"), fit.guides.b);
     setLine(element("pae-fit-match-line"), fit.matchLine);
 
-    setText(
-      element("pae-fit-title-label"),
-      fit.labels.title,
-      `Lines drawn parallel to the ${DIMENSIONS.side} ft top edge`,
-    );
     setText(
       element("pae-fit-strip-right-label"),
       fit.labels.rightInset,

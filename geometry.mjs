@@ -202,7 +202,6 @@ export function calculateDiagram(angleDegrees) {
       (leftBottom.y + rightBottom.y) / 2 + 17,
     ),
     rightSideLabel: point(rightX + 13, (rightTop.y + rightBottom.y) / 2),
-    titleLabel: point(CENTER_X, Math.min(leftTop.y, rightTop.y) - 40),
     measurements,
     formulas: {
       shape: {
@@ -419,7 +418,6 @@ export function calculateRightAngleAreas(angleDegrees) {
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),
-      title: point(CENTER_X, topY - 40),
     },
     measurements: {
       perpendicularWidth,
@@ -538,7 +536,6 @@ export function calculateParallelAreas(angleDegrees) {
         Math.max(guideA.x2 - 10, LEFT_LABEL_LIMIT + 15),
         (guideA.y2 + guideB.y2) / 2,
       ),
-      title: point(CENTER_X, topY - 14),
     },
     measurements: {
       topEdge: DIMENSIONS.side,
