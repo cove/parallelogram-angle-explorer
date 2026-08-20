@@ -260,9 +260,10 @@ export function calculateRightAngleAreas(angleDegrees) {
   // horizontal room, but the shape only offers 80 × sin(theta) of it.
   const perpendicularWidth = base.measurements.perpendicularWidth;
 
-  // Whatever the two 15 ft strips leave between them has to serve as the
-  // middle 50 ft. Squared off the sides they eat more room than 15 ft each,
-  // so the middle comes up short, and on a steep lean they even collide.
+  // Squared off the sides the shape measures only 80 x sin(theta) across, yet
+  // each strip still claims a full 15 ft of that narrower width, so what is
+  // left for the middle falls short of 50 ft - and on a steep lean the two
+  // strips meet and there is no middle at all.
   const middleStart = strips.left.x + stripWidth;
   const middleEnd = strips.right.x;
   const middleFeet = perpendicularWidth - DIMENSIONS.inset * 2;
