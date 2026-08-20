@@ -187,3 +187,56 @@ test("keeps both diagrams on the same mobile viewport", async () => {
   mediaQuery.setMatches(true);
   assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "88 0 444 676");
 });
+
+test("renders the third parallel-to-the-top diagram", async () => {
+  const { controller, nodes } = await createHarness();
+
+  assert.equal(typeof controller.drawParallel, "function");
+  assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "0 0 620 676");
+  assert.equal(
+    nodes.get("pae-fit-shape").getAttribute("d"),
+    nodes.get("pae-fit-clip-shape").getAttribute("d"),
+  );
+  assert.equal(nodes.get("pae-fit-strip-right-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-fit-strip-inner-label").textContent, "50 ft");
+  assert.equal(nodes.get("pae-fit-strip-left-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "A · 65 ft along the top");
+  assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "B · 50 ft along the top");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "Both end here · 0.00 ft gap");
+  assert.equal(
+    nodes.get("pae-fit-title-label").textContent,
+    "Lines drawn parallel to the 80 ft top edge",
+  );
+  assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
+  assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
+  assert.equal(nodes.get("pae-fit-calc-gap-result").textContent, "= 0.00 ft at every angle");
+
+  // Both guides stop on the same line, however far the shape leans.
+  assert.equal(
+    nodes.get("pae-fit-guide-a").getAttribute("x2"),
+    nodes.get("pae-fit-guide-b").getAttribute("x2"),
+  );
+});
+
+test("keeps the parallel guides matched after the angle changes", async () => {
+  const { nodes } = await createHarness();
+  const slider = nodes.get("pae-angle");
+
+  slider.value = "122.5";
+  slider.dispatch("input");
+
+  assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "0 0 620 676");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "Both end here · 0.00 ft gap");
+  assert.equal(
+    nodes.get("pae-fit-guide-a").getAttribute("x2"),
+    nodes.get("pae-fit-guide-b").getAttribute("x2"),
+  );
+  assert.equal(nodes.get("pae-fit-match-line").getAttribute("x1"), nodes.get("pae-fit-match-line").getAttribute("x2"));
+});
+
+test("keeps all three diagrams on the same mobile viewport", async () => {
+  const { mediaQuery, nodes } = await createHarness();
+
+  mediaQuery.setMatches(true);
+  assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "88 0 444 676");
+});

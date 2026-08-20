@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   calculateDiagram,
+  calculateParallelAreas,
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
@@ -287,4 +288,60 @@ test("flags the part of the longer area that runs past the far edge", () => {
 test("rejects invalid angles for the right-angle areas too", () => {
   assert.throws(() => calculateRightAngleAreas(0), RangeError);
   assert.throws(() => calculateRightAngleAreas(Number.NaN), RangeError);
+});
+
+test("draws the 65 and 50 ft lines parallel to the top edge", () => {
+  const fit = calculateParallelAreas(PRESET_ANGLES.initial);
+  const [leftTop, rightTop, rightBottom, leftBottom] = fit.shape;
+  const topLength = Math.hypot(leftTop.x - rightTop.x, leftTop.y - rightTop.y);
+  const length = ({ x1, y1, x2, y2 }) => Math.hypot(x2 - x1, y2 - y1);
+  const direction = ({ x1, y1, x2, y2 }) => Math.atan2(y2 - y1, x2 - x1);
+
+  // The top edge is exactly 80 ft long, so both guides keep their true length.
+  approximately(topLength / 1.72, DIMENSIONS.side, 1e-9);
+  approximately(length(fit.guides.a) / 1.72, DIMENSIONS.arrowA, 1e-9);
+  approximately(length(fit.guides.b) / 1.72, DIMENSIONS.innerSpan, 1e-9);
+  approximately(
+    direction(fit.guides.a),
+    Math.atan2(leftTop.y - rightTop.y, leftTop.x - rightTop.x),
+  );
+  approximately(direction(fit.guides.b), direction(fit.guides.a));
+
+  assert.equal(fit.rotation, PRESET_ANGLES.initial - 90);
+  approximately(fit.strips.rightInset.x + fit.strips.rightInset.width, rightTop.x);
+  approximately(fit.strips.leftInset.x, leftTop.x);
+  approximately(
+    fit.strips.rightInset.width + fit.strips.inner.width + fit.strips.leftInset.width,
+    rightTop.x - leftTop.x,
+  );
+  approximately(fit.strips.rightInset.width, fit.strips.leftInset.width);
+  approximately(fit.strips.rightInset.y, Math.min(leftTop.y, rightTop.y));
+  approximately(
+    fit.strips.inner.height,
+    Math.max(leftBottom.y, rightBottom.y) - fit.strips.inner.y,
+  );
+  assert.equal(fit.formulas.method.result, "· no sine, no shrink");
+  assert.equal(fit.formulas.reach.expression, "15 ft + 50 ft");
+  assert.equal(fit.formulas.reach.result, "= 65.00 ft, exactly where A ends");
+  assert.equal(fit.formulas.total.expression, "65 ft + 15 ft");
+  assert.equal(fit.formulas.total.result, "= 80.00 ft, the whole side");
+  assert.equal(fit.formulas.gap.expression, "|65 ft − (15 ft + 50 ft)|");
+  assert.equal(fit.formulas.gap.result, "= 0.00 ft at every angle");
+});
+
+test("both parallel guides end on the same line at every angle", () => {
+  for (let angle = 1; angle <= 180; angle += 0.25) {
+    const fit = calculateParallelAreas(angle);
+    assert.equal(fit.measurements.gap, 0);
+    assert.equal(fit.measurements.reach, DIMENSIONS.arrowA);
+    assert.equal(fit.measurements.topEdge, DIMENSIONS.side);
+    approximately(fit.guides.a.x2, fit.guides.b.x2, 1e-9);
+    approximately(fit.matchLine.x1, fit.matchLine.x2, 1e-9);
+    assert.equal(fit.labels.match.x, fit.guides.a.x2 - 10);
+  }
+});
+
+test("rejects invalid angles for the parallel diagram too", () => {
+  assert.throws(() => calculateParallelAreas(181), RangeError);
+  assert.throws(() => calculateParallelAreas("90"), RangeError);
 });

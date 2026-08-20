@@ -1,5 +1,6 @@
 import {
   calculateDiagram,
+  calculateParallelAreas,
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
@@ -13,6 +14,7 @@ export function initializeApp(documentRef, windowRef) {
   const angleOutput = root.querySelector("#pae-angle-output");
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
+  const fitSvg = root.querySelector("#pae-fit-svg");
   const mobileLayout = windowRef.matchMedia("(max-width: 600px)");
   const element = (id) => root.querySelector(`#${id}`);
 
@@ -20,6 +22,7 @@ export function initializeApp(documentRef, windowRef) {
     const viewBox = mobileLayout.matches ? "88 0 444 676" : "0 0 620 676";
     svg.setAttribute("viewBox", viewBox);
     areaSvg.setAttribute("viewBox", viewBox);
+    fitSvg.setAttribute("viewBox", viewBox);
   }
 
   function setLine(node, coordinates) {
@@ -163,6 +166,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
     angleOutput.textContent = `${angleDegrees.toFixed(2)}°`;
     drawAreas(angleDegrees);
+    drawParallel(angleDegrees);
   }
 
   function drawAreas(angleDegrees) {
@@ -219,6 +223,68 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-beyond", areas.formulas.beyond);
   }
 
+  function drawParallel(angleDegrees) {
+    const fit = calculateParallelAreas(angleDegrees);
+
+    const shapePath = pathFromPoints(fit.shape, true);
+    element("pae-fit-shape").setAttribute("d", shapePath);
+    element("pae-fit-clip-shape").setAttribute("d", shapePath);
+
+    setRect(element("pae-fit-strip-right"), fit.strips.rightInset);
+    setRect(element("pae-fit-strip-inner"), fit.strips.inner);
+    setRect(element("pae-fit-strip-left"), fit.strips.leftInset);
+
+    setLine(element("pae-fit-guide-a"), fit.guides.a);
+    setLine(element("pae-fit-guide-b"), fit.guides.b);
+    setLine(element("pae-fit-match-line"), fit.matchLine);
+
+    setText(
+      element("pae-fit-title-label"),
+      fit.labels.title,
+      `Lines drawn parallel to the ${DIMENSIONS.side} ft top edge`,
+    );
+    setText(
+      element("pae-fit-strip-right-label"),
+      fit.labels.rightInset,
+      `${DIMENSIONS.inset} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-strip-inner-label"),
+      fit.labels.inner,
+      `${DIMENSIONS.innerSpan} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-strip-left-label"),
+      fit.labels.leftInset,
+      `${DIMENSIONS.inset} ft`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-guide-a-label"),
+      fit.labels.a,
+      `A · ${DIMENSIONS.arrowA} ft along the top`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-guide-b-label"),
+      fit.labels.b,
+      `B · ${DIMENSIONS.innerSpan} ft along the top`,
+      fit.rotation,
+    );
+    setText(
+      element("pae-fit-match-label"),
+      fit.labels.match,
+      `Both end here · ${fit.measurements.gap.toFixed(2)} ft gap`,
+    );
+
+    setFormula("pae-fit-calc-method", fit.formulas.method);
+    setFormula("pae-fit-calc-reach", fit.formulas.reach);
+    setFormula("pae-fit-calc-total", fit.formulas.total);
+    setFormula("pae-fit-calc-gap", fit.formulas.gap);
+  }
+
   angleInput.addEventListener("input", () => draw(Number(angleInput.value)));
   snap90Button.addEventListener("click", () => {
     angleInput.value = String(PRESET_ANGLES.rightAngle);
@@ -232,5 +298,5 @@ export function initializeApp(documentRef, windowRef) {
   syncMobileViewport();
   draw(Number(angleInput.value));
 
-  return { draw, drawAreas, syncMobileViewport };
+  return { draw, drawAreas, drawParallel, syncMobileViewport };
 }

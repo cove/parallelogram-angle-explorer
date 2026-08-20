@@ -309,3 +309,99 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
   };
 }
+
+export function calculateParallelAreas(angleDegrees) {
+  const base = calculateDiagram(angleDegrees);
+  const [leftTop, rightTop, rightBottom, leftBottom] = base.shape;
+  const rightX = rightTop.x;
+  const leftX = leftTop.x;
+  const topY = Math.min(leftTop.y, rightTop.y);
+  const bottomY = Math.max(leftBottom.y, rightBottom.y);
+  const height = bottomY - topY;
+
+  // Walking the top edge is the one direction where a foot is a foot at any
+  // angle: the edge is exactly 80 ft long however far the shape leans.
+  const alongTop = (feet) => point(
+    rightTop.x - base.sine * feet * SCALE,
+    rightTop.y + base.cosine * feet * SCALE,
+  );
+  const rightInsetMark = alongTop(DIMENSIONS.inset);
+  const innerMark = alongTop(DIMENSIONS.inset + DIMENSIONS.innerSpan);
+
+  const stripRect = (startX, endX) => ({
+    x: Math.min(startX, endX),
+    y: topY,
+    width: Math.abs(endX - startX),
+    height,
+  });
+  const strips = {
+    rightInset: stripRect(rightInsetMark.x, rightX),
+    inner: stripRect(innerMark.x, rightInsetMark.x),
+    leftInset: stripRect(leftX, innerMark.x),
+  };
+
+  const stripLabel = (start, end) => point(
+    (start.x + end.x) / 2,
+    (start.y + end.y) / 2 + 34,
+  );
+  const guide = (start, feet) => line(
+    start,
+    point(start.x - base.sine * feet * SCALE, start.y + base.cosine * feet * SCALE),
+  );
+  const guideA = guide(point(rightTop.x, rightTop.y + 118), DIMENSIONS.arrowA);
+  const guideB = guide(
+    point(rightInsetMark.x, rightInsetMark.y + 188),
+    DIMENSIONS.innerSpan,
+  );
+
+  // A starts at the corner and B starts 15 ft along, so 15 + 50 = 65 puts both
+  // far ends on the same line no matter how the shape leans.
+  const gap = Math.abs(
+    DIMENSIONS.arrowA - (DIMENSIONS.inset + DIMENSIONS.innerSpan),
+  );
+  const matchLine = line(
+    point(guideA.x2, guideA.y2),
+    point(guideB.x2, guideB.y2),
+  );
+
+  return {
+    angleDegrees,
+    shape: base.shape,
+    rotation: base.shortRotation,
+    strips,
+    guides: { a: guideA, b: guideB },
+    matchLine,
+    labels: {
+      rightInset: stripLabel(rightInsetMark, rightTop),
+      inner: stripLabel(innerMark, rightInsetMark),
+      leftInset: stripLabel(leftTop, innerMark),
+      a: point((guideA.x1 + guideA.x2) / 2, (guideA.y1 + guideA.y2) / 2 - 9),
+      b: point((guideB.x1 + guideB.x2) / 2, (guideB.y1 + guideB.y2) / 2 - 9),
+      match: point(guideA.x2 - 10, (guideA.y2 + guideB.y2) / 2),
+      title: point(CENTER_X, topY - 14),
+    },
+    measurements: {
+      topEdge: DIMENSIONS.side,
+      reach: DIMENSIONS.inset + DIMENSIONS.innerSpan,
+      gap,
+    },
+    formulas: {
+      method: {
+        expression: "A and B run parallel to the 80 ft top edge",
+        result: "· no sine, no shrink",
+      },
+      reach: {
+        expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
+        result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where A ends`,
+      },
+      total: {
+        expression: `${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
+        result: `= ${formatFeet(DIMENSIONS.side)} ft, the whole side`,
+      },
+      gap: {
+        expression: `|${DIMENSIONS.arrowA} ft − (${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft)|`,
+        result: `= ${formatFeet(gap)} ft at every angle`,
+      },
+    },
+  };
+}

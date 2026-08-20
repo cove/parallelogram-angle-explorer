@@ -235,6 +235,39 @@
       font-size: 12px;
       font-weight: 700;
     }
+    #parallelogram-angle-explorer .fit-strip-outer { fill: #258a53; fill-opacity: 0.14; stroke: none; }
+    #parallelogram-angle-explorer .fit-strip-inner { fill: #258a53; fill-opacity: 0.30; stroke: none; }
+    #parallelogram-angle-explorer .fit-guide {
+      fill: none;
+      stroke: #1c6d43;
+      stroke-width: 1.6;
+    }
+    #parallelogram-angle-explorer .fit-match-line {
+      fill: none;
+      stroke: #1c6d43;
+      stroke-width: 1.2;
+      stroke-dasharray: 5 4;
+    }
+    #parallelogram-angle-explorer text.fit-label {
+      fill: #1c6d43;
+      font-size: 11px;
+      font-weight: 700;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
+    #parallelogram-angle-explorer text.fit-match-label {
+      fill: #1c6d43;
+      font-size: 12px;
+      font-weight: 700;
+      text-anchor: end;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
+    #parallelogram-angle-explorer .calculation-green-strong { color: #1c6d43; }
     #parallelogram-angle-explorer .calculations {
       color: #111111;
       background: #ffffff;
@@ -323,6 +356,12 @@
         order: 7;
         flex: 0 0 auto;
         margin-top: 6px;
+      }
+      #parallelogram-angle-explorer #pae-fit-svg,
+      #parallelogram-angle-explorer #pae-fit-calculations,
+      #parallelogram-angle-explorer #pae-fit-heading {
+        order: 6;
+        flex: 0 0 auto;
       }
       #parallelogram-angle-explorer #pae-area-svg,
       #parallelogram-angle-explorer #pae-area-calculations,
@@ -486,6 +525,59 @@
       <div class="calculation calculation-red">
         <span class="calculation-name">Past far edge</span>
         <span class="calculation-formula"><span id="pae-area-calc-beyond-expression">Calculating…</span><strong id="pae-area-calc-beyond-result" class="calculation-result"></strong></span>
+      </div>
+    </div>
+  </section>
+
+  <h2 id="pae-fit-heading">LINES PARALLEL TO THE TOP EDGE — EVERYTHING FITS</h2>
+  <svg id="pae-fit-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-fit-svg-title pae-fit-svg-desc">
+    <title id="pae-fit-svg-title">The 65 and 50 foot lines drawn parallel to the top edge</title>
+    <desc id="pae-fit-svg-desc">The same parallelogram with the 65 foot and 50 foot lines drawn parallel to the 80 foot top edge instead of at a right angle to the side. A starts at the right corner and reaches 65 feet; B starts 15 feet along and reaches 50 feet. Because 15 plus 50 equals 65, both lines end on the same line at every angle, and 65 plus the remaining 15 feet fills the whole 80 foot side with no overlap and nothing left over.</desc>
+    <defs>
+      <clipPath id="pae-fit-clip">
+        <path id="pae-fit-clip-shape"></path>
+      </clipPath>
+    </defs>
+    <g id="pae-fit-scale" transform="translate(-93 0) scale(1.3)">
+    <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
+    <g clip-path="url(#pae-fit-clip)">
+      <rect id="pae-fit-strip-right" class="fit-strip-outer"></rect>
+      <rect id="pae-fit-strip-inner" class="fit-strip-inner"></rect>
+      <rect id="pae-fit-strip-left" class="fit-strip-outer"></rect>
+    </g>
+    <path id="pae-fit-shape" class="shape"></path>
+    <line id="pae-fit-match-line" class="fit-match-line"></line>
+    <line id="pae-fit-guide-a" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <line id="pae-fit-guide-b" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <text id="pae-fit-title-label" class="label area-title-label">Lines drawn parallel to the 80 ft top edge</text>
+    <text id="pae-fit-strip-right-label" class="label fit-label">15 ft</text>
+    <text id="pae-fit-strip-inner-label" class="label fit-label">50 ft</text>
+    <text id="pae-fit-strip-left-label" class="label fit-label">15 ft</text>
+    <text id="pae-fit-guide-a-label" class="label fit-label">A · 65 ft along the top</text>
+    <text id="pae-fit-guide-b-label" class="label fit-label">B · 50 ft along the top</text>
+    <text id="pae-fit-match-label" class="label fit-match-label">Both end here · 0.00 ft gap</text>
+    </g>
+  </svg>
+
+  <section id="pae-fit-calculations" class="calculations" aria-labelledby="pae-fit-calculations-title">
+    <h3 id="pae-fit-calculations-title">Parallel-to-the-top calculations</h3>
+    <p class="calculation-note">Measured along the top edge, a foot stays a foot at any angle, so 15 + 50 + 15 fills the 80 ft side exactly — A and B meet end to end instead of overlapping.</p>
+    <div class="calculation-grid">
+      <div class="calculation calculation-green">
+        <span class="calculation-name">Method</span>
+        <span class="calculation-formula"><span id="pae-fit-calc-method-expression">Calculating…</span><strong id="pae-fit-calc-method-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-green">
+        <span class="calculation-name">B reaches</span>
+        <span class="calculation-formula"><span id="pae-fit-calc-reach-expression">Calculating…</span><strong id="pae-fit-calc-reach-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-green">
+        <span class="calculation-name">Full side</span>
+        <span class="calculation-formula"><span id="pae-fit-calc-total-expression">Calculating…</span><strong id="pae-fit-calc-total-result" class="calculation-result"></strong></span>
+      </div>
+      <div class="calculation calculation-green">
+        <span class="calculation-name">Gap or overlap</span>
+        <span class="calculation-formula"><span id="pae-fit-calc-gap-expression">Calculating…</span><strong id="pae-fit-calc-gap-result" class="calculation-result"></strong></span>
       </div>
     </div>
   </section>
