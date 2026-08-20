@@ -156,7 +156,7 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
-      `${DIMENSIONS.arrowA} ft overlap · ${diagram.measurements.overlap.toFixed(2)} ft`,
+      `Overlap · ${diagram.measurements.overlap.toFixed(2)} ft`,
     );
 
     element("pae-angle-arc").setAttribute(
