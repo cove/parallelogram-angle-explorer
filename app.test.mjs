@@ -99,14 +99,15 @@ test("renders the initial state from the shared geometry module", async () => {
   );
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 0.93 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "65 ft overlap · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
   );
+  assert.equal(nodes.has("pae-overlap-extent-b"), false);
   assert.equal(
-    nodes.get("pae-overlap-extent-b").getAttribute("x1"),
-    nodes.get("pae-static-b").getAttribute("x2"),
+    nodes.get("pae-overlap-span").getAttribute("x2"),
+    nodes.get("pae-inset-left").getAttribute("x1"),
   );
   assert.equal(nodes.get("pae-calc-shape-expression").textContent, "15 ft + 50 ft + 15 ft");
   assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
@@ -126,7 +127,7 @@ test("updates the diagram and formulas from slider input", async () => {
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
   assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "15 ft × sin(86.89°)");
   assert.equal(nodes.get("pae-calc-perp-insets-result").textContent, "= 14.98 ft each");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.02 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft");
 });
 
 test("handles both preset buttons and the 180 degree extreme", async () => {
@@ -144,7 +145,7 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "0.00 ft");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 15.00 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
 });
 
 test("switches the SVG viewport at the mobile breakpoint", async () => {

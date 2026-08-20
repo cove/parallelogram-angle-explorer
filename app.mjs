@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=3";
+} from "./geometry.mjs?v=4";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -152,12 +152,11 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-static-b"), diagram.guides.b);
     setText(element("pae-static-b-label"), diagram.guides.bLabel, `B · ${DIMENSIONS.arrowB} ft`);
     setLine(element("pae-overlap-extent-a"), diagram.guides.overlapExtentA);
-    setLine(element("pae-overlap-extent-b"), diagram.guides.overlapExtentB);
     setLine(element("pae-overlap-span"), diagram.guides.overlapSpan);
     setText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
-      `Overlap · ${diagram.measurements.overlap.toFixed(2)} ft`,
+      `${DIMENSIONS.arrowA} ft overlap · ${diagram.measurements.overlap.toFixed(2)} ft`,
     );
 
     element("pae-angle-arc").setAttribute(

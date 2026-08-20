@@ -130,7 +130,10 @@ export function calculateDiagram(angleDegrees) {
   const staticBStart = point(rightInsetTop.x, staticBY);
   const staticBEnd = point(rightInsetTop.x - DIMENSIONS.arrowB * SCALE, staticBY);
   const overlapY = (staticAY + staticBY) / 2;
-  const overlap = Math.abs(staticBEnd.x - staticAEnd.x) / SCALE;
+  // A is the first assessor line to cross the left inset boundary. Show only
+  // that encroachment; B remains a reference measurement without a second
+  // overlap figure.
+  const overlap = (leftInsetTop.x - staticAEnd.x) / SCALE;
   const fullLengthGuide = (x) => {
     const fractionAcrossShape = scaledWidth === 0
       ? 0.5
@@ -143,9 +146,8 @@ export function calculateDiagram(angleDegrees) {
     aLabel: point((staticAStart.x + staticAEnd.x) / 2, staticAY - 9),
     b: line(staticBStart, staticBEnd),
     bLabel: point((staticBStart.x + staticBEnd.x) / 2, staticBY - 9),
-    overlapSpan: line(point(staticAEnd.x, overlapY), point(staticBEnd.x, overlapY)),
+    overlapSpan: line(point(staticAEnd.x, overlapY), point(leftInsetTop.x, overlapY)),
     overlapExtentA: fullLengthGuide(staticAEnd.x),
-    overlapExtentB: fullLengthGuide(staticBEnd.x),
     // Held clear of the left edge so the label is not clipped on a phone.
     overlapLabel: point(
       Math.max(Math.min(staticAEnd.x, staticBEnd.x) - 8, LEFT_LABEL_LIMIT),
@@ -220,7 +222,7 @@ export function calculateDiagram(angleDegrees) {
         result: "· B = 50 ft",
       },
       overlap: {
-        expression: `|65 ft − (50 ft + 15 ft × sin(${angleDegrees.toFixed(2)}°))|`,
+        expression: `65 ft − 65 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(overlap)} ft`,
       },
     },
