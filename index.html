@@ -137,8 +137,14 @@
     }
     #parallelogram-angle-explorer .overlap-dimension {
       fill: none;
-      stroke: #6a3d12;
-      stroke-width: 1;
+      stroke: #c00000;
+      stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .overlap-extent {
+      fill: none;
+      stroke: #c00000;
+      stroke-width: 1.1;
+      stroke-dasharray: 4 4;
     }
     #parallelogram-angle-explorer .overlap-label {
       fill: var(--red);
@@ -332,6 +338,15 @@
       color: #444444;
       font-size: 12px;
     }
+    #parallelogram-angle-explorer .diagram-disclaimer {
+      margin: 0 0 10px;
+      padding: 8px 10px;
+      color: #6a3d12;
+      background: #fff7ed;
+      border-left: 3px solid #d06418;
+      font-size: 12px;
+      line-height: 1.4;
+    }
     #parallelogram-angle-explorer .calculation-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -445,10 +460,11 @@
   </style>
 
   <h2>ASSESSOR MEASUREMENTS</h2>
+  <p class="diagram-disclaimer" role="note"><strong>Disclaimer:</strong> These diagrams are illustrative only and are not guaranteed to be accurate. They are intended solely to provide an intuitive understanding of how parallelograms change at different angles.</p>
   <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
-    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.</desc>
+    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement whose red boundaries extend the full length of the parallelogram.</desc>
     <defs>
       <marker id="pae-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
@@ -492,9 +508,9 @@
     <text id="pae-static-a-label" class="label static-line-label">A · 65 ft</text>
     <line id="pae-static-b" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
     <text id="pae-static-b-label" class="label static-line-label">B · 50 ft</text>
+    <line id="pae-overlap-extent-a" class="overlap-extent"></line>
+    <line id="pae-overlap-extent-b" class="overlap-extent"></line>
     <line id="pae-overlap-span" class="overlap-dimension"></line>
-    <line id="pae-overlap-extension" class="overlap-dimension"></line>
-    <line id="pae-overlap-witness-a" class="overlap-dimension"></line>
     <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 0.93 ft</text>
 
     <text id="pae-forced-title-label" class="label area-title-label">Forced assessor measurements</text>
@@ -549,7 +565,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=2"></script>
+  <script type="module" src="./main.mjs?v=3"></script>
 </div>
 
 </body>

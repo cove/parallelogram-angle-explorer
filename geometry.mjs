@@ -35,6 +35,7 @@ const midpoint = (start, end) => point(
   (start.x + end.x) / 2,
   (start.y + end.y) / 2,
 );
+const clamp = (value, minimum, maximum) => Math.min(maximum, Math.max(minimum, value));
 const normalizeZero = (value) => Math.abs(value) < 1e-12 ? 0 : value;
 const formatFeet = (value) => normalizeZero(value).toFixed(2);
 
@@ -130,14 +131,21 @@ export function calculateDiagram(angleDegrees) {
   const staticBEnd = point(rightInsetTop.x - DIMENSIONS.arrowB * SCALE, staticBY);
   const overlapY = (staticAY + staticBY) / 2;
   const overlap = Math.abs(staticBEnd.x - staticAEnd.x) / SCALE;
+  const fullLengthGuide = (x) => {
+    const fractionAcrossShape = scaledWidth === 0
+      ? 0.5
+      : clamp((x - leftX) / scaledWidth, 0, 1);
+    const guideTopY = leftTop.y + (rightTop.y - leftTop.y) * fractionAcrossShape;
+    return line(point(x, guideTopY), point(x, guideTopY + scaledLength));
+  };
   const guides = {
     a: line(staticAStart, staticAEnd),
     aLabel: point((staticAStart.x + staticAEnd.x) / 2, staticAY - 9),
     b: line(staticBStart, staticBEnd),
     bLabel: point((staticBStart.x + staticBEnd.x) / 2, staticBY - 9),
     overlapSpan: line(point(staticAEnd.x, overlapY), point(staticBEnd.x, overlapY)),
-    overlapExtension: line(point(staticBEnd.x, overlapY), point(leftInsetTop.x, overlapY)),
-    overlapWitness: line(point(staticAEnd.x, staticAY + 4), point(staticAEnd.x, overlapY + 4)),
+    overlapExtentA: fullLengthGuide(staticAEnd.x),
+    overlapExtentB: fullLengthGuide(staticBEnd.x),
     // Held clear of the left edge so the label is not clipped on a phone.
     overlapLabel: point(
       Math.max(Math.min(staticAEnd.x, staticBEnd.x) - 8, LEFT_LABEL_LIMIT),

@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs";
+} from "./geometry.mjs?v=3";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -205,7 +205,18 @@ test("returns a complete, internally connected drawing model", () => {
   assert.equal(diagram.perpendicular.inner.x2, diagram.perpendicular.right.x1);
   assert.equal(diagram.perpendicular.leftSquare.length, 3);
   assert.equal(diagram.perpendicular.rightSquare.length, 3);
-  assert.equal(diagram.guides.overlapSpan.y1, diagram.guides.overlapExtension.y1);
+  assert.equal(diagram.guides.overlapExtentA.x1, diagram.guides.a.x2);
+  assert.equal(diagram.guides.overlapExtentB.x1, diagram.guides.b.x2);
+  assert.equal(
+    diagram.guides.overlapExtentA.y2 - diagram.guides.overlapExtentA.y1,
+    diagram.insetLines.left.y2 - diagram.insetLines.left.y1,
+  );
+  assert.equal(
+    diagram.guides.overlapExtentB.y2 - diagram.guides.overlapExtentB.y1,
+    diagram.insetLines.right.y2 - diagram.insetLines.right.y1,
+  );
+  assert.equal(diagram.guides.overlapSpan.x1, diagram.guides.overlapExtentA.x1);
+  assert.equal(diagram.guides.overlapSpan.x2, diagram.guides.overlapExtentB.x1);
   assert.equal(diagram.arc.radius, 28);
   assert.equal(diagram.angleDegrees, EXAMPLE_ANGLE);
   approximately(diagram.angleRadians, EXAMPLE_ANGLE * Math.PI / 180);
