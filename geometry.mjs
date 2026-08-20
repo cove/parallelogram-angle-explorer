@@ -233,16 +233,19 @@ export function calculateRightAngleAreas(angleDegrees) {
   const areaA = bandRect(DIMENSIONS.arrowA);
   const areaB = bandRect(DIMENSIONS.arrowB);
 
-  // Measured from the same side, the shorter band always sits inside the
-  // longer one, so the overlap is the shorter of the two and never vanishes.
-  const overlapFeet = Math.min(DIMENSIONS.arrowA, DIMENSIONS.arrowB);
-  const overlapArea = bandRect(overlapFeet);
+  // Stepping off at 90 degrees from the side starts at the top corner and runs
+  // level, but the top edge falls away from that line. Everything caught
+  // between the two is the part that goes over the top of the shape.
+  const overTopFeet = DIMENSIONS.side * Math.abs(base.cosine);
+  const overTopTriangle = [rightTop, point(leftTop.x, rightTop.y), leftTop];
 
   // Laying 15 + 50 + 15 out at a right angle to the side needs a full 80 ft of
   // horizontal room, but the shape only offers 80 × sin(theta) of it.
   const perpendicularWidth = base.measurements.perpendicularWidth;
   const chainMark = (feet) => rightX - feet * SCALE;
-  const chainY = Math.max(leftTop.y, rightTop.y) + 44;
+  // The chain rides the perpendicular off the top corner, so it shows where a
+  // right-angle measurement puts the marks against the real top edge.
+  const chainY = rightTop.y;
   const chain = {
     rightInset: line(point(rightX, chainY), point(chainMark(DIMENSIONS.inset), chainY)),
     inner: line(
@@ -254,9 +257,9 @@ export function calculateRightAngleAreas(angleDegrees) {
       point(chainMark(DIMENSIONS.side), chainY),
     ),
   };
-  const chainLabel = ({ x1, x2 }) => point((x1 + x2) / 2, chainY - 9);
+  const chainLabel = ({ x1, x2 }) => point((x1 + x2) / 2, chainY - 10);
   const farEdgeWitness = line(
-    point(leftTop.x, chainY - 14),
+    point(leftTop.x, chainY),
     point(leftTop.x, leftBottom.y),
   );
 
@@ -291,7 +294,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     shape: base.shape,
     areaA,
     areaB,
-    overlapArea,
+    overTopTriangle,
     beyondArea,
     chain,
     farEdgeWitness,
@@ -304,16 +307,22 @@ export function calculateRightAngleAreas(angleDegrees) {
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
-      overlap: point((rightX + overlapArea.x) / 2, bandY(0) + 4),
-      beyond: point(beyondArea.x + beyondArea.width / 2, leftTop.y - AREA_LABEL_INSET),
+      overTop: point(
+        (rightTop.x + leftTop.x * 2) / 3,
+        (rightTop.y * 2 + leftTop.y) / 3 + 4,
+      ),
+      beyond: point(
+        beyondArea.x + beyondArea.width / 2,
+        leftBottom.y + AREA_LABEL_INSET + 4,
+      ),
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),
-      title: point(CENTER_X, topY - 14),
+      title: point(CENTER_X, topY - 40),
     },
     measurements: {
       perpendicularWidth,
-      overlap: overlapFeet,
+      overTop: overTopFeet,
       beyond: beyondFeet,
     },
     formulas: {
@@ -325,9 +334,9 @@ export function calculateRightAngleAreas(angleDegrees) {
         expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularWidth)} ft across`,
       },
-      overlap: {
-        expression: `min(${DIMENSIONS.arrowA} ft, ${DIMENSIONS.arrowB} ft)`,
-        result: `= ${formatFeet(overlapFeet)} ft, always overlapping`,
+      overTop: {
+        expression: `${DIMENSIONS.side} ft × |cos(${angleDegrees.toFixed(2)}°)|`,
+        result: `= ${formatFeet(overTopFeet)} ft over the top edge`,
       },
       chain: {
         expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft + ${DIMENSIONS.inset} ft`,

@@ -178,7 +178,6 @@ export function initializeApp(documentRef, windowRef) {
 
     setRect(element("pae-area-a"), areas.areaA);
     setRect(element("pae-area-b"), areas.areaB);
-    setRect(element("pae-area-overlap"), areas.overlapArea);
     setRect(element("pae-area-beyond"), areas.beyondArea);
 
     setLine(element("pae-area-chain-right"), areas.chain.rightInset);
@@ -213,10 +212,18 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.b,
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
+    // The wedge only exists while the shape leans, so hide it when square on.
+    const overTopVisible = areas.measurements.overTop > 0;
+    element("pae-area-over-top").setAttribute(
+      "d",
+      pathFromPoints(areas.overTopTriangle, true),
+    );
+    element("pae-area-over-top").setAttribute("opacity", overTopVisible ? "1" : "0");
+    element("pae-area-overlap-label").setAttribute("opacity", overTopVisible ? "1" : "0");
     setText(
       element("pae-area-overlap-label"),
-      areas.labels.overlap,
-      `Overlapping · ${areas.measurements.overlap.toFixed(2)} ft`,
+      areas.labels.overTop,
+      `Overlapping · ${areas.measurements.overTop.toFixed(2)} ft`,
     );
 
     // The chain only fits when the shape is square on, so hide the spill there.
@@ -231,7 +238,7 @@ export function initializeApp(documentRef, windowRef) {
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
-    setFormula("pae-area-calc-overlap", areas.formulas.overlap);
+    setFormula("pae-area-calc-over-top", areas.formulas.overTop);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
     setFormula("pae-area-calc-beyond", areas.formulas.beyond);
   }
