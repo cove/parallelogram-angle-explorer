@@ -186,6 +186,7 @@ export function calculateDiagram(angleDegrees) {
       (leftBottom.y + rightBottom.y) / 2 + 17,
     ),
     rightSideLabel: point(rightX + 13, (rightTop.y + rightBottom.y) / 2),
+    titleLabel: point(CENTER_X, Math.min(leftTop.y, rightTop.y) - 40),
     measurements,
     formulas: {
       shape: {

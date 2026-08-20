@@ -350,6 +350,10 @@
         font-size: 15px;
         margin-bottom: 6px;
       }
+      #parallelogram-angle-explorer #pae-forced-heading {
+        order: 0;
+        flex: 0 0 auto;
+      }
       #parallelogram-angle-explorer #pae-svg {
         order: 1;
         flex: 1 1 auto;
@@ -412,9 +416,10 @@
     <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
     <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
   </div>
+  <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
-    <desc id="pae-svg-desc">Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.</desc>
+    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet, with a live overlap measurement between their left endpoints.</desc>
     <defs>
       <marker id="pae-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
@@ -463,6 +468,7 @@
     <line id="pae-overlap-witness-a" class="overlap-dimension"></line>
     <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 0.93 ft</text>
 
+    <text id="pae-forced-title-label" class="label area-title-label">Forced assessor measurements</text>
     <text id="pae-bottom-side-label" class="label">80 ft</text>
     <text id="pae-right-side-label" class="label">165.93 ft</text>
     </g>
