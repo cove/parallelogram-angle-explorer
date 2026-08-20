@@ -476,7 +476,7 @@
     <text id="pae-top-dim-right-label" class="label inset-label emphasized-dimension-label">15 ft</text>
     <text id="pae-top-dim-inner-label" class="label inset-label emphasized-dimension-label">50 ft</text>
     <path id="pae-angle-arc" class="angle-arc"></path>
-    <text id="pae-angle-label" class="label angle-label">69.69°</text>
+    <text id="pae-angle-label" class="label angle-label">110.23°</text>
 
     <line id="pae-perp-inset-left" class="inset-offset right-angle-method" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-perp-inner" class="inset-offset right-angle-method" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -505,8 +505,8 @@
 
   <div class="controls">
     <label>
-      <span>Slant angle θ <output id="pae-angle-output">69.69°</output></span>
-      <input id="pae-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+      <span>Slant angle θ <output id="pae-angle-output">110.23°</output></span>
+      <input id="pae-angle" type="range" min="1" max="180" step="0.01" value="110.23" aria-label="Slant angle in degrees">
     </label>
   </div>
   <div id="pae-reset-row" class="viz-row">
@@ -591,6 +591,10 @@
     <text id="pae-area-title-label" class="label area-title-label">15 ft squared off each side, 50 ft in the middle</text>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
+    <line id="pae-area-ab-overlap" class="overlap-dimension"></line>
+    <line id="pae-area-ab-witness-a" class="overlap-dimension"></line>
+    <line id="pae-area-ab-witness-b" class="overlap-dimension"></line>
+    <text id="pae-area-ab-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 0.93 ft</text>
     <text id="pae-area-strip-right-label" class="label area-label">15 ft</text>
     <text id="pae-area-strip-left-label" class="label area-label">15 ft</text>
     <text id="pae-area-corner-rt" class="label area-corner-label area-overlap-start">Overlap · 5.55 ft</text>
@@ -612,8 +616,8 @@
 
   <div class="controls" id="pae-area-controls">
     <label>
-      <span>Slant angle θ <output id="pae-area-angle-output">69.69°</output></span>
-      <input id="pae-area-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+      <span>Slant angle θ <output id="pae-area-angle-output">110.23°</output></span>
+      <input id="pae-area-angle" type="range" min="1" max="180" step="0.01" value="110.23" aria-label="Slant angle in degrees">
     </label>
   </div>
 
@@ -646,6 +650,10 @@
         <div class="calculation calculation-black">
           <span class="calculation-name">Strip gap</span>
           <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-red">
+          <span class="calculation-name">A over B</span>
+          <span class="calculation-formula"><span id="pae-area-calc-ab-overlap-expression">Calculating…</span><strong id="pae-area-calc-ab-overlap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
           <span class="calculation-name">Room needed</span>
@@ -687,8 +695,8 @@
 
   <div class="controls" id="pae-fit-controls">
     <label>
-      <span>Slant angle θ <output id="pae-fit-angle-output">69.69°</output></span>
-      <input id="pae-fit-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+      <span>Slant angle θ <output id="pae-fit-angle-output">110.23°</output></span>
+      <input id="pae-fit-angle" type="range" min="1" max="180" step="0.01" value="110.23" aria-label="Slant angle in degrees">
     </label>
   </div>
 

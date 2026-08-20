@@ -16,9 +16,14 @@ const approximately = (actual, expected, tolerance = 1e-9) => {
   );
 };
 
+// The angle every worked figure below was computed by hand for. It is no
+// longer the sliders' starting angle, so it is pinned here rather than read
+// from the presets.
+const EXAMPLE_ANGLE = 69.69;
+
 test("exports the supported presets and fixed dimensions", () => {
   assert.deepEqual(PRESET_ANGLES, {
-    initial: 69.69,
+    initial: 110.23,
     rightAngle: 90,
     reverse: 110.23,
   });
@@ -35,7 +40,7 @@ test("exports the supported presets and fixed dimensions", () => {
 });
 
 test("calculates the initial 69.69 degree example", () => {
-  const diagram = calculateDiagram(PRESET_ANGLES.initial);
+  const diagram = calculateDiagram(EXAMPLE_ANGLE);
 
   approximately(diagram.sine, 0.9378283686332146);
   approximately(diagram.cosine, 0.347099338464);
@@ -190,7 +195,7 @@ test("is symmetric around 90 degrees across the supported range", () => {
 });
 
 test("returns a complete, internally connected drawing model", () => {
-  const diagram = calculateDiagram(PRESET_ANGLES.initial);
+  const diagram = calculateDiagram(EXAMPLE_ANGLE);
 
   assert.equal(diagram.shape.length, 4);
   assert.deepEqual(diagram.insetLines.left.y2 - diagram.insetLines.left.y1, 285.3996);
@@ -202,8 +207,8 @@ test("returns a complete, internally connected drawing model", () => {
   assert.equal(diagram.perpendicular.rightSquare.length, 3);
   assert.equal(diagram.guides.overlapSpan.y1, diagram.guides.overlapExtension.y1);
   assert.equal(diagram.arc.radius, 28);
-  assert.equal(diagram.angleDegrees, PRESET_ANGLES.initial);
-  approximately(diagram.angleRadians, PRESET_ANGLES.initial * Math.PI / 180);
+  assert.equal(diagram.angleDegrees, EXAMPLE_ANGLE);
+  approximately(diagram.angleRadians, EXAMPLE_ANGLE * Math.PI / 180);
   assert.ok(diagram.topLabels.left.x < diagram.topLabels.inner.x);
   assert.ok(diagram.topLabels.inner.x < diagram.topLabels.right.x);
   assert.ok(diagram.bottomLabel.y > diagram.shape[2].y);
@@ -211,7 +216,7 @@ test("returns a complete, internally connected drawing model", () => {
 });
 
 test("titles the first diagram above its highest corner", () => {
-  for (const angle of [PRESET_ANGLES.initial, PRESET_ANGLES.rightAngle, PRESET_ANGLES.reverse]) {
+  for (const angle of [EXAMPLE_ANGLE, PRESET_ANGLES.rightAngle, PRESET_ANGLES.reverse]) {
     const diagram = calculateDiagram(angle);
     const [leftTop, rightTop] = diagram.shape;
     assert.equal(diagram.titleLabel.x, 300);
@@ -241,13 +246,29 @@ test("rejects invalid angle values", () => {
 });
 
 test("measures both right-angle areas from the right side", () => {
-  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
+  // Feet to drawing units, recovered from a band whose width in feet is known.
+  const scale = areas.areaA.width / DIMENSIONS.arrowA;
 
-  // Both bands end on the right side and run back at a right angle to it.
+  // A runs back from the right side itself; B starts where the 15 ft inset
+  // lands when it is stepped off along the leaning edge, so the two ends miss
+  // each other by the amount both claim.
   approximately(areas.areaA.x + areas.areaA.width, rightTop.x);
-  approximately(areas.areaB.x + areas.areaB.width, rightTop.x);
+  approximately(
+    areas.areaB.x + areas.areaB.width,
+    rightTop.x - DIMENSIONS.inset * Math.sin(EXAMPLE_ANGLE * Math.PI / 180) * scale,
+  );
   approximately(areas.areaA.width / areas.areaB.width, DIMENSIONS.arrowA / DIMENSIONS.arrowB);
+  approximately(
+    areas.measurements.abOverlap,
+    Math.abs(
+      DIMENSIONS.arrowA
+        - (DIMENSIONS.arrowB + DIMENSIONS.inset * Math.sin(EXAMPLE_ANGLE * Math.PI / 180)),
+    ),
+  );
+  approximately(areas.abOverlap.span.x1, areas.areaA.x);
+  approximately(areas.abOverlap.span.x2, areas.areaB.x);
   approximately(areas.areaA.y, Math.min(leftTop.y, rightTop.y));
   approximately(areas.areaA.height, Math.max(leftBottom.y, rightBottom.y) - areas.areaA.y);
   assert.equal(areas.strips.right.width, areas.strips.left.width);
@@ -259,7 +280,7 @@ test("measures both right-angle areas from the right side", () => {
   assert.equal(areas.squares.b.length, 3);
   assert.ok(areas.squares.a[1].y < areas.squares.a[0].y);
   assert.ok(areas.squares.b[1].y > areas.squares.b[0].y);
-  assert.equal(areas.angleDegrees, PRESET_ANGLES.initial);
+  assert.equal(areas.angleDegrees, EXAMPLE_ANGLE);
   assert.equal(areas.formulas.method.result, "· A = 65 ft · B = 50 ft");
   assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
   assert.equal(areas.formulas.width.result, "= 75.03 ft across");
@@ -274,7 +295,7 @@ test("measures both right-angle areas from the right side", () => {
 });
 
 test("steps 15, 50 and 15 off the side at a right angle", () => {
-  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
@@ -295,12 +316,12 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   assert.equal(areas.farEdgeWitness.x2, leftTop.x);
   assert.equal(areas.squares.chain.length, 3);
   approximately(areas.measurements.perpendicularWidth, DIMENSIONS.side * Math.sin(
-    PRESET_ANGLES.initial * Math.PI / 180,
+    EXAMPLE_ANGLE * Math.PI / 180,
   ));
 });
 
 test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
-  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
 
   // Each strip hugs its own side and is 15 ft wide measured square off it.
@@ -317,7 +338,7 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   approximately(areas.strips.right.height, areas.strips.left.height);
 
   // Those square ends sit clear of the leaning top and bottom edges.
-  const radians = PRESET_ANGLES.initial * Math.PI / 180;
+  const radians = EXAMPLE_ANGLE * Math.PI / 180;
   approximately(
     areas.measurements.overhang,
     DIMENSIONS.inset * Math.abs(Math.cos(radians)) / Math.sin(radians),
@@ -352,7 +373,7 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   assert.equal(square.measurements.middleEnds, 0);
   assert.equal(calculateRightAngleAreas(180).measurements.middleEnds, 0);
 
-  const areas = calculateRightAngleAreas(PRESET_ANGLES.initial);
+  const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   approximately(
     areas.measurements.middle,
     areas.measurements.perpendicularWidth - DIMENSIONS.inset * 2,
@@ -412,7 +433,7 @@ test("rejects invalid angles for the right-angle areas too", () => {
 });
 
 test("draws the 65 and 50 ft lines parallel to the top edge", () => {
-  const fit = calculateParallelAreas(PRESET_ANGLES.initial);
+  const fit = calculateParallelAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop, rightBottom, leftBottom] = fit.shape;
   const topLength = Math.hypot(leftTop.x - rightTop.x, leftTop.y - rightTop.y);
   const length = ({ x1, y1, x2, y2 }) => Math.hypot(x2 - x1, y2 - y1);
@@ -428,7 +449,7 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
   );
   approximately(direction(fit.guides.b), direction(fit.guides.a));
 
-  assert.equal(fit.rotation, PRESET_ANGLES.initial - 90);
+  assert.equal(fit.rotation, EXAMPLE_ANGLE - 90);
   approximately(fit.strips.rightInset.x + fit.strips.rightInset.width, rightTop.x);
   approximately(fit.strips.leftInset.x, leftTop.x);
   approximately(
@@ -466,4 +487,19 @@ test("both parallel guides end on the same line at every angle", () => {
 test("rejects invalid angles for the parallel diagram too", () => {
   assert.throws(() => calculateParallelAreas(181), RangeError);
   assert.throws(() => calculateParallelAreas("90"), RangeError);
+});
+
+test("A and B claim the same ground until the shape is square on", () => {
+  const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
+  approximately(square.measurements.abOverlap, 0);
+  approximately(square.abOverlap.span.x1, square.abOverlap.span.x2);
+
+  const leaning = calculateRightAngleAreas(PRESET_ANGLES.reverse);
+  const sine = Math.sin(PRESET_ANGLES.reverse * Math.PI / 180);
+  approximately(leaning.measurements.abOverlap, Math.abs(65 - (50 + 15 * sine)));
+  assert.ok(leaning.measurements.abOverlap > 0);
+  assert.equal(
+    leaning.formulas.abOverlap.result,
+    `= ${leaning.measurements.abOverlap.toFixed(2)} ft claimed twice`,
+  );
 });

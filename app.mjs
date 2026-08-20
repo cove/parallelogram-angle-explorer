@@ -261,6 +261,22 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.b,
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
+    // A and B end in different places unless the shape is square on, and the
+    // stretch between those ends is ground both of them claim.
+    setLine(element("pae-area-ab-overlap"), areas.abOverlap.span);
+    setLine(element("pae-area-ab-witness-a"), areas.abOverlap.witnessA);
+    setLine(element("pae-area-ab-witness-b"), areas.abOverlap.witnessB);
+    const abVisible = areas.abOverlap.feet > 0 ? "1" : "0";
+    for (const id of ["pae-area-ab-overlap", "pae-area-ab-witness-a", "pae-area-ab-witness-b"]) {
+      element(id).setAttribute("opacity", abVisible);
+    }
+    const abLabel = element("pae-area-ab-overlap-label");
+    abLabel.setAttribute("opacity", abVisible);
+    setText(
+      abLabel,
+      areas.abOverlap.label,
+      `A over B · ${areas.abOverlap.feet.toFixed(2)} ft`,
+    );
     // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
     const middleEnds = areas.measurements.middleEnds;
@@ -290,6 +306,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
     setFormula("pae-area-calc-middle-ends", areas.formulas.middleEnds);
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
+    setFormula("pae-area-calc-ab-overlap", areas.formulas.abOverlap);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 

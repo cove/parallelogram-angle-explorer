@@ -1,5 +1,5 @@
 export const PRESET_ANGLES = Object.freeze({
-  initial: 69.69,
+  initial: 110.23,
   rightAngle: 90,
   reverse: 110.23,
 });
@@ -238,7 +238,19 @@ export function calculateRightAngleAreas(angleDegrees) {
     height,
   });
   const areaA = bandRect(DIMENSIONS.arrowA);
-  const areaB = bandRect(DIMENSIONS.arrowB);
+  // B starts where the 15 ft inset lands when it is stepped off along the
+  // leaning side, so its 50 ft ends up somewhere other than A's 65 ft and the
+  // two claims overlap by however far apart those ends fall.
+  const insetAlongSide = DIMENSIONS.inset * base.sine;
+  const areaBStartFeet = insetAlongSide;
+  const areaBEndFeet = areaBStartFeet + DIMENSIONS.arrowB;
+  const areaB = {
+    x: rightX - areaBEndFeet * SCALE,
+    y: topY,
+    width: DIMENSIONS.arrowB * SCALE,
+    height,
+  };
+  const abOverlapFeet = Math.abs(DIMENSIONS.arrowA - areaBEndFeet);
 
   // A 15 ft strip squared off each side keeps square ends, but the top and
   // bottom edges lean away from those ends, so each strip runs past the shape.
@@ -316,14 +328,26 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(areaA.x, bandY(-34)),
   );
   const dimensionB = line(
-    point(rightX, bandY(34)),
+    point(rightX - areaBStartFeet * SCALE, bandY(34)),
     point(areaB.x, bandY(34)),
   );
-  const rightAngleSquare = (y, direction) => [
-    point(rightX - 9, y),
-    point(rightX - 9, y + 9 * direction),
-    point(rightX, y + 9 * direction),
+  const rightAngleSquare = (y, direction, x = rightX) => [
+    point(x - 9, y),
+    point(x - 9, y + 9 * direction),
+    point(x, y + 9 * direction),
   ];
+  // The two far ends and the stretch between them: ground both A and B claim.
+  const abOverlapY = bandY(0);
+  const abOverlap = {
+    span: line(point(areaA.x, abOverlapY), point(areaB.x, abOverlapY)),
+    witnessA: line(point(areaA.x, bandY(-34)), point(areaA.x, abOverlapY)),
+    witnessB: line(point(areaB.x, bandY(34)), point(areaB.x, abOverlapY)),
+    label: point(
+      Math.max(Math.min(areaA.x, areaB.x) - 8, LEFT_LABEL_LIMIT),
+      abOverlapY + 4,
+    ),
+    feet: abOverlapFeet,
+  };
 
   return {
     angleDegrees,
@@ -344,9 +368,10 @@ export function calculateRightAngleAreas(angleDegrees) {
     chain,
     farEdgeWitness,
     dimensions: { a: dimensionA, b: dimensionB },
+    abOverlap,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
-      b: rightAngleSquare(bandY(34), 1),
+      b: rightAngleSquare(bandY(34), 1, rightX - areaBStartFeet * SCALE),
       chain: rightAngleSquare(chainY, 1),
     },
     labels: {
@@ -383,8 +408,13 @@ export function calculateRightAngleAreas(angleDegrees) {
       middle: middleFeet,
       middleShort: middleShortFeet,
       middleEnds: middleEndFeet,
+      abOverlap: abOverlapFeet,
     },
     formulas: {
+      abOverlap: {
+        expression: `|65 ft − (50 ft + 15 ft × sin(${angleDegrees.toFixed(2)}°))|`,
+        result: `= ${formatFeet(abOverlapFeet)} ft claimed twice`,
+      },
       method: {
         expression: "both areas start at the right side, turned 90°",
         result: `· A = ${DIMENSIONS.arrowA} ft · B = ${DIMENSIONS.arrowB} ft`,
