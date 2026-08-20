@@ -164,7 +164,7 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-corner-rb").textContent, "Gap · 5.55 ft");
   assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 5.55 ft");
   assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
-  assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #a3520f");
+  assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #4b5563");
   assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
   assert.equal(
@@ -268,7 +268,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   controller.draw(110.23);
   assert.equal(nodes.get("pae-area-corner-rt").textContent, "Gap · 5.53 ft");
   assert.equal(nodes.get("pae-area-corner-rb").textContent, "Overlap · 5.53 ft");
-  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #a3520f");
+  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #4b5563");
 
   // Leaned far enough, the two strips run into each other.
   controller.draw(20);
