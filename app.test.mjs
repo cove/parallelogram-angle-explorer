@@ -52,19 +52,21 @@ class FakeMediaQuery {
   }
 }
 
-async function createHarness() {
-  const html = await readFile(new URL("./index.html", import.meta.url), "utf8");
+async function createHarness(page = "./index.html") {
+  const html = await readFile(new URL(page, import.meta.url), "utf8");
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
   const nodes = new Map(ids.map((id) => [id, new FakeElement()]));
   const root = nodes.get("parallelogram-angle-explorer");
   root.querySelector = (selector) => {
     assert.match(selector, /^#/);
-    const node = nodes.get(selector.slice(1));
-    assert.ok(node, `missing fixture for ${selector}`);
-    return node;
+    // A page carrying only some of the diagrams has no node for the others,
+    // and the app is expected to cope with that rather than throw.
+    return nodes.get(selector.slice(1)) ?? null;
   };
   for (const id of ["pae-angle", "pae-area-angle", "pae-fit-angle"]) {
-    nodes.get(id).value = "69.69";
+    if (nodes.has(id)) {
+      nodes.get(id).value = "69.69";
+    }
   }
 
   const documentRef = {
@@ -371,4 +373,26 @@ test("keeps the three sliders in step", async () => {
   for (const output of outputs) {
     assert.equal(output.textContent, "90.00°");
   }
+});
+
+test("drives the standalone overlaps page with only the area diagram", async () => {
+  const { controller, nodes, mediaQuery } = await createHarness("./overlaps.html");
+
+  assert.equal(nodes.has("pae-svg"), false);
+  assert.equal(nodes.has("pae-fit-svg"), false);
+  assert.equal(nodes.get("pae-area-angle-output").textContent, "69.69°");
+  assert.equal(nodes.get("pae-area-corner-mt").textContent, "Overlap · 22.22 ft");
+  assert.match(nodes.get("pae-area-shape").getAttribute("d"), /^M .+ Z$/);
+
+  const slider = nodes.get("pae-area-angle");
+  slider.value = "90";
+  slider.dispatch("input");
+  assert.equal(nodes.get("pae-area-angle-output").textContent, "90.00°");
+  assert.equal(nodes.get("pae-area-corner-mt").getAttribute("opacity"), "0");
+
+  nodes.get("pae-snap-11023").dispatch("click");
+  assert.equal(nodes.get("pae-area-angle-output").textContent, "110.23°");
+
+  mediaQuery.setMatches(true);
+  assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "70 0 480 676");
 });
