@@ -396,12 +396,12 @@
         max-height: 62vh;
       }
       #parallelogram-angle-explorer .controls {
-        order: 3;
+        order: 2;
         flex: 0 0 auto;
         margin: 8px 0 6px;
       }
       #parallelogram-angle-explorer #pae-calculations {
-        order: 2;
+        order: 3;
         flex: 0 0 auto;
         margin: 5px 0;
       }
@@ -412,7 +412,7 @@
         margin: 0 0 6px;
       }
       #parallelogram-angle-explorer #pae-reset-row {
-        order: 4;
+        order: 2;
         flex: 0 0 auto;
       }
       #parallelogram-angle-explorer #pae-source-footer {
@@ -447,16 +447,6 @@
   </style>
 
   <h2>PARALLELOGRAM ANGLE EXPLORER</h2>
-  <div class="controls">
-    <label>
-      <span>Slant angle θ <output id="pae-angle-output">69.69°</output></span>
-      <input id="pae-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
-    </label>
-  </div>
-  <div id="pae-reset-row" class="viz-row">
-    <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
-    <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
-  </div>
   <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
@@ -515,6 +505,17 @@
     </g>
   </svg>
 
+  <div class="controls">
+    <label>
+      <span>Slant angle θ <output id="pae-angle-output">69.69°</output></span>
+      <input id="pae-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+    </label>
+  </div>
+  <div id="pae-reset-row" class="viz-row">
+    <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
+    <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
+  </div>
+
   <details id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
     <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
     <h3 id="pae-calculations-title">Measurement calculations</h3>
@@ -544,12 +545,6 @@
   </details>
 
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
-  <div class="controls" id="pae-area-controls">
-    <label>
-      <span>Slant angle θ <output id="pae-area-angle-output">69.69°</output></span>
-      <input id="pae-area-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
-    </label>
-  </div>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
     <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. A 15 foot strip is squared off each side and the 50 foot middle carries on from the right strip with the same square ends. Because those ends are cut square while the top and bottom edges lean, each part runs past one edge, shaded red, and stops short of the other, leaving a gap of unclaimed shape, left white. The middle runs furthest from the side it was squared off, so its wedges are the deepest. Measured this way the middle also comes up short of 50 feet, and on a steep lean the two strips collide. Everything lines up only when the shape is square on at 90 degrees.</desc>
@@ -615,6 +610,13 @@
     </g>
   </svg>
 
+  <div class="controls" id="pae-area-controls">
+    <label>
+      <span>Slant angle θ <output id="pae-area-angle-output">69.69°</output></span>
+      <input id="pae-area-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+    </label>
+  </div>
+
   <details id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
@@ -652,12 +654,6 @@
   </details>
 
   <h2 id="pae-fit-heading">LINES PARALLEL TO THE TOP EDGE — EVERYTHING FITS</h2>
-  <div class="controls" id="pae-fit-controls">
-    <label>
-      <span>Slant angle θ <output id="pae-fit-angle-output">69.69°</output></span>
-      <input id="pae-fit-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
-    </label>
-  </div>
   <svg id="pae-fit-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-fit-svg-title pae-fit-svg-desc">
     <title id="pae-fit-svg-title">The 65 and 50 foot lines drawn parallel to the top edge</title>
     <desc id="pae-fit-svg-desc">The same parallelogram with the 65 foot and 50 foot lines drawn parallel to the 80 foot top edge instead of at a right angle to the side. A starts at the right corner and reaches 65 feet; B starts 15 feet along and reaches 50 feet. Because 15 plus 50 equals 65, both lines end on the same line at every angle, and 65 plus the remaining 15 feet fills the whole 80 foot side with no overlap and nothing left over.</desc>
@@ -686,6 +682,13 @@
     <text id="pae-fit-match-label" class="label fit-match-label">Ends match · 0.00 ft</text>
     </g>
   </svg>
+
+  <div class="controls" id="pae-fit-controls">
+    <label>
+      <span>Slant angle θ <output id="pae-fit-angle-output">69.69°</output></span>
+      <input id="pae-fit-angle" type="range" min="1" max="180" step="0.01" value="69.69" aria-label="Slant angle in degrees">
+    </label>
+  </div>
 
   <details id="pae-fit-calculations" class="calculations" aria-labelledby="pae-fit-calculations-title">
     <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
