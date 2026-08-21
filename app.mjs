@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=7";
+} from "./geometry.mjs?v=8";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -220,9 +220,6 @@ export function initializeApp(documentRef, windowRef) {
     setRect(element("pae-area-mask-strip-left"), areas.strips.left);
     setRect(element("pae-area-strip-right-gap"), areas.stripColumns.right);
     setRect(element("pae-area-strip-left-gap"), areas.stripColumns.left);
-    setText(element("pae-area-strip-right-label"), areas.labels.rightStrip, `${DIMENSIONS.inset} ft`, 90);
-    setText(element("pae-area-strip-left-label"), areas.labels.leftStrip, `${DIMENSIONS.inset} ft`, 90);
-
     setLine(element("pae-area-chain-right"), areas.chain.rightInset);
     setLine(element("pae-area-chain-inner"), areas.chain.inner);
     setLine(element("pae-area-chain-left"), areas.chain.leftInset);

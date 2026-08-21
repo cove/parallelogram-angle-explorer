@@ -406,15 +406,6 @@ export function calculateRightAngleAreas(angleDegrees) {
       ),
       leftTop: point(leftTop.x - 6, leftTop.y - 8),
       leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
-      // Kept clear of the A and B arrows that sit across the middle.
-      rightStrip: point(
-        rightX - stripWidth / 2,
-        rightTop.y + (rightBottom.y - rightTop.y) / 4,
-      ),
-      leftStrip: point(
-        leftTop.x + stripWidth / 2,
-        leftTop.y + (leftBottom.y - leftTop.y) * 3 / 4,
-      ),
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),

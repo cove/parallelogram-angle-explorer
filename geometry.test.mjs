@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=7";
+} from "./geometry.mjs?v=8";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -344,8 +344,6 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
     areas.measurements.overhang,
     DIMENSIONS.inset * Math.abs(Math.cos(radians)) / Math.sin(radians),
   );
-  approximately(areas.labels.rightStrip.x, rightTop.x - areas.strips.right.width / 2);
-  approximately(areas.labels.leftStrip.x, leftTop.x + areas.strips.left.width / 2);
   // Corner labels sit outside their strip, and the lean decides which corner
   // is an overlap and which is a gap.
   assert.equal(areas.leansRight, true);
@@ -359,8 +357,6 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
   approximately(areas.stripColumns.left.width, areas.strips.left.width);
   assert.ok(areas.stripColumns.right.height > areas.strips.right.height);
-  assert.ok(areas.labels.rightStrip.y < (rightTop.y + rightBottom.y) / 2);
-  assert.ok(areas.labels.leftStrip.y > (leftTop.y + leftBottom.y) / 2);
 });
 
 test("the middle only measures a full 50 ft when the shape is square on", () => {
