@@ -135,10 +135,10 @@ test("handles all preset buttons and the 180 degree extreme", async () => {
   assert.equal(slider.value, "90");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft");
 
-  nodes.get("pae-snap-10080").dispatch("click");
-  assert.equal(slider.value, "100.8");
-  assert.equal(nodes.get("pae-angle-output").textContent, "100.80°");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.27 ft");
+  nodes.get("pae-snap-11254").dispatch("click");
+  assert.equal(slider.value, "112.54");
+  assert.equal(nodes.get("pae-angle-output").textContent, "112.54°");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 1.15 ft");
 
   nodes.get("pae-snap-11023").dispatch("click");
   assert.equal(slider.value, "110.23");
@@ -376,12 +376,12 @@ test("keeps the right-angle page's two sliders in step", async () => {
     assert.equal(output.textContent, "90.00°");
   }
 
-  nodes.get("pae-snap-10080").dispatch("click");
+  nodes.get("pae-snap-11254").dispatch("click");
   for (const slider of sliders) {
-    assert.equal(slider.value, "100.8");
+    assert.equal(slider.value, "112.54");
   }
   for (const output of outputs) {
-    assert.equal(output.textContent, "100.80°");
+    assert.equal(output.textContent, "112.54°");
   }
 });
 

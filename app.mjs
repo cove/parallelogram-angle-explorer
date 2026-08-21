@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=6";
+} from "./geometry.mjs?v=7";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -19,7 +19,7 @@ export function initializeApp(documentRef, windowRef) {
     .map((id) => root.querySelector(`#${id}`))
     .filter((output) => output !== null);
   const snap90Button = root.querySelector("#pae-snap-90");
-  const snap10080Button = root.querySelector("#pae-snap-10080");
+  const snap11254Button = root.querySelector("#pae-snap-11254");
   const snap11023Button = root.querySelector("#pae-snap-11023");
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
@@ -283,7 +283,8 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
     setFormula("pae-area-calc-middle-ends", areas.formulas.middleEnds);
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
-    setFormula("pae-area-calc-left-overlap", areas.formulas.leftStripOverlap);
+    setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapA);
+    setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapB);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 
@@ -358,7 +359,7 @@ export function initializeApp(documentRef, windowRef) {
     input.addEventListener("input", () => setAngle(Number(input.value)));
   }
   snap90Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.rightAngle));
-  snap10080Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.angle10080));
+  snap11254Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.angle11254));
   snap11023Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();

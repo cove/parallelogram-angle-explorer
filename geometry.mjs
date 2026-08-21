@@ -1,7 +1,7 @@
 export const PRESET_ANGLES = Object.freeze({
   initial: 110.23,
   rightAngle: 90,
-  angle10080: 100.8,
+  angle11254: 112.54,
   reverse: 110.23,
 });
 
@@ -429,9 +429,13 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapB: leftStripOverlaps.b.feet,
     },
     formulas: {
-      leftStripOverlap: {
-        expression: `past ${formatFeet(leftStripInnerFeet)} ft, where the left 15 ft strip starts`,
-        result: `A by ${formatFeet(leftStripOverlaps.a.feet)} ft · B by ${formatFeet(leftStripOverlaps.b.feet)} ft`,
+      leftStripOverlapA: {
+        expression: `${DIMENSIONS.arrowA} ft − (${DIMENSIONS.side} ft × sin(${angleDegrees.toFixed(2)}°) − ${DIMENSIONS.inset} ft)`,
+        result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
+      },
+      leftStripOverlapB: {
+        expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − (${DIMENSIONS.side} ft × sin(${angleDegrees.toFixed(2)}°) − ${DIMENSIONS.inset} ft)`,
+        result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       method: {
         expression: "both areas start at the right side, turned 90°",
