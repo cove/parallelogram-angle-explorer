@@ -525,3 +525,28 @@ test("measurement labels are smaller and use normal weight", async () => {
     }
   }
 });
+
+test("show-math rows are grouped in a readable derivation order", async () => {
+  const expectedGroups = {
+    "index.html": [
+      "1. Parcel and true projections",
+      "2. Forced lines and purple row",
+      "3. Left-15 overlap checks",
+    ],
+    "overlaps.html": [
+      "1. Build the squared-off construction",
+      "2. Compare the fixed fit with the available middle",
+      "3. Locate the vertical and area effects",
+      "1. Trace both lines along the top edge",
+      "2. Prove the endpoints match",
+    ],
+  };
+
+  for (const [file, expected] of Object.entries(expectedGroups)) {
+    const source = await readFile(new URL(`./${file}`, import.meta.url), "utf8");
+    const actual = [...source.matchAll(/class="calculation-group-title">([^<]+)/g)]
+      .map((match) => match[1]);
+    assert.deepEqual(actual, expected);
+    assert.match(source, /\.calculation-group-title\s*\{[^}]*grid-column:\s*1 \/ -1;/s);
+  }
+});

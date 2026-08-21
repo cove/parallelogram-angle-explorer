@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=36";
+} from "./geometry.mjs?v=37";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(

@@ -354,6 +354,20 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 4px 18px;
     }
+    #parallelogram-angle-explorer .calculation-group-title {
+      grid-column: 1 / -1;
+      margin: 8px 0 2px;
+      padding-top: 7px;
+      border-top: 1px solid #dddddd;
+      color: #333333;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    #parallelogram-angle-explorer .calculation-group-title:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
     #parallelogram-angle-explorer .calculation {
       display: grid;
       grid-template-columns: max-content minmax(0, 1fr);
@@ -536,6 +550,7 @@
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
+        <h4 class="calculation-group-title">1. Parcel and true projections</h4>
         <div class="calculation calculation-green">
           <span class="calculation-name"><var>a</var> + <var>b</var> + <var>c</var> · Shape</span>
           <span class="calculation-formula"><span id="pae-calc-shape-expression">Calculating…</span><strong id="pae-calc-shape-result" class="calculation-result"></strong></span>
@@ -552,6 +567,7 @@
           <span class="calculation-name"><var>b</var> + <var>c</var> · Left-15 boundary</span>
           <span class="calculation-formula"><span id="pae-calc-left-boundary-expression">Calculating…</span><strong id="pae-calc-left-boundary-result" class="calculation-result"></strong></span>
         </div>
+        <h4 class="calculation-group-title">2. Forced lines and purple row</h4>
         <div class="calculation calculation-brown">
           <span class="calculation-name">lines <var>h</var>, <var>g</var></span>
           <span class="calculation-formula"><span id="pae-calc-fixed-arrows-expression">Calculating…</span><strong id="pae-calc-fixed-arrows-result" class="calculation-result"></strong></span>
@@ -568,6 +584,7 @@
           <span class="calculation-name"><var>e</var> · Forced center</span>
           <span class="calculation-formula"><span id="pae-calc-forced-inner-expression">Calculating…</span><strong id="pae-calc-forced-inner-result" class="calculation-result"></strong></span>
         </div>
+        <h4 class="calculation-group-title">3. Left-15 overlap checks</h4>
         <div class="calculation calculation-red">
           <span class="calculation-name"><var>i</var> · line <var>h</var> into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
@@ -589,7 +606,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=36"></script>
+  <script type="module" src="./main.mjs?v=37"></script>
 </div>
 
 </body>
