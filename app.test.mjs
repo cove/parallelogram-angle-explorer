@@ -327,6 +327,14 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 901.55 ft²");
 
+  // Once the constructed gaps fall completely outside the parcel, neither is
+  // considered an unclaimed parcel gap.
+  controller.draw(10);
+  assert.equal(nodes.get("pae-area-gap-main").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-gap-leader-main").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-gap-leader-left").getAttribute("opacity"), "0");
+
   // Leaned far enough, the two strips run into each other.
   controller.draw(20);
   assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "0");
