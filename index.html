@@ -505,7 +505,7 @@
     <text id="pae-static-b-label" class="label static-line-label">B · 50 ft</text>
     <line id="pae-overlap-extent-a" class="overlap-extent"></line>
     <line id="pae-overlap-span" class="overlap-dimension"></line>
-    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 4.01 ft</text>
+    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">A into left 15 · 0.75 ft</text>
 
     <text id="pae-bottom-side-label" class="label">80 ft</text>
     <text id="pae-right-side-label" class="label">165.93 ft</text>
@@ -534,27 +534,39 @@
           <span class="calculation-formula"><span id="pae-calc-shape-expression">Calculating…</span><strong id="pae-calc-shape-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">Right offset</span>
+          <span class="calculation-name">Left/right 15 projection</span>
           <span class="calculation-formula"><span id="pae-calc-perp-insets-expression">Calculating…</span><strong id="pae-calc-perp-insets-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">Inner span</span>
+          <span class="calculation-name">True middle projection</span>
           <span class="calculation-formula"><span id="pae-calc-perp-inner-expression">Calculating…</span><strong id="pae-calc-perp-inner-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-purple">
+          <span class="calculation-name">Left-15 boundary</span>
+          <span class="calculation-formula"><span id="pae-calc-left-boundary-expression">Calculating…</span><strong id="pae-calc-left-boundary-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-brown">
           <span class="calculation-name">A and B</span>
           <span class="calculation-formula"><span id="pae-calc-fixed-arrows-expression">Calculating…</span><strong id="pae-calc-fixed-arrows-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-brown">
+          <span class="calculation-name">B endpoint</span>
+          <span class="calculation-formula"><span id="pae-calc-b-reach-expression">Calculating…</span><strong id="pae-calc-b-reach-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
           <span class="calculation-name">Left over</span>
           <span class="calculation-formula"><span id="pae-calc-left-over-expression">Calculating…</span><strong id="pae-calc-left-over-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">Overlap</span>
+          <span class="calculation-name">A into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
         </div>
+        <div class="calculation calculation-red">
+          <span class="calculation-name">B into left 15</span>
+          <span class="calculation-formula"><span id="pae-calc-b-overlap-expression">Calculating…</span><strong id="pae-calc-b-overlap-result" class="calculation-result"></strong></span>
+        </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">Projection loss</span>
+          <span class="calculation-name">A past B</span>
           <span class="calculation-formula"><span id="pae-calc-projection-loss-expression">Calculating…</span><strong id="pae-calc-projection-loss-result" class="calculation-result"></strong></span>
         </div>
       </div>
@@ -566,7 +578,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=32"></script>
+  <script type="module" src="./main.mjs?v=33"></script>
 </div>
 
 </body>

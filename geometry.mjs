@@ -147,10 +147,13 @@ export function calculateDiagram(angleDegrees) {
   const staticBStart = point(rightInsetTop.x, staticBY);
   const staticBEnd = point(rightInsetTop.x - DIMENSIONS.arrowB * SCALE, staticBY);
   const overlapY = (staticAY + staticBY) / 2;
-  // A's endpoint reaches into the projected left inset. This is the visible
-  // overlap; the separate loss from projecting 15 ft is kept in the math.
-  const overlap = (leftInsetTop.x - staticAEnd.x) / SCALE;
-  const projectionLoss = DIMENSIONS.inset - perpendicularInset;
+  // The true left-15 boundary is 15 + 50 = 65 ft along the top edge, then
+  // projected into this right-angle view. A and B both reach past it.
+  const leftBoundaryReach = (DIMENSIONS.inset + DIMENSIONS.innerSpan) * sine;
+  const bReach = perpendicularInset + DIMENSIONS.arrowB;
+  const overlap = DIMENSIONS.arrowA - leftBoundaryReach;
+  const bOverlap = bReach - leftBoundaryReach;
+  const projectionLoss = DIMENSIONS.arrowA - bReach;
   // A's endpoint can fall outside the shape's own width. Past that edge
   // there is no real vertical to trace, so both the fraction and the x it is
   // drawn at are held to the corner - otherwise the line keeps the corner's
@@ -196,6 +199,9 @@ export function calculateDiagram(angleDegrees) {
     perpendicularLeftOver,
     perpendicularChain,
     overlap,
+    bOverlap,
+    bReach,
+    leftBoundaryReach,
     projectionLoss,
   };
 
@@ -235,11 +241,15 @@ export function calculateDiagram(angleDegrees) {
       },
       outerOffsets: {
         expression: `15 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularInset)} ft on the right; the left 15 ft is stepped off A's end instead`,
+        result: `= ${formatFeet(perpendicularInset)} ft projected on both the left and right`,
       },
       innerSpan: {
         expression: `50 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularInner)} ft`,
+        result: `= ${formatFeet(perpendicularInner)} ft for the true projected middle`,
+      },
+      leftBoundary: {
+        expression: `(15 ft + 50 ft) × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(leftBoundaryReach)} ft from the right to the left-15 boundary`,
       },
       fixedArrows: {
         expression: "A = 65 ft",
@@ -247,15 +257,23 @@ export function calculateDiagram(angleDegrees) {
       },
       leftOver: {
         expression: `80 ft × sin(${angleDegrees.toFixed(2)}°) − 65 ft`,
-        result: `= ${formatFeet(perpendicularLeftOver)} ft left where 15 ft was claimed`,
+        result: `= ${formatFeet(perpendicularLeftOver)} ft between the left side and A's end`,
       },
       overlap: {
-        expression: `65 ft − 65 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(overlap)} ft`,
+        expression: `65 ft − (15 ft + 50 ft) × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(overlap)} ft A enters the left 15 ft`,
+      },
+      bReach: {
+        expression: `15 ft × sin(${angleDegrees.toFixed(2)}°) + 50 ft`,
+        result: `= ${formatFeet(bReach)} ft from the right to B's end`,
+      },
+      bOverlap: {
+        expression: `(${formatFeet(bReach)} ft) − (${formatFeet(leftBoundaryReach)} ft)`,
+        result: `= ${formatFeet(bOverlap)} ft B enters the left 15 ft`,
       },
       projectionLoss: {
-        expression: `15 ft − 15 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(projectionLoss)} ft`,
+        expression: `65 ft − (${formatFeet(bReach)} ft)`,
+        result: `= ${formatFeet(projectionLoss)} ft A reaches farther left than B`,
       },
     },
   };

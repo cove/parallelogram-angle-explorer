@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=32";
+} from "./geometry.mjs?v=33";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -160,7 +160,7 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
-      `Overlap · ${diagram.measurements.overlap.toFixed(2)} ft`,
+      `A into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
     );
 
     element("pae-angle-arc").setAttribute(
@@ -188,9 +188,12 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-shape", diagram.formulas.shape);
     setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
+    setFormula("pae-calc-left-boundary", diagram.formulas.leftBoundary);
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
+    setFormula("pae-calc-b-reach", diagram.formulas.bReach);
     setFormula("pae-calc-left-over", diagram.formulas.leftOver);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
+    setFormula("pae-calc-b-overlap", diagram.formulas.bOverlap);
     setFormula("pae-calc-projection-loss", diagram.formulas.projectionLoss);
   }
 
