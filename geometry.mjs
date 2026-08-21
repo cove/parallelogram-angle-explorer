@@ -447,9 +447,15 @@ export function calculateRightAngleAreas(angleDegrees) {
   const gapArea = polygonAreaFeet(gapWedge);
   const gapTarget = polygonCentroid(gapWedge);
   const gapMidX = (rightX + gapCornerX) / 2;
+  // The flat strip line sits inside the real parcel on this side (that
+  // mismatch is the gap itself), so anchoring the label off it can still
+  // land inside the shape. Anchoring off the real edge at the label's own x
+  // instead keeps the label outside the parallelogram, same as the overlap
+  // label already is.
+  const gapRealEdgeAtMidX = leansRight ? bottomEdgeYAtX(gapMidX) : topEdgeYAtX(gapMidX);
   const gapLabelPosition = point(
     gapMidX,
-    gapFlatY + (leansRight ? 1 : -1) * LEADER_GAP,
+    gapRealEdgeAtMidX + (leansRight ? 1 : -1) * LEADER_GAP,
   );
   const gapLeader = line(
     point(gapMidX, gapLabelPosition.y + (leansRight ? -1 : 1) * LEADER_START_GAP),
