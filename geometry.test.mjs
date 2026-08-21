@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=21";
+} from "./geometry.mjs?v=22";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -176,6 +176,12 @@ test("preserves geometry invariants at every slider step", () => {
     assert.equal(diagram.topDimensions.inner.x2, diagram.topDimensions.right.x1);
     assert.equal(diagram.perpendicular.left.x2, diagram.perpendicular.inner.x1);
     assert.equal(diagram.perpendicular.inner.x2, diagram.perpendicular.right.x1);
+    // A's endpoint can land outside the shape's own width; the full-length
+    // guide drawn at it must still stay on the shape's own edge rather than
+    // being drawn out at that off-shape x with a mismatched edge-y.
+    const [leftTop, rightTop] = diagram.shape;
+    assert.ok(diagram.guides.overlapExtentA.x1 >= Math.min(leftTop.x, rightTop.x) - 1e-6);
+    assert.ok(diagram.guides.overlapExtentA.x1 <= Math.max(leftTop.x, rightTop.x) + 1e-6);
 
     const numericValues = [];
     const collectNumbers = (value) => {

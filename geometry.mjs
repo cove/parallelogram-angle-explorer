@@ -148,12 +148,17 @@ export function calculateDiagram(angleDegrees) {
   // overlap; the separate loss from projecting 15 ft is kept in the math.
   const overlap = (leftInsetTop.x - staticAEnd.x) / SCALE;
   const projectionLoss = DIMENSIONS.inset - perpendicularInset;
+  // A's endpoint can fall outside the shape's own width. Past that edge
+  // there is no real vertical to trace, so both the fraction and the x it is
+  // drawn at are held to the corner - otherwise the line keeps the corner's
+  // y while still being drawn out at the original, off-shape x.
   const fullLengthGuide = (x) => {
+    const guideX = clamp(x, leftX, rightX);
     const fractionAcrossShape = scaledWidth === 0
       ? 0.5
-      : clamp((x - leftX) / scaledWidth, 0, 1);
+      : (guideX - leftX) / scaledWidth;
     const guideTopY = leftTop.y + (rightTop.y - leftTop.y) * fractionAcrossShape;
-    return line(point(x, guideTopY), point(x, guideTopY + scaledLength));
+    return line(point(guideX, guideTopY), point(guideX, guideTopY + scaledLength));
   };
   const guides = {
     a: line(staticAStart, staticAEnd),
