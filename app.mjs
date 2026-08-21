@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=9";
+} from "./geometry.mjs?v=10";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -224,7 +224,13 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-area-chain-right"), areas.chain.rightInset);
     setLine(element("pae-area-chain-inner"), areas.chain.inner);
     setLine(element("pae-area-chain-left"), areas.chain.leftInset);
-    setLine(element("pae-area-far-edge-witness"), areas.farEdgeWitness);
+    for (const boundary of ["right", "rightInset", "inner", "left"]) {
+      const id = boundary.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+      setLine(
+        element(`pae-area-chain-witness-${id}`),
+        areas.chainWitnesses[boundary],
+      );
+    }
     element("pae-area-square-chain").setAttribute(
       "d",
       pathFromPoints(areas.squares.chain),
@@ -235,6 +241,10 @@ export function initializeApp(documentRef, windowRef) {
 
     setLine(element("pae-area-dim-a"), areas.dimensions.a);
     setLine(element("pae-area-dim-b"), areas.dimensions.b);
+    for (const id of ["pae-area-dim-a", "pae-area-dim-b"]) {
+      element(id).setAttribute("marker-start", "url(#pae-area-purple-arrow)");
+      element(id).setAttribute("marker-end", "url(#pae-area-purple-arrow)");
+    }
     element("pae-area-square-a").setAttribute("d", pathFromPoints(areas.squares.a));
     element("pae-area-square-b").setAttribute("d", pathFromPoints(areas.squares.b));
 
@@ -268,9 +278,17 @@ export function initializeApp(documentRef, windowRef) {
     ];
     for (const [corner, position, isOverlap, feet] of corners) {
       const node = element(`pae-area-corner-${corner}`);
-      node.setAttribute("opacity", feet > 0 ? "1" : "0");
+      const dimensionNode = element(`pae-area-corner-dim-${corner}`);
+      const opacity = feet > 0 ? "1" : "0";
+      node.setAttribute("opacity", opacity);
+      dimensionNode.setAttribute("opacity", opacity);
       // Inline so it wins over the shared label colour in the stylesheet.
       node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#111111"}`);
+      dimensionNode.setAttribute("style", `stroke: ${isOverlap ? "#c00000" : "#111111"}`);
+      const marker = isOverlap ? "pae-area-red-arrow" : "pae-area-black-arrow";
+      dimensionNode.setAttribute("marker-start", `url(#${marker})`);
+      dimensionNode.setAttribute("marker-end", `url(#${marker})`);
+      setLine(dimensionNode, areas.cornerDimensions[corner]);
       setText(
         node,
         position,
@@ -303,6 +321,20 @@ export function initializeApp(documentRef, windowRef) {
     setRect(element("pae-fit-strip-right"), fit.strips.rightInset);
     setRect(element("pae-fit-strip-inner"), fit.strips.inner);
     setRect(element("pae-fit-strip-left"), fit.strips.leftInset);
+
+    setLine(element("pae-fit-boundary-right-inset"), fit.boundaryLines.rightInset);
+    setLine(element("pae-fit-boundary-inner"), fit.boundaryLines.inner);
+    setLine(element("pae-fit-top-dim-right"), fit.topDimensions.rightInset);
+    setLine(element("pae-fit-top-dim-inner"), fit.topDimensions.inner);
+    setLine(element("pae-fit-top-dim-left"), fit.topDimensions.leftInset);
+    for (const id of ["pae-fit-top-dim-right", "pae-fit-top-dim-inner", "pae-fit-top-dim-left"]) {
+      element(id).setAttribute("marker-start", "url(#pae-fit-green-arrow)");
+      element(id).setAttribute("marker-end", "url(#pae-fit-green-arrow)");
+    }
+    setLine(element("pae-fit-top-ext-right"), fit.topExtensions.right);
+    setLine(element("pae-fit-top-ext-right-inset"), fit.topExtensions.rightInset);
+    setLine(element("pae-fit-top-ext-inner"), fit.topExtensions.inner);
+    setLine(element("pae-fit-top-ext-left"), fit.topExtensions.left);
 
     setLine(element("pae-fit-guide-a"), fit.guides.a);
     setLine(element("pae-fit-guide-b"), fit.guides.b);

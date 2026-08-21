@@ -181,6 +181,18 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 3.71 ft");
   assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
   assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #111111");
+  assert.equal(
+    nodes.get("pae-area-corner-dim-rt").getAttribute("marker-start"),
+    "url(#pae-area-red-arrow)",
+  );
+  assert.equal(
+    nodes.get("pae-area-corner-dim-rb").getAttribute("marker-start"),
+    "url(#pae-area-black-arrow)",
+  );
+  assert.equal(nodes.get("pae-area-dim-a").getAttribute("marker-start"), "url(#pae-area-purple-arrow)");
+  assert.equal(nodes.get("pae-area-dim-a").getAttribute("marker-end"), "url(#pae-area-purple-arrow)");
+  assert.equal(nodes.get("pae-area-dim-b").getAttribute("marker-start"), "url(#pae-area-purple-arrow)");
+  assert.equal(nodes.get("pae-area-dim-b").getAttribute("marker-end"), "url(#pae-area-purple-arrow)");
   assert.equal(nodes.has("pae-area-strip-right-label"), false);
   assert.equal(nodes.has("pae-area-strip-left-label"), false);
   assert.equal(nodes.has("pae-area-title-label"), false);
@@ -237,6 +249,14 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-chain-left-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft of room needed at 90°");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
+  assert.equal(
+    nodes.get("pae-area-chain-witness-right-inset").getAttribute("x1"),
+    nodes.get("pae-area-chain-right").getAttribute("x2"),
+  );
+  assert.equal(
+    nodes.get("pae-area-chain-witness-inner").getAttribute("x1"),
+    nodes.get("pae-area-chain-inner").getAttribute("x2"),
+  );
 
   // Each strip spans its own side, so the two are the same length.
   assert.equal(
@@ -245,6 +265,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   );
   for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "1");
+    assert.equal(nodes.get(`pae-area-corner-dim-${corner}`).getAttribute("opacity"), "1");
   }
   // The middle carries the same square ends further from the side, so its
   // over and under run deeper than the strips'.
@@ -264,6 +285,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   controller.draw(90);
   for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
     assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "0");
+    assert.equal(nodes.get(`pae-area-corner-dim-${corner}`).getAttribute("opacity"), "0");
   }
   // Hidden at 90 degrees, and every corner measures nothing either way.
   for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
@@ -322,6 +344,16 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
   assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
   assert.equal(nodes.get("pae-fit-calc-gap-result").textContent, "= 0.00 ft at every angle");
+  assert.equal(
+    nodes.get("pae-fit-boundary-right-inset").getAttribute("x1"),
+    nodes.get("pae-fit-boundary-right-inset").getAttribute("x2"),
+  );
+  assert.equal(
+    nodes.get("pae-fit-boundary-inner").getAttribute("x1"),
+    nodes.get("pae-fit-boundary-inner").getAttribute("x2"),
+  );
+  assert.equal(nodes.get("pae-fit-top-dim-right").getAttribute("marker-start"), "url(#pae-fit-green-arrow)");
+  assert.equal(nodes.get("pae-fit-top-dim-inner").getAttribute("marker-end"), "url(#pae-fit-green-arrow)");
 
   // Both guides stop on the same line, however far the shape leans.
   assert.equal(
