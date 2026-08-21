@@ -464,3 +464,17 @@ test("each page carries only its own diagrams", async () => {
   mediaQuery.setMatches(true);
   assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "70 0 480 676");
 });
+
+test("every module version query matches", async () => {
+  // A page can load a fresh app.mjs beside a cached geometry.mjs if these
+  // drift apart, and the mismatched pair throws instead of drawing.
+  const files = ["index.html", "overlaps.html", "main.mjs", "app.mjs", "geometry.test.mjs"];
+  const versions = new Set();
+  for (const file of files) {
+    const source = await readFile(new URL(`./${file}`, import.meta.url), "utf8");
+    for (const [, version] of source.matchAll(/\.mjs\?v=(\d+)/g)) {
+      versions.add(version);
+    }
+  }
+  assert.equal(versions.size, 1, `mixed module versions: ${[...versions].join(", ")}`);
+});
