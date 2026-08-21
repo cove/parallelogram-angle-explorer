@@ -232,7 +232,7 @@ export function calculateDiagram(angleDegrees) {
       },
       outerOffsets: {
         expression: `15 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularInset)} ft each`,
+        result: `= ${formatFeet(perpendicularInset)} ft on the right; the left 15 ft is stepped off A's end instead`,
       },
       innerSpan: {
         expression: `50 ft × sin(${angleDegrees.toFixed(2)}°)`,

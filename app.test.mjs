@@ -125,7 +125,10 @@ test("updates the diagram and formulas from slider input", async () => {
 
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
   assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "15 ft × sin(86.89°)");
-  assert.equal(nodes.get("pae-calc-perp-insets-result").textContent, "= 14.98 ft each");
+  assert.equal(
+    nodes.get("pae-calc-perp-insets-result").textContent,
+    "= 14.98 ft on the right; the left 15 ft is stepped off A's end instead",
+  );
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft");
 });
 

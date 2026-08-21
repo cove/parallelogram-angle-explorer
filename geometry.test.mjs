@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=22";
+} from "./geometry.mjs?v=23";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -53,7 +53,7 @@ test("calculates the initial 69.69 degree example", () => {
   approximately(diagram.measurements.projectionLoss, 0.9325744705018165);
   assert.deepEqual(diagram.formulas.outerOffsets, {
     expression: "15 ft × sin(69.69°)",
-    result: "= 14.07 ft each",
+    result: "= 14.07 ft on the right; the left 15 ft is stepped off A's end instead",
   });
   assert.deepEqual(diagram.formulas.innerSpan, {
     expression: "50 ft × sin(69.69°)",
@@ -88,7 +88,7 @@ test("produces exact right-angle measurements at 90 degrees", () => {
     expression: "A = 65 ft",
     result: "· B = 50 ft",
   });
-  assert.equal(diagram.formulas.outerOffsets.result, "= 15.00 ft each");
+  assert.equal(diagram.formulas.outerOffsets.result, "= 15.00 ft on the right; the left 15 ft is stepped off A's end instead");
   assert.equal(diagram.formulas.innerSpan.result, "= 50.00 ft");
   assert.equal(
     diagram.formulas.overlap.expression,
@@ -127,7 +127,7 @@ test("supports both slider boundaries without negative zero", () => {
   assert.equal(flat.measurements.perpendicularInner, 0);
   assert.equal(flat.measurements.perpendicularWidth, 0);
   approximately(flat.measurements.overlap, 65);
-  assert.equal(flat.formulas.outerOffsets.result, "= 0.00 ft each");
+  assert.equal(flat.formulas.outerOffsets.result, "= 0.00 ft on the right; the left 15 ft is stepped off A's end instead");
   assert.equal(flat.formulas.overlap.result, "= 65.00 ft");
 });
 
