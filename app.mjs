@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=34";
+} from "./geometry.mjs?v=35";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -52,6 +52,14 @@ export function initializeApp(documentRef, windowRef) {
     );
   }
 
+  function setVariableText(node, position, text, rotation = 0) {
+    setText(node, position, "", rotation);
+    node.innerHTML = text.replace(
+      /\b([a-i])\b/g,
+      '<tspan class="math-variable">$1</tspan>',
+    );
+  }
+
   function setRect(node, rect) {
     for (const attribute of ["x", "y", "width", "height"]) {
       node.setAttribute(attribute, rect[attribute].toFixed(2));
@@ -70,7 +78,10 @@ export function initializeApp(documentRef, windowRef) {
   }
 
   function setFormula(id, formula) {
-    element(`${id}-expression`).textContent = formula.expression;
+    element(`${id}-expression`).innerHTML = formula.expression.replace(
+      /\b([a-i])\b/g,
+      "<var>$1</var>",
+    );
     element(`${id}-result`).textContent = formula.result;
   }
 
@@ -100,19 +111,19 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-top-ext-inset-left"), diagram.topExtensions.insetLeft);
     setLine(element("pae-top-ext-inset-right"), diagram.topExtensions.insetRight);
     setLine(element("pae-top-ext-right"), diagram.topExtensions.right);
-    setText(
+    setVariableText(
       element("pae-top-dim-left-label"),
       diagram.topLabels.left,
       `a · ${DIMENSIONS.inset} ft`,
       diagram.shortRotation,
     );
-    setText(
+    setVariableText(
       element("pae-top-dim-inner-label"),
       diagram.topLabels.inner,
       `b · ${DIMENSIONS.innerSpan} ft`,
       diagram.shortRotation,
     );
-    setText(
+    setVariableText(
       element("pae-top-dim-right-label"),
       diagram.topLabels.right,
       `c · ${DIMENSIONS.inset} ft`,
@@ -135,29 +146,29 @@ export function initializeApp(documentRef, windowRef) {
       diagram.perpendicular.methodLabel,
       "Right angle method",
     );
-    setText(
+    setVariableText(
       element("pae-perp-inset-left-label"),
       diagram.perpendicular.leftLabel,
       `d · ${diagram.measurements.perpendicularChain.left.toFixed(2)} ft`,
     );
-    setText(
+    setVariableText(
       element("pae-perp-inner-label"),
       diagram.perpendicular.innerLabel,
       `e · ${diagram.measurements.perpendicularChain.inner.toFixed(2)} ft`,
     );
-    setText(
+    setVariableText(
       element("pae-perp-inset-right-label"),
       diagram.perpendicular.rightLabel,
       `f · ${diagram.measurements.perpendicularChain.right.toFixed(2)} ft`,
     );
 
     setLine(element("pae-static-a"), diagram.guides.a);
-    setText(element("pae-static-a-label"), diagram.guides.aLabel, `g · A · ${DIMENSIONS.arrowA} ft`);
+    setVariableText(element("pae-static-a-label"), diagram.guides.aLabel, `g · A · ${DIMENSIONS.arrowA} ft`);
     setLine(element("pae-static-b"), diagram.guides.b);
-    setText(element("pae-static-b-label"), diagram.guides.bLabel, `h · B · ${DIMENSIONS.arrowB} ft`);
+    setVariableText(element("pae-static-b-label"), diagram.guides.bLabel, `h · B · ${DIMENSIONS.arrowB} ft`);
     setLine(element("pae-overlap-extent-a"), diagram.guides.overlapExtentA);
     setLine(element("pae-overlap-span"), diagram.guides.overlapSpan);
-    setText(
+    setVariableText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
       `i · A into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
@@ -220,19 +231,19 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-area-top-ext-inset-left"), areas.topExtensions.insetLeft);
     setLine(element("pae-area-top-ext-inset-right"), areas.topExtensions.insetRight);
     setLine(element("pae-area-top-ext-right"), areas.topExtensions.right);
-    setText(
+    setVariableText(
       element("pae-area-top-dim-left-label"),
       areas.topLabels.left,
       `a · ${DIMENSIONS.inset} ft`,
       areas.shortRotation,
     );
-    setText(
+    setVariableText(
       element("pae-area-top-dim-inner-label"),
       areas.topLabels.inner,
       `b · ${DIMENSIONS.innerSpan} ft`,
       areas.shortRotation,
     );
-    setText(
+    setVariableText(
       element("pae-area-top-dim-right-label"),
       areas.topLabels.right,
       `c · ${DIMENSIONS.inset} ft`,
@@ -268,17 +279,17 @@ export function initializeApp(documentRef, windowRef) {
       "d",
       pathFromPoints(areas.squares.chain),
     );
-    setText(
+    setVariableText(
       element("pae-area-chain-right-label"),
       areas.labels.chainRightInset,
       `f · ${areas.measurements.chainRightAngle.right.toFixed(2)} ft`,
     );
-    setText(
+    setVariableText(
       element("pae-area-chain-inner-label"),
       areas.labels.chainInner,
       `e · ${areas.measurements.chainRightAngle.inner.toFixed(2)} ft`,
     );
-    setText(
+    setVariableText(
       element("pae-area-chain-left-label"),
       areas.labels.chainLeftInset,
       `d · ${areas.measurements.chainRightAngle.left.toFixed(2)} ft`,
@@ -293,12 +304,12 @@ export function initializeApp(documentRef, windowRef) {
     element("pae-area-square-a").setAttribute("d", pathFromPoints(areas.squares.a));
     element("pae-area-square-b").setAttribute("d", pathFromPoints(areas.squares.b));
 
-    setText(
+    setVariableText(
       element("pae-area-a-label"),
       areas.labels.a,
       `g · A · ${DIMENSIONS.arrowA} ft at 90°`,
     );
-    setText(
+    setVariableText(
       element("pae-area-b-label"),
       areas.labels.b,
       `h · B · ${DIMENSIONS.arrowB} ft at 90°`,
@@ -370,37 +381,37 @@ export function initializeApp(documentRef, windowRef) {
     setLine(element("pae-fit-guide-b"), fit.guides.b);
     setLine(element("pae-fit-match-line"), fit.matchLine);
 
-    setText(
+    setVariableText(
       element("pae-fit-strip-right-label"),
       fit.labels.rightInset,
       `c · ${DIMENSIONS.inset} ft`,
       fit.rotation,
     );
-    setText(
+    setVariableText(
       element("pae-fit-strip-inner-label"),
       fit.labels.inner,
       `b · ${DIMENSIONS.innerSpan} ft`,
       fit.rotation,
     );
-    setText(
+    setVariableText(
       element("pae-fit-strip-left-label"),
       fit.labels.leftInset,
       `a · ${DIMENSIONS.inset} ft`,
       fit.rotation,
     );
-    setText(
+    setVariableText(
       element("pae-fit-guide-a-label"),
       fit.labels.a,
       `g · A · ${DIMENSIONS.arrowA} ft along the top`,
       fit.rotation,
     );
-    setText(
+    setVariableText(
       element("pae-fit-guide-b-label"),
       fit.labels.b,
       `h · B · ${DIMENSIONS.innerSpan} ft along the top`,
       fit.rotation,
     );
-    setText(
+    setVariableText(
       element("pae-fit-match-label"),
       fit.labels.match,
       `i · Ends match · ${fit.measurements.gap.toFixed(2)} ft`,

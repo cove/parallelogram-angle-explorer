@@ -9,7 +9,17 @@ class FakeElement {
     this.attributes = new Map();
     this.listeners = new Map();
     this.textContent = "";
+    this._innerHTML = "";
     this.value = "";
+  }
+
+  get innerHTML() {
+    return this._innerHTML;
+  }
+
+  set innerHTML(value) {
+    this._innerHTML = String(value);
+    this.textContent = this._innerHTML.replace(/<[^>]+>/g, "");
   }
 
   addEventListener(type, listener) {
@@ -104,6 +114,8 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-static-a-label").textContent, "g · A · 65 ft");
   assert.equal(nodes.get("pae-static-b-label").textContent, "h · B · 50 ft");
   assert.equal(nodes.get("pae-overlap-label").textContent, "i · A into left 15 · 4.04 ft");
+  assert.match(nodes.get("pae-top-dim-left-label").innerHTML, /class="math-variable">a<\/tspan>/);
+  assert.match(nodes.get("pae-static-a-label").innerHTML, /class="math-variable">g<\/tspan>/);
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
@@ -121,6 +133,10 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.07 ft from the right to B's end");
   assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 3.11 ft B enters the left 15 ft");
   assert.equal(nodes.get("pae-calc-forced-inner-expression").textContent, "e = g − c × sin(69.69°)");
+  assert.equal(
+    nodes.get("pae-calc-forced-inner-expression").innerHTML,
+    "<var>e</var> = <var>g</var> − <var>c</var> × sin(69.69°)",
+  );
   assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft A reaches farther left than B");
   assert.match(nodes.get("pae-shape").getAttribute("d"), /^M .+ Z$/);
   assert.match(nodes.get("pae-perp-square-left").getAttribute("d"), /^M .+ L .+ L /);
@@ -193,6 +209,7 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-top-dim-left-label").textContent, "a · 15 ft");
   assert.equal(nodes.get("pae-area-top-dim-inner-label").textContent, "b · 50 ft");
   assert.equal(nodes.get("pae-area-top-dim-right-label").textContent, "c · 15 ft");
+  assert.match(nodes.get("pae-area-chain-inner-label").innerHTML, /class="math-variable">e<\/tspan>/);
   // The naive inset (this row's boundary) and the squared-off strip's own
   // edge are two different marks off the angle, not the same line.
   assert.notEqual(
@@ -368,6 +385,11 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "g · A · 65 ft along the top");
   assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "h · B · 50 ft along the top");
   assert.equal(nodes.get("pae-fit-match-label").textContent, "i · Ends match · 0.00 ft");
+  assert.match(nodes.get("pae-fit-match-label").innerHTML, /class="math-variable">i<\/tspan>/);
+  assert.equal(
+    nodes.get("pae-fit-calc-gap-expression").innerHTML,
+    "<var>i</var> = |<var>g</var> − (<var>c</var> + <var>h</var>)|",
+  );
   assert.equal(nodes.has("pae-fit-title-label"), false);
   assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
   assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");

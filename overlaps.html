@@ -170,6 +170,10 @@
       stroke-width: 5px;
       stroke-linejoin: round;
     }
+    #parallelogram-angle-explorer .math-variable,
+    #parallelogram-angle-explorer var {
+      font-style: italic;
+    }
     #parallelogram-angle-explorer text.inside-measurement-label {
       font-weight: 700;
       paint-order: stroke fill;
@@ -535,35 +539,35 @@
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
         <div class="calculation calculation-purple">
-          <span class="calculation-name">a, b, c · Method</span>
+          <span class="calculation-name"><var>a</var>, <var>b</var>, <var>c</var> · Method</span>
           <span class="calculation-formula"><span id="pae-area-calc-method-expression">Calculating…</span><strong id="pae-area-calc-method-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">a + b + c · Width at 90°</span>
+          <span class="calculation-name"><var>a</var> + <var>b</var> + <var>c</var> · Width at 90°</span>
           <span class="calculation-formula"><span id="pae-area-calc-width-expression">Calculating…</span><strong id="pae-area-calc-width-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-green">
-          <span class="calculation-name">b · Projected middle</span>
+          <span class="calculation-name"><var>b</var> · Projected middle</span>
           <span class="calculation-formula"><span id="pae-area-calc-middle-expression">Calculating…</span><strong id="pae-area-calc-middle-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">fixed b − projected b</span>
+          <span class="calculation-name">fixed <var>b</var> − projected <var>b</var></span>
           <span class="calculation-formula"><span id="pae-area-calc-middle-short-expression">Calculating…</span><strong id="pae-area-calc-middle-short-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-black">
-          <span class="calculation-name">b + c · Far-end gap</span>
+          <span class="calculation-name"><var>b</var> + <var>c</var> · Far-end gap</span>
           <span class="calculation-formula"><span id="pae-area-calc-middle-ends-expression">Calculating…</span><strong id="pae-area-calc-middle-ends-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-black">
-          <span class="calculation-name">a, c · Strip gap</span>
+          <span class="calculation-name"><var>a</var>, <var>c</var> · Strip gap</span>
           <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">fixed b into a</span>
+          <span class="calculation-name">fixed <var>b</var> into <var>a</var></span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-a-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-a-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">g into a</span>
+          <span class="calculation-name"><var>g</var> into <var>a</var></span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-b-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-b-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
@@ -579,7 +583,7 @@
           <span class="calculation-formula"><span id="pae-area-calc-gap-area-expression">Calculating…</span><strong id="pae-area-calc-gap-area-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">d, e, f · Purple row</span>
+          <span class="calculation-name"><var>d</var>, <var>e</var>, <var>f</var> · Purple row</span>
           <span class="calculation-formula"><span id="pae-area-calc-chain-expression">Calculating…</span><strong id="pae-area-calc-chain-result" class="calculation-result"></strong></span>
         </div>
       </div>
@@ -640,19 +644,19 @@
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
         <div class="calculation calculation-green">
-          <span class="calculation-name">g, h · Method</span>
+          <span class="calculation-name"><var>g</var>, <var>h</var> · Method</span>
           <span class="calculation-formula"><span id="pae-fit-calc-method-expression">Calculating…</span><strong id="pae-fit-calc-method-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-green">
-          <span class="calculation-name">c + h · B reaches</span>
+          <span class="calculation-name"><var>c</var> + <var>h</var> · B reaches</span>
           <span class="calculation-formula"><span id="pae-fit-calc-reach-expression">Calculating…</span><strong id="pae-fit-calc-reach-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-green">
-          <span class="calculation-name">g + a · Full side</span>
+          <span class="calculation-name"><var>g</var> + <var>a</var> · Full side</span>
           <span class="calculation-formula"><span id="pae-fit-calc-total-expression">Calculating…</span><strong id="pae-fit-calc-total-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-green">
-          <span class="calculation-name">i · Gap or overlap</span>
+          <span class="calculation-name"><var>i</var> · Gap or overlap</span>
           <span class="calculation-formula"><span id="pae-fit-calc-gap-expression">Calculating…</span><strong id="pae-fit-calc-gap-result" class="calculation-result"></strong></span>
         </div>
       </div>
@@ -664,7 +668,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=34"></script>
+  <script type="module" src="./main.mjs?v=35"></script>
 </div>
 
 </body>
