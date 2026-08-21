@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=30";
+} from "./geometry.mjs?v=31";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -320,27 +320,6 @@ export function initializeApp(documentRef, windowRef) {
       "d",
       pathFromPoints(areas.overlapPolygon, true),
     );
-    // One label for the whole double-claimed area, held off far enough that
-    // the leader reads as a line with an arrowhead, not just the arrowhead.
-    const overlapLabel = element("pae-area-overlap-label");
-    const overlapLeader = element("pae-area-overlap-leader");
-    overlapLabel.setAttribute("opacity", overlapOpacity);
-    overlapLeader.setAttribute("opacity", overlapOpacity);
-    overlapLeader.setAttribute("marker-end", "url(#pae-area-red-arrow)");
-    setLine(overlapLeader, areas.overlapLeader);
-    setText(overlapLabel, areas.labels.overlap, `Overlap · ${areas.overlapArea.toFixed(2)} ft²`);
-
-    // One label for both unclaimed triangles; the leader targets the larger
-    // triangle so the arrow remains legible as the lean changes.
-    const gapLabel = element("pae-area-gap");
-    const gapLeader = element("pae-area-gap-leader");
-    const gapOpacity = areas.gapVisible ? "1" : "0";
-    gapLabel.setAttribute("opacity", gapOpacity);
-    gapLeader.setAttribute("opacity", gapOpacity);
-    gapLeader.setAttribute("marker-end", "url(#pae-area-black-arrow)");
-    setLine(gapLeader, areas.gapLeader);
-    setText(gapLabel, areas.labels.gap, `Gap · ${areas.gapArea.toFixed(2)} ft²`);
-
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
     setFormula("pae-area-calc-middle", areas.formulas.middle);

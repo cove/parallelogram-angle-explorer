@@ -423,10 +423,6 @@ export function calculateRightAngleAreas(angleDegrees) {
   };
   const leansRight = base.cosine > 0;
 
-  const polygonCentroid = (points) => point(
-    points.reduce((sum, p) => sum + p.x, 0) / points.length,
-    points.reduce((sum, p) => sum + p.y, 0) / points.length,
-  );
   const polygonAreaFeet = (points) => {
     let twiceArea = 0;
     for (let index = 0; index < points.length; index += 1) {
@@ -447,7 +443,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(overlapRect.x, overlapRect.y + overlapRect.height),
   ];
   const overlapArea = polygonAreaFeet(overlapPolygon);
-  const overlapTarget = polygonCentroid(overlapPolygon);
 
   // Fitting the left strip from the left and A from the right leaves two
   // unclaimed triangles inside the parcel: one beside each independently
@@ -464,9 +459,6 @@ export function calculateRightAngleAreas(angleDegrees) {
   const gapPolygons = [leftGap, rightGap];
   const gapPolygonAreas = gapPolygons.map(polygonAreaFeet);
   const gapArea = gapPolygonAreas.reduce((sum, area) => sum + area, 0);
-  // The right-side triangle always has at least as much horizontal base as
-  // the left-side triangle for this 15 / 50 / 15 construction.
-  const gapTarget = polygonCentroid(rightGap);
 
   // The same square-ended rectangles also claim ground beyond the sloping
   // parcel boundary. The strip launched from the left spills past one edge;
@@ -502,22 +494,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     .map(polygonAreaFeet)
     .reduce((sum, area) => sum + area, 0);
 
-  // Both labels sit outside the shape on the left, clear of the strips,
-  // the top row and the chain row alike, each pointing back in at its own
-  // triangle - Overlap above the shape, Gap below, or the other way round
-  // once the lean flips.
-  const labelX = leftTop.x - 8;
-  const gapLabelPosition = point(labelX, leansRight ? bottomY + 18 : topY - 8);
-  const gapLeader = line(
-    point(labelX + 3, gapLabelPosition.y + (leansRight ? -3 : 3)),
-    gapTarget,
-  );
-  const overlapLabelPosition = point(labelX, leansRight ? topY - 8 : bottomY + 18);
-  const overlapLeader = line(
-    point(labelX + 3, overlapLabelPosition.y + (leansRight ? 3 : -3)),
-    overlapTarget,
-  );
-
   return {
     angleDegrees,
     shape: base.shape,
@@ -545,13 +521,10 @@ export function calculateRightAngleAreas(angleDegrees) {
     topExtensions: base.topExtensions,
     topLabels: base.topLabels,
     dimensions: { a: dimensionA, b: dimensionB },
-    gapLeader,
     gapArea,
     gapPolygon: rightGap,
     gapPolygons,
-    gapVisible: gapArea > 1e-9,
     leftStripOverlaps,
-    overlapLeader,
     overlapArea,
     overlapPolygon,
     overlapVisible: overlapArea > 1e-9,
@@ -566,8 +539,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
-      overlap: overlapLabelPosition,
-      gap: gapLabelPosition,
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),

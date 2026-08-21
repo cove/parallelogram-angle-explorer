@@ -202,16 +202,6 @@
       stroke-dasharray: 6 4;
     }
     #parallelogram-angle-explorer .area-strip-gap { fill: #ffffff; stroke: none; }
-    #parallelogram-angle-explorer text.area-gap-label {
-      fill: #111111;
-      font-size: 12px;
-      font-weight: 700;
-      paint-order: stroke fill;
-      stroke: #ffffff;
-      stroke-width: 5px;
-      stroke-linejoin: round;
-      text-anchor: middle;
-    }
     #parallelogram-angle-explorer .area-chain-witness {
       fill: none;
       stroke: #7030a0;
@@ -222,12 +212,6 @@
       fill: none;
       stroke: #7030a0;
       stroke-width: 1.2;
-    }
-    #parallelogram-angle-explorer .area-gap-leader {
-      fill: none;
-      stroke: #111111;
-      stroke-width: 1.4;
-      stroke-dasharray: 4 3;
     }
     #parallelogram-angle-explorer .area-square {
       fill: none;
@@ -242,16 +226,6 @@
       stroke: #ffffff;
       stroke-width: 5px;
       stroke-linejoin: round;
-    }
-    #parallelogram-angle-explorer text.area-overlap-label {
-      fill: #c00000;
-      font-size: 12px;
-      font-weight: 700;
-      paint-order: stroke fill;
-      stroke: #ffffff;
-      stroke-width: 5px;
-      stroke-linejoin: round;
-      text-anchor: middle;
     }
     #parallelogram-angle-explorer .fit-strip-outer { fill: #258a53; fill-opacity: 0.14; stroke: none; }
     #parallelogram-angle-explorer .fit-strip-inner { fill: #258a53; fill-opacity: 0.30; stroke: none; }
@@ -479,12 +453,6 @@
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
       </marker>
-      <marker id="pae-area-red-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#c00000"></path>
-      </marker>
-      <marker id="pae-area-black-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#111111"></path>
-      </marker>
       <marker id="pae-area-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
       </marker>
@@ -538,8 +506,6 @@
     <path id="pae-area-square-b" class="area-square"></path>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
-    <line id="pae-area-gap-leader" class="area-gap-leader"></line>
-    <text id="pae-area-gap" class="label area-gap-label">Gap · 0.00 ft²</text>
     <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
@@ -547,8 +513,6 @@
     <text id="pae-area-chain-right-label" class="label area-label">15 ft</text>
     <text id="pae-area-chain-inner-label" class="label area-label">50 ft</text>
     <text id="pae-area-chain-left-label" class="label area-label">15 ft</text>
-    <line id="pae-area-overlap-leader" class="area-gap-leader"></line>
-    <text id="pae-area-overlap-label" class="label area-overlap-label">Overlap</text>
     </g>
   </svg>
 
@@ -700,7 +664,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=30"></script>
+  <script type="module" src="./main.mjs?v=31"></script>
 </div>
 
 </body>
