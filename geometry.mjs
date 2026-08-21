@@ -465,8 +465,42 @@ export function calculateRightAngleAreas(angleDegrees) {
   const gapPolygonAreas = gapPolygons.map(polygonAreaFeet);
   const gapArea = gapPolygonAreas.reduce((sum, area) => sum + area, 0);
   // The right-side triangle always has at least as much horizontal base as
-  // the left-side triangle (W − 15 versus max(0, W − 65)).
+  // the left-side triangle for this 15 / 50 / 15 construction.
   const gapTarget = polygonCentroid(rightGap);
+
+  // The same square-ended rectangles also claim ground beyond the sloping
+  // parcel boundary. The strip launched from the left spills past one edge;
+  // the fixed center and right strip, launched from the right, spill past the
+  // opposite edge. Keep these exterior over-claims separate from the red
+  // center/left-strip intersection inside the parcel.
+  const spillLeftInnerX = clamp(leftStripInnerX, leftTop.x, rightX);
+  const spillCenterStartX = clamp(middleStart, leftTop.x, rightX);
+  const leftSpill = leansRight
+    ? [
+      leftBottom,
+      point(spillLeftInnerX, leftBottom.y),
+      point(spillLeftInnerX, bottomEdgeYAtX(spillLeftInnerX)),
+    ]
+    : [
+      leftTop,
+      point(spillLeftInnerX, leftTop.y),
+      point(spillLeftInnerX, topEdgeYAtX(spillLeftInnerX)),
+    ];
+  const centerSpill = leansRight
+    ? [
+      rightTop,
+      point(spillCenterStartX, rightTop.y),
+      point(spillCenterStartX, topEdgeYAtX(spillCenterStartX)),
+    ]
+    : [
+      rightBottom,
+      point(spillCenterStartX, rightBottom.y),
+      point(spillCenterStartX, bottomEdgeYAtX(spillCenterStartX)),
+    ];
+  const spillPolygons = [leftSpill, centerSpill];
+  const spillArea = spillPolygons
+    .map(polygonAreaFeet)
+    .reduce((sum, area) => sum + area, 0);
 
   // Both labels sit outside the shape on the left, clear of the strips,
   // the top row and the chain row alike, each pointing back in at its own
@@ -521,6 +555,9 @@ export function calculateRightAngleAreas(angleDegrees) {
     overlapArea,
     overlapPolygon,
     overlapVisible: overlapArea > 1e-9,
+    spillArea,
+    spillPolygons,
+    spillVisible: spillArea > 1e-9,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
       b: rightAngleSquare(bandY(34), 1, rightX - areaBStartFeet * SCALE),
@@ -545,6 +582,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapB: leftStripOverlaps.b.feet,
       gapArea,
       overlapArea,
+      spillArea,
       // The two true 15 ft end strips and the perpendicular room actually
       // left between their inner edges.
       chainRightAngle: {
@@ -569,6 +607,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       overlapArea: {
         expression: `${formatFeet(leftStripOverlaps.b.feet)} ft × ${formatFeet(overlapRect.height / SCALE)} ft`,
         result: `= ${formatFeet(overlapArea)} ft² claimed twice`,
+      },
+      spillArea: {
+        expression: "square-ended fit beyond the sloping top and bottom",
+        result: `= ${formatFeet(spillArea)} ft² outside the parcel`,
       },
       method: {
         expression: "each 15 ft mark follows the slanted edge, then is squared off",

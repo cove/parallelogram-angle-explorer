@@ -220,6 +220,10 @@ test("renders the second right-angle area diagram", async () => {
   // left strip, clipped to the parcel.
   assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
   assert.equal(nodes.get("pae-area-left-overlap-a").getAttribute("opacity"), "0");
+  const spillPath = nodes.get("pae-area-spill-fill").getAttribute("d");
+  assert.equal(spillPath.match(/\bM /g).length, 2);
+  assert.equal(spillPath.match(/ Z/g).length, 2);
+  assert.equal(nodes.get("pae-area-spill-fill").getAttribute("opacity"), "1");
   // The shaded length covers the same rectangle as the outline.
   for (const side of ["right", "left"]) {
     for (const attribute of ["x", "y", "width", "height"]) {
@@ -248,6 +252,10 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(
     nodes.get("pae-area-calc-overlap-area-result").textContent,
     "= 429.49 ft² claimed twice",
+  );
+  assert.equal(
+    nodes.get("pae-area-calc-spill-area-result").textContent,
+    "= 796.20 ft² outside the parcel",
   );
 });
 
@@ -296,6 +304,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-leader").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-spill-fill").getAttribute("opacity"), "0");
   assert.equal(
     nodes.get("pae-area-strip-right").getAttribute("y"),
     nodes.get("pae-area-strip-left").getAttribute("y"),

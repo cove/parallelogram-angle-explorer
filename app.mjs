@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=29";
+} from "./geometry.mjs?v=30";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -63,6 +63,10 @@ export function initializeApp(documentRef, windowRef) {
       `${index === 0 ? "M" : "L"} ${position.x} ${position.y}`
     ));
     return `${commands.join(" ")}${close ? " Z" : ""}`;
+  }
+
+  function pathFromPolygons(polygons) {
+    return polygons.map((points) => pathFromPoints(points, true)).join(" ");
   }
 
   function setFormula(id, formula) {
@@ -300,8 +304,16 @@ export function initializeApp(documentRef, windowRef) {
     // this legacy rectangle transparent so it cannot double-darken the fill.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
     element("pae-area-left-overlap-a").setAttribute("opacity", "0");
-    // The overlap is the ground claimed by both the fitted center and the
-    // independently measured left strip.
+    // Restore the two exterior spill regions where the square-ended fit runs
+    // beyond the sloping top and bottom parcel edges.
+    const spillOpacity = areas.spillVisible ? "1" : "0";
+    element("pae-area-spill-fill").setAttribute("opacity", spillOpacity);
+    element("pae-area-spill-fill").setAttribute(
+      "d",
+      pathFromPolygons(areas.spillPolygons),
+    );
+    // The internal overlap is ground claimed by both the fitted center and
+    // the independently measured left strip.
     const overlapOpacity = areas.overlapVisible ? "1" : "0";
     element("pae-area-overlap-fill").setAttribute("opacity", overlapOpacity);
     element("pae-area-overlap-fill").setAttribute(
@@ -339,6 +351,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapA);
     setFormula("pae-area-calc-gap-area", areas.formulas.gapArea);
     setFormula("pae-area-calc-overlap-area", areas.formulas.overlapArea);
+    setFormula("pae-area-calc-spill-area", areas.formulas.spillArea);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 

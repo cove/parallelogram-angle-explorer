@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=29";
+} from "./geometry.mjs?v=30";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -390,10 +390,13 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   approximately(areas.measurements.leftStripOverlapB, 3.1085815683393005);
   approximately(areas.overlapArea, 429.48801107952045);
   approximately(areas.gapArea, 709.8845622107292);
+  approximately(areas.spillArea, 796.2034907657483);
+  assert.equal(areas.spillPolygons.length, 2);
   assert.equal(areas.gapPolygons.length, 2);
   assert.equal(areas.formulas.gapArea.expression, "two unclaimed triangles inside the parcel");
   assert.equal(areas.formulas.gapArea.result, "= 709.88 ft² unclaimed");
   assert.equal(areas.formulas.overlapArea.result, "= 429.49 ft² claimed twice");
+  assert.equal(areas.formulas.spillArea.result, "= 796.20 ft² outside the parcel");
 
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
@@ -478,6 +481,7 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
     assert.ok(areas.measurements.overhang >= 0);
     assert.ok(areas.gapArea >= 0);
     assert.ok(areas.overlapArea >= 0);
+    assert.ok(areas.spillArea >= 0);
     assert.equal(
       areas.gapPolygon.every((position) => insideShape(position, areas.shape)),
       true,
@@ -488,6 +492,7 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
 test("a flattened shape leaves nothing for the strips to hang over", () => {
   const flat = calculateRightAngleAreas(180);
   assert.equal(flat.measurements.overhang, 0);
+  assert.equal(flat.spillArea, 0);
   assert.equal(
     flat.formulas.overhang.result,
     "= 0.00 ft over one edge, short of the other",

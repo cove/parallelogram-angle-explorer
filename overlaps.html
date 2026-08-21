@@ -474,7 +474,7 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Incorrect right-angle fit measured inward from both sides</title>
-    <desc id="pae-area-svg-desc">The same parallelogram incorrectly fitted by carrying each 15 foot end mark along the slanted parcel edge, squaring it off from its own side, and then forcing a 50 foot center inward from the right strip. Each purple strip changes horizontal width with the angle because 15 feet along the slanted edge projects to 15 times sine theta. The left purple strip begins at the real left side and its square top and bottom shift above or below the green center as the lean changes. The fixed 50 foot center reaches into the smaller projected middle, shown in red as double-claimed overlap, while white triangles show ground inside the parcel that none of the squared rectangles reaches. Both overlap and gaps close only at 90 degrees.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram incorrectly fitted by carrying each 15 foot end mark along the slanted parcel edge, squaring it off from its own side, and then forcing a 50 foot center inward from the right strip. Each purple strip changes horizontal width with the angle because 15 feet along the slanted edge projects to 15 times sine theta. The left purple strip begins at the real left side and its square top and bottom shift above or below the green center as the lean changes. Red inside the parcel shows where the fixed 50 foot center double-claims the left strip; red triangles beyond the sloping top and bottom show where the square-ended fit claims ground outside the parcel. White triangles show ground inside the parcel that none of the fitted rectangles reaches. All three errors close only at 90 degrees.</desc>
     <defs>
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
@@ -510,6 +510,7 @@
       <rect id="pae-area-strip-left-gap" class="area-strip-gap"></rect>
       <rect id="pae-area-middle-gap" class="area-strip-gap"></rect>
     </g>
+    <path id="pae-area-spill-fill" class="area-overlap"></path>
     <path id="pae-area-overlap-fill" class="area-overlap" clip-path="url(#pae-area-clip)"></path>
     <rect id="pae-area-strip-right" class="area-strip"></rect>
     <rect id="pae-area-strip-left" class="area-strip"></rect>
@@ -565,7 +566,7 @@
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">Each 15 ft end mark is carried along the slanted parcel edge and then squared off from its own side, so its purple horizontal width is <strong>15 × sin(θ)</strong> and changes with the angle. The 50 ft center is then incorrectly forced inward from the right strip. Away from 90°, that fixed center <strong>overlaps</strong> the smaller projected middle and left strip (red: ground claimed twice), while the different square-ended levels leave <strong>gaps</strong> inside the parallelogram (white: ground nothing claims). The purple left strip reaches above or below the green center as the lean reverses. Everything fits only at 90°.</p>
+    <p class="calculation-note">Each 15 ft end mark is carried along the slanted parcel edge and then squared off from its own side, so its purple horizontal width is <strong>15 × sin(θ)</strong> and changes with the angle. The 50 ft center is then incorrectly forced inward from the right strip. Away from 90°, red shows both ground <strong>claimed twice inside</strong> the parcel and the square-ended fit continuing <strong>outside the sloping top and bottom</strong>; white shows <strong>gaps</strong> inside that nothing claims. The purple left strip reaches above or below the green center as the lean reverses. Everything fits only at 90°.</p>
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
@@ -604,6 +605,10 @@
         <div class="calculation calculation-red">
           <span class="calculation-name">Overlap area</span>
           <span class="calculation-formula"><span id="pae-area-calc-overlap-area-expression">Calculating…</span><strong id="pae-area-calc-overlap-area-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-red">
+          <span class="calculation-name">Outside the parcel</span>
+          <span class="calculation-formula"><span id="pae-area-calc-spill-area-expression">Calculating…</span><strong id="pae-area-calc-spill-area-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-black">
           <span class="calculation-name">Gap area</span>
@@ -695,7 +700,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=29"></script>
+  <script type="module" src="./main.mjs?v=30"></script>
 </div>
 
 </body>
