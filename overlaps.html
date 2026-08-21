@@ -490,7 +490,6 @@
     <rect id="pae-area-strip-right" class="area-strip"></rect>
     <rect id="pae-area-strip-left" class="area-strip"></rect>
     <rect id="pae-area-left-overlap-a" class="area-overlap"></rect>
-    <rect id="pae-area-left-overlap-b" class="area-overlap"></rect>
     <path id="pae-area-shape" class="area-shape"></path>
     <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
     <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
@@ -524,7 +523,7 @@
 
   <div id="pae-reset-row" class="viz-row">
     <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
-    <button id="pae-snap-11254" class="btn" type="button">Reset to 112.54°</button>
+    <button id="pae-snap-10080" class="btn" type="button">Reset to 100.80°</button>
     <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
   </div>
 
@@ -565,6 +564,10 @@
         <div class="calculation calculation-red">
           <span class="calculation-name">B overlap</span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-b-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-b-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-black">
+          <span class="calculation-name">Net left gap</span>
+          <span class="calculation-formula"><span id="pae-area-calc-left-gap-expression">Calculating…</span><strong id="pae-area-calc-left-gap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
           <span class="calculation-name">Room needed</span>
@@ -640,7 +643,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=8"></script>
+  <script type="module" src="./main.mjs?v=9"></script>
 </div>
 
 </body>

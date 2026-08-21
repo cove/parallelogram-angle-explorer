@@ -459,7 +459,7 @@
   <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
-    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet. Their endpoint separation is the part of the nominal 15 foot inset lost when it is measured at a right angle; only the 65 foot line receives a red full-length guide.</desc>
+    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet. The red span measures from A's endpoint to the left green boundary; only A receives a red full-length guide.</desc>
     <defs>
       <marker id="pae-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
@@ -505,7 +505,7 @@
     <text id="pae-static-b-label" class="label static-line-label">B · 50 ft</text>
     <line id="pae-overlap-extent-a" class="overlap-extent"></line>
     <line id="pae-overlap-span" class="overlap-dimension"></line>
-    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 0.93 ft</text>
+    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">Overlap · 4.01 ft</text>
 
     <text id="pae-bottom-side-label" class="label">80 ft</text>
     <text id="pae-right-side-label" class="label">165.93 ft</text>
@@ -520,7 +520,7 @@
   </div>
   <div id="pae-reset-row" class="viz-row">
     <button id="pae-snap-90" class="btn" type="button">Reset to 90°</button>
-    <button id="pae-snap-11254" class="btn" type="button">Reset to 112.54°</button>
+    <button id="pae-snap-10080" class="btn" type="button">Reset to 100.80°</button>
     <button id="pae-snap-11023" class="btn" type="button">Reset to 110.23°</button>
   </div>
 
@@ -550,6 +550,10 @@
           <span class="calculation-name">Overlap</span>
           <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
         </div>
+        <div class="calculation calculation-purple">
+          <span class="calculation-name">Projection loss</span>
+          <span class="calculation-formula"><span id="pae-calc-projection-loss-expression">Calculating…</span><strong id="pae-calc-projection-loss-result" class="calculation-result"></strong></span>
+        </div>
       </div>
     </details>
   </section>
@@ -559,7 +563,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=8"></script>
+  <script type="module" src="./main.mjs?v=9"></script>
 </div>
 
 </body>
