@@ -221,8 +221,6 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
 
   // The middle band is whatever the two squared-off strips leave behind.
-  assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-calc-middle-result").textContent, "= 45.03 ft for a 50 ft middle");
   assert.equal(
     nodes.get("pae-area-calc-middle-short-result").textContent,
@@ -311,10 +309,14 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-leader-left").getAttribute("opacity"), "0");
 
-  // Leaned far enough, the two strips run into each other.
+  // Leaned steep enough that most of the middle's nominal 50 ft sits past
+  // the parcel's true edge, the shaded fill still stops exactly at that edge
+  // rather than washing the whole rectangle red.
   controller.draw(20);
-  assert.equal(nodes.get("pae-area-middle").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-middle-collide").getAttribute("opacity"), "1");
+  assert.equal(
+    nodes.get("pae-area-middle-spill").getAttribute("width"),
+    nodes.get("pae-area-middle").getAttribute("width"),
+  );
 });
 
 test("keeps both right-angle diagrams on the same mobile viewport", async () => {

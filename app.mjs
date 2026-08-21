@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=16";
+} from "./geometry.mjs?v=17";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -205,9 +205,6 @@ export function initializeApp(documentRef, windowRef) {
     // Either the middle still lands on the parcel, or it has leaned far
     // enough that its far end has walked off the parcel entirely.
     setRect(element("pae-area-middle"), areas.middleArea);
-    setRect(element("pae-area-middle-collide"), areas.middleArea);
-    element("pae-area-middle").setAttribute("opacity", areas.middleOffParcel ? "0" : "1");
-    element("pae-area-middle-collide").setAttribute("opacity", areas.middleOffParcel ? "1" : "0");
     // Outline, shaded length inside the shape, the spill past its edges, and
     // the mask that turns each strip into a hole for the gap slivers.
     for (const part of ["", "-fill", "-spill"]) {
