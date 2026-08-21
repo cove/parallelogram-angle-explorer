@@ -189,13 +189,13 @@ test("renders the second right-angle area diagram", async () => {
   // One label for the whole over-claimed wedge and one for the whole
   // unclaimed wedge, each reporting a single combined total rather than a
   // per-strip breakdown.
-  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlap · 1041.66 ft²");
+  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlap · 687.66 ft²");
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(
     nodes.get("pae-area-overlap-leader").getAttribute("marker-end"),
     "url(#pae-area-red-arrow)",
   );
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1041.66 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 687.66 ft²");
   assert.equal(
     nodes.get("pae-area-gap-leader").getAttribute("marker-end"),
     "url(#pae-area-black-arrow)",
@@ -250,11 +250,11 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(
     nodes.get("pae-area-calc-gap-area-result").textContent,
-    "= 1041.66 ft² unclaimed",
+    "= 687.66 ft² unclaimed",
   );
   assert.equal(
     nodes.get("pae-area-calc-overlap-area-result").textContent,
-    "= 1041.66 ft² over-claimed",
+    "= 687.66 ft² over-claimed",
   );
 });
 
@@ -306,18 +306,18 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1575.69 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1040.20 ft²");
 
   // Past 90 degrees the lean flips.
   controller.draw(110.23);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1038.27 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 685.42 ft²");
 
   // Leaned far enough that the left strip has walked off the parcel entirely,
   // the total is exactly what the right and middle strips alone leave behind.
   controller.draw(128.3);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1556.44 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1027.49 ft²");
 
   // The chain's square ends still leave the parcel's own far corner uncovered.
   controller.draw(10);

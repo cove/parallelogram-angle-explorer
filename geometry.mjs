@@ -436,66 +436,50 @@ export function calculateRightAngleAreas(angleDegrees) {
     }
     return Math.abs(twiceArea) / (2 * SCALE * SCALE);
   };
-  // A label offset far enough that the leader reads as a line with an
-  // arrowhead, not just the arrowhead on its own.
-  const LEADER_GAP = 22;
-  const LEADER_START_GAP = 6;
-
-  // The squared-off strips share one flat top and one flat bottom (both at
-  // the right side's own height), while the real top and real bottom edges
-  // lean. That leaves exactly two triangular wedges of mismatch, one on each
-  // side of the shape: on the side the flat line falls short of the real
-  // edge, real parcel ground goes unclaimed (the gap); on the side it runs
-  // past the real edge, the strips claim ground that is not there (the
-  // overlap/spill). Each is reported as one whole-parcel total rather than
-  // broken out strip by strip.
-  const gapCornerX = clamp(strips.left.x, leftTop.x, rightX);
+  // Measuring a static distance at a right angle from the right side (the
+  // flat strip line) against the real, leaning edges leaves a triangle of
+  // mismatch on each side of the shape: overlap where the flat line runs
+  // past the real edge, gap where it falls short. Neither triangle is let
+  // to run past the left inset line - the same offset line the naive top
+  // row already marks 15 ft in from the real left edge - so both stay a
+  // single clean triangle sitting between the two offset lines instead of
+  // pinching down to a sliver at the shape's own far corner.
+  const wedgeFarX = base.insetLines.left.x1;
+  const wedgeFarTopY = topEdgeYAtX(wedgeFarX);
+  const wedgeFarBottomY = bottomEdgeYAtX(wedgeFarX);
   const gapFlatY = leansRight ? rightBottom.y : rightTop.y;
-  const gapEdgeY = leansRight ? bottomEdgeYAtX(gapCornerX) : topEdgeYAtX(gapCornerX);
-  const gapBaseFeet = (rightX - gapCornerX) / SCALE;
+  const gapEdgeY = leansRight ? wedgeFarBottomY : wedgeFarTopY;
+  const gapBaseFeet = (rightX - wedgeFarX) / SCALE;
   const gapHeightFeet = Math.abs(gapEdgeY - gapFlatY) / SCALE;
   const gapWedge = leansRight
-    ? [rightBottom, point(gapCornerX, gapFlatY), point(gapCornerX, gapEdgeY)]
-    : [rightTop, point(gapCornerX, gapFlatY), point(gapCornerX, gapEdgeY)];
+    ? [rightBottom, point(wedgeFarX, gapFlatY), point(wedgeFarX, gapEdgeY)]
+    : [rightTop, point(wedgeFarX, gapFlatY), point(wedgeFarX, gapEdgeY)];
   const gapArea = polygonAreaFeet(gapWedge);
   const gapTarget = polygonCentroid(gapWedge);
-  const gapMidX = (rightX + gapCornerX) / 2;
-  // The flat strip line sits inside the real parcel on this side (that
-  // mismatch is the gap itself), so anchoring the label off it can still
-  // land inside the shape. Anchoring off the real edge at the label's own x
-  // instead keeps the label outside the parallelogram, same as the overlap
-  // label already is.
-  const gapRealEdgeAtMidX = leansRight ? bottomEdgeYAtX(gapMidX) : topEdgeYAtX(gapMidX);
-  const gapLabelPosition = point(
-    gapMidX,
-    gapRealEdgeAtMidX + (leansRight ? 1 : -1) * LEADER_GAP,
-  );
-  const gapLeader = line(
-    point(gapMidX, gapLabelPosition.y + (leansRight ? -1 : 1) * LEADER_START_GAP),
-    gapTarget,
-  );
 
-  // The overlap wedge is the gap's mirror image, on the opposite side of the
-  // shape, running the full width to the far (left) corner rather than only
-  // to wherever the left strip's own edge happens to land.
-  const overlapCorner = leansRight ? leftTop : leftBottom;
   const overlapFlatY = leansRight ? rightTop.y : rightBottom.y;
-  const overlapBaseFeet = (rightX - overlapCorner.x) / SCALE;
-  const overlapHeightFeet = Math.abs(overlapFlatY - overlapCorner.y) / SCALE;
-  const overlapWedge = [
-    leansRight ? rightTop : rightBottom,
-    point(overlapCorner.x, overlapFlatY),
-    overlapCorner,
-  ];
+  const overlapEdgeY = leansRight ? wedgeFarTopY : wedgeFarBottomY;
+  const overlapBaseFeet = gapBaseFeet;
+  const overlapHeightFeet = Math.abs(overlapFlatY - overlapEdgeY) / SCALE;
+  const overlapWedge = leansRight
+    ? [rightTop, point(wedgeFarX, overlapFlatY), point(wedgeFarX, overlapEdgeY)]
+    : [rightBottom, point(wedgeFarX, overlapFlatY), point(wedgeFarX, overlapEdgeY)];
   const overlapArea = polygonAreaFeet(overlapWedge);
   const overlapTarget = polygonCentroid(overlapWedge);
-  const overlapMidX = (rightX + overlapCorner.x) / 2;
-  const overlapLabelPosition = point(
-    overlapMidX,
-    overlapFlatY + (leansRight ? -1 : 1) * LEADER_GAP,
+
+  // Both labels sit outside the shape on the left, clear of the strips,
+  // the top row and the chain row alike, each pointing back in at its own
+  // triangle - Overlap above the shape, Gap below, or the other way round
+  // once the lean flips.
+  const labelX = leftTop.x - 8;
+  const gapLabelPosition = point(labelX, leansRight ? bottomY + 18 : topY - 8);
+  const gapLeader = line(
+    point(labelX + 3, gapLabelPosition.y + (leansRight ? -3 : 3)),
+    gapTarget,
   );
+  const overlapLabelPosition = point(labelX, leansRight ? topY - 8 : bottomY + 18);
   const overlapLeader = line(
-    point(overlapMidX, overlapLabelPosition.y + (leansRight ? 1 : -1) * LEADER_START_GAP),
+    point(labelX + 3, overlapLabelPosition.y + (leansRight ? 3 : -3)),
     overlapTarget,
   );
 
