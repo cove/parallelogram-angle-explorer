@@ -180,8 +180,8 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 5.55 ft");
   assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
   assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #111111");
-  assert.equal(nodes.get("pae-area-strip-right-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-area-strip-left-label").textContent, "15 ft");
+  assert.equal(nodes.has("pae-area-strip-right-label"), false);
+  assert.equal(nodes.has("pae-area-strip-left-label"), false);
   assert.equal(nodes.has("pae-area-title-label"), false);
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
