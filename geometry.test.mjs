@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=11";
+} from "./geometry.mjs?v=12";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -439,6 +439,24 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
 });
 
 test("the strips hang over the top and bottom at every angle but 90", () => {
+  const insideShape = (position, shape) => {
+    let direction = 0;
+    for (let index = 0; index < shape.length; index += 1) {
+      const start = shape[index];
+      const end = shape[(index + 1) % shape.length];
+      const cross = (end.x - start.x) * (position.y - start.y)
+        - (end.y - start.y) * (position.x - start.x);
+      if (Math.abs(cross) > 1e-8) {
+        const nextDirection = Math.sign(cross);
+        if (direction !== 0 && nextDirection !== direction) {
+          return false;
+        }
+        direction = nextDirection;
+      }
+    }
+    return true;
+  };
+
   for (let angle = 1; angle <= 180; angle += 0.25) {
     const areas = calculateRightAngleAreas(angle);
     // 180 degrees is the flat, zero-width case and is checked on its own.
@@ -449,6 +467,13 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
     assert.ok(areas.measurements.overhang >= 0);
     assert.ok(areas.measurements.leftGap >= 0);
     assert.ok(areas.measurements.leftGap <= areas.measurements.overhang + 1e-8);
+    for (const gap of ["main", "left"]) {
+      assert.ok(areas.gapAreas[gap] >= 0);
+      assert.equal(
+        areas.gapPolygons[gap].every((position) => insideShape(position, areas.shape)),
+        true,
+      );
+    }
   }
 });
 
@@ -595,4 +620,8 @@ test("shades where A and B run into the left 15 ft strip", () => {
     fullyCoveredGap.formulas.leftGapArea.result,
     "= 0.00 ft² unclaimed",
   );
+
+  const outsideOnly = calculateRightAngleAreas(10);
+  approximately(outsideOnly.gapAreas.main, 0);
+  approximately(outsideOnly.gapAreas.left, 0);
 });

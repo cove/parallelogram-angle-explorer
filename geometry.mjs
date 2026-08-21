@@ -376,9 +376,10 @@ export function calculateRightAngleAreas(angleDegrees) {
   };
   // A's full-length claim can cover part or all of the triangular gap left by
   // the squared-off strip. Report only the portion that remains uncovered.
-  const leftGapWidthFeet = Math.max(
-    0,
+  const leftGapWidthFeet = clamp(
     DIMENSIONS.inset - leftStripOverlaps.a.feet,
+    0,
+    perpendicularWidth,
   );
   const leftGapFeet = leftGapWidthFeet * cotangentMagnitude;
   const leansRight = base.cosine > 0;
@@ -431,37 +432,46 @@ export function calculateRightAngleAreas(angleDegrees) {
       middleArea.x + cornerDimensionLane,
     ),
   };
-  const triangleCentroid = (a, b, c) => point(
+  const triangleCentroid = ([a, b, c]) => point(
     (a.x + b.x + c.x) / 3,
     (a.y + b.y + c.y) / 3,
   );
-  const mainGapBaseFeet = Math.max(0, perpendicularWidth - DIMENSIONS.inset);
-  const mainGapArea = 0.5 * mainGapBaseFeet * middleEndFeet;
-  const leftGapArea = 0.5 * leftGapWidthFeet * leftGapFeet;
-  const mainGapFarTop = point(leftStripInnerX, topEdgeYAtX(leftStripInnerX));
-  const mainGapFarBottom = point(leftStripInnerX, bottomEdgeYAtX(leftStripInnerX));
-  const mainGapTarget = leansRight
-    ? triangleCentroid(
+  const triangleAreaFeet = ([a, b, c]) => Math.abs(
+    a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y),
+  ) / (2 * SCALE * SCALE);
+  // Clamp candidate gaps to the parcel before measuring them. The portion
+  // beyond the black boundary is parcel geometry, not unclaimed parcel area.
+  const mainGapBoundaryX = clamp(leftStripInnerX, leftTop.x, rightX);
+  const leftGapBoundaryX = clamp(leftGapMeasureX, leftTop.x, rightX);
+  const mainGapBaseFeet = (rightX - mainGapBoundaryX) / SCALE;
+  const mainGapFarTop = point(mainGapBoundaryX, topEdgeYAtX(mainGapBoundaryX));
+  const mainGapFarBottom = point(mainGapBoundaryX, bottomEdgeYAtX(mainGapBoundaryX));
+  const mainGapTriangle = leansRight
+    ? [
       rightBottom,
-      point(leftStripInnerX, rightBottom.y),
+      point(mainGapBoundaryX, rightBottom.y),
       mainGapFarBottom,
-    )
-    : triangleCentroid(
+    ]
+    : [
       rightTop,
-      point(leftStripInnerX, rightTop.y),
+      point(mainGapBoundaryX, rightTop.y),
       mainGapFarTop,
-    );
-  const leftGapTarget = leansRight
-    ? triangleCentroid(
+    ];
+  const leftGapTriangle = leansRight
+    ? [
       leftTop,
-      point(leftGapMeasureX, leftTop.y),
-      point(leftGapMeasureX, topEdgeYAtX(leftGapMeasureX)),
-    )
-    : triangleCentroid(
+      point(leftGapBoundaryX, leftTop.y),
+      point(leftGapBoundaryX, topEdgeYAtX(leftGapBoundaryX)),
+    ]
+    : [
       leftBottom,
-      point(leftGapMeasureX, leftBottom.y),
-      point(leftGapMeasureX, bottomEdgeYAtX(leftGapMeasureX)),
-    );
+      point(leftGapBoundaryX, leftBottom.y),
+      point(leftGapBoundaryX, bottomEdgeYAtX(leftGapBoundaryX)),
+    ];
+  const mainGapArea = triangleAreaFeet(mainGapTriangle);
+  const leftGapArea = triangleAreaFeet(leftGapTriangle);
+  const mainGapTarget = triangleCentroid(mainGapTriangle);
+  const leftGapTarget = triangleCentroid(leftGapTriangle);
   const gapLabels = {
     main: point(rightX + 8, leansRight ? rightBottom.y - 12 : rightTop.y + 18),
     left: point(leftTop.x - 8, leansRight ? leftTop.y - 8 : leftBottom.y + 18),
@@ -493,6 +503,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     cornerDimensions,
     gapLeaders,
     gapAreas: { main: mainGapArea, left: leftGapArea },
+    gapPolygons: { main: mainGapTriangle, left: leftGapTriangle },
     leftStripOverlaps,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
