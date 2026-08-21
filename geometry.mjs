@@ -328,11 +328,14 @@ export function calculateRightAngleAreas(angleDegrees) {
       point(chainMark(DIMENSIONS.side), chainY),
     ),
   };
+  const chainWitness = (x) => line(point(x, topY), point(x, bottomY));
+  const chainWitnesses = {
+    right: chainWitness(rightX),
+    rightInset: chainWitness(chain.rightInset.x2),
+    inner: chainWitness(chain.inner.x2),
+    left: chainWitness(chain.leftInset.x2),
+  };
   const chainLabel = ({ x1, x2 }) => point((x1 + x2) / 2, chainY - 10);
-  const farEdgeWitness = line(
-    point(leftTop.x, chainY),
-    point(leftTop.x, leftBottom.y),
-  );
 
 
   const bandY = (offset) => topY + height / 2 + offset;
@@ -378,6 +381,56 @@ export function calculateRightAngleAreas(angleDegrees) {
     DIMENSIONS.inset - leftStripOverlaps.a.feet,
   );
   const leftGapFeet = leftGapWidthFeet * cotangentMagnitude;
+  const leansRight = base.cosine > 0;
+
+  const topEdgeYAtX = (x) => {
+    const width = rightX - leftTop.x;
+    const fraction = width === 0 ? 0.5 : (x - leftTop.x) / width;
+    return leftTop.y + (rightTop.y - leftTop.y) * fraction;
+  };
+  const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
+  const verticalDimension = (measureX, squareY, edgeY, drawX = measureX) => line(
+    point(drawX, squareY),
+    point(drawX, edgeY),
+  );
+  const leftGapMeasureX = leftTop.x + leftGapWidthFeet * SCALE;
+  // The left-strip and middle measurements share a boundary. Adjacent lanes
+  // keep both arrows visible while retaining the exact vertical span.
+  const cornerDimensionLane = 5;
+  const leftTopMeasureX = !leansRight || leftGapFeet === 0
+    ? leftStripInnerX
+    : leftGapMeasureX;
+  const leftBottomMeasureX = leansRight || leftGapFeet === 0
+    ? leftStripInnerX
+    : leftGapMeasureX;
+  const cornerDimensions = {
+    rt: verticalDimension(strips.right.x, rightTop.y, topEdgeYAtX(strips.right.x)),
+    rb: verticalDimension(strips.right.x, rightBottom.y, bottomEdgeYAtX(strips.right.x)),
+    lt: verticalDimension(
+      leftTopMeasureX,
+      leftTop.y,
+      topEdgeYAtX(leftTopMeasureX),
+      leftTopMeasureX - cornerDimensionLane,
+    ),
+    lb: verticalDimension(
+      leftBottomMeasureX,
+      leftBottom.y,
+      bottomEdgeYAtX(leftBottomMeasureX),
+      leftBottomMeasureX - cornerDimensionLane,
+    ),
+    mt: verticalDimension(
+      middleArea.x,
+      middleArea.y,
+      topEdgeYAtX(middleArea.x),
+      middleArea.x + cornerDimensionLane,
+    ),
+    mb: verticalDimension(
+      middleArea.x,
+      middleArea.y + middleArea.height,
+      bottomEdgeYAtX(middleArea.x),
+      middleArea.x + cornerDimensionLane,
+    ),
+  };
 
   return {
     angleDegrees,
@@ -387,7 +440,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     strips,
     // Which way the shape leans decides which end of a strip runs past its
     // edge and which end stops short of it.
-    leansRight: base.cosine > 0,
+    leansRight,
     stripColumns: {
       right: { x: strips.right.x, y: topY, width: stripWidth, height },
       left: { x: strips.left.x, y: topY, width: stripWidth, height },
@@ -396,8 +449,9 @@ export function calculateRightAngleAreas(angleDegrees) {
     middleColumn,
     stripsCollide,
     chain,
-    farEdgeWitness,
+    chainWitnesses,
     dimensions: { a: dimensionA, b: dimensionB },
+    cornerDimensions,
     leftStripOverlaps,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
@@ -495,6 +549,24 @@ export function calculateParallelAreas(angleDegrees) {
   const rightInsetMark = alongTop(DIMENSIONS.inset);
   const innerMark = alongTop(DIMENSIONS.inset + DIMENSIONS.innerSpan);
 
+  const topOffset = (source, amount) => point(
+    source.x - base.cosine * amount,
+    source.y - base.sine * amount,
+  );
+  const topDimensionOffset = 14;
+  const topLabelOffset = 27;
+  const topDimensions = {
+    rightInset: line(topOffset(rightTop, topDimensionOffset), topOffset(rightInsetMark, topDimensionOffset)),
+    inner: line(topOffset(rightInsetMark, topDimensionOffset), topOffset(innerMark, topDimensionOffset)),
+    leftInset: line(topOffset(innerMark, topDimensionOffset), topOffset(leftTop, topDimensionOffset)),
+  };
+  const topExtensions = {
+    right: line(rightTop, topOffset(rightTop, topDimensionOffset + 4)),
+    rightInset: line(rightInsetMark, topOffset(rightInsetMark, topDimensionOffset + 4)),
+    inner: line(innerMark, topOffset(innerMark, topDimensionOffset + 4)),
+    left: line(leftTop, topOffset(leftTop, topDimensionOffset + 4)),
+  };
+
   const stripRect = (startX, endX) => ({
     x: Math.min(startX, endX),
     y: topY,
@@ -507,10 +579,7 @@ export function calculateParallelAreas(angleDegrees) {
     leftInset: stripRect(leftX, innerMark.x),
   };
 
-  const stripLabel = (start, end) => point(
-    (start.x + end.x) / 2,
-    (start.y + end.y) / 2 + 34,
-  );
+  const stripLabel = (start, end) => topOffset(midpoint(start, end), topLabelOffset);
   const guide = (start, feet) => line(
     start,
     point(start.x - base.sine * feet * SCALE, start.y + base.cosine * feet * SCALE),
@@ -530,12 +599,20 @@ export function calculateParallelAreas(angleDegrees) {
     point(guideA.x2, guideA.y2),
     point(guideB.x2, guideB.y2),
   );
+  const boundaryLine = (x) => line(point(x, topY), point(x, bottomY));
+  const boundaryLines = {
+    rightInset: boundaryLine(rightInsetMark.x),
+    inner: boundaryLine(innerMark.x),
+  };
 
   return {
     angleDegrees,
     shape: base.shape,
     rotation: base.shortRotation,
     strips,
+    topDimensions,
+    topExtensions,
+    boundaryLines,
     guides: { a: guideA, b: guideB },
     matchLine,
     labels: {

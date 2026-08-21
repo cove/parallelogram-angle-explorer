@@ -214,16 +214,20 @@
     }
     #parallelogram-angle-explorer text.area-overlap-start { text-anchor: start; }
     #parallelogram-angle-explorer text.area-overlap-end { text-anchor: end; }
-    #parallelogram-angle-explorer .area-far-edge-witness {
+    #parallelogram-angle-explorer .area-chain-witness {
       fill: none;
-      stroke: #111111;
+      stroke: #7030a0;
       stroke-width: 1;
-      stroke-dasharray: 4 4;
+      stroke-dasharray: 5 4;
     }
     #parallelogram-angle-explorer .area-dimension {
       fill: none;
       stroke: #7030a0;
       stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .area-corner-dimension {
+      fill: none;
+      stroke-width: 1.3;
     }
     #parallelogram-angle-explorer .area-square {
       fill: none;
@@ -254,6 +258,22 @@
       fill: none;
       stroke: #1c6d43;
       stroke-width: 1.6;
+    }
+    #parallelogram-angle-explorer .fit-boundary-line {
+      fill: none;
+      stroke: #1c6d43;
+      stroke-width: 1.1;
+      stroke-dasharray: 6 5;
+    }
+    #parallelogram-angle-explorer .fit-top-dimension {
+      fill: none;
+      stroke: #1c6d43;
+      stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .fit-dimension-extension {
+      fill: none;
+      stroke: #777777;
+      stroke-width: 1;
     }
     #parallelogram-angle-explorer .fit-match-line {
       fill: none;
@@ -453,8 +473,17 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. A 15 foot strip is squared off each side and the 50 foot middle carries on from the right strip with the same square ends. Because those ends are cut square while the top and bottom edges lean, each part runs past one edge, shaded red, and stops short of the other, leaving a gap of unclaimed shape, left white. The middle runs furthest from the side it was squared off, so its wedges are the deepest. Measured this way the middle also comes up short of 50 feet, and on a steep lean the two strips collide. Everything lines up only when the shape is square on at 90 degrees.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. Dashed full-length witnesses connect the top dimension chain to its exact boundaries. A 15 foot strip is squared off each side and the 50 foot middle carries on from the right strip with the same square ends. Double-arrow dimensions connect each gap and overlap label to the exact span it measures. Because those ends are cut square while the top and bottom edges lean, each part runs past one edge, shaded red, and stops short of the other, leaving a gap of unclaimed shape, left white. Everything lines up only when the shape is square on at 90 degrees.</desc>
     <defs>
+      <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
+      </marker>
+      <marker id="pae-area-red-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#c00000"></path>
+      </marker>
+      <marker id="pae-area-black-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#111111"></path>
+      </marker>
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
       </clipPath>
@@ -491,22 +520,31 @@
     <rect id="pae-area-strip-left" class="area-strip"></rect>
     <rect id="pae-area-left-overlap-a" class="area-overlap"></rect>
     <path id="pae-area-shape" class="area-shape"></path>
-    <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-area-chain-witness-right" class="area-chain-witness"></line>
+    <line id="pae-area-chain-witness-right-inset" class="area-chain-witness"></line>
+    <line id="pae-area-chain-witness-inner" class="area-chain-witness"></line>
+    <line id="pae-area-chain-witness-left" class="area-chain-witness"></line>
+    <line id="pae-area-dim-a" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
+    <line id="pae-area-dim-b" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <path id="pae-area-square-a" class="area-square"></path>
     <path id="pae-area-square-b" class="area-square"></path>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
+    <line id="pae-area-corner-dim-rt" class="area-corner-dimension"></line>
+    <line id="pae-area-corner-dim-rb" class="area-corner-dimension"></line>
+    <line id="pae-area-corner-dim-lt" class="area-corner-dimension"></line>
+    <line id="pae-area-corner-dim-lb" class="area-corner-dimension"></line>
+    <line id="pae-area-corner-dim-mt" class="area-corner-dimension"></line>
+    <line id="pae-area-corner-dim-mb" class="area-corner-dimension"></line>
     <text id="pae-area-corner-rt" class="label area-corner-label area-overlap-start">Overlap · 5.55 ft</text>
     <text id="pae-area-corner-rb" class="label area-corner-label area-overlap-start">Gap · 5.55 ft</text>
     <text id="pae-area-corner-lt" class="label area-corner-label area-overlap-end">Gap · 5.55 ft</text>
     <text id="pae-area-corner-mt" class="label area-corner-label">Overlap · 22.22 ft</text>
     <text id="pae-area-corner-mb" class="label area-corner-label">Gap · 22.22 ft</text>
-    <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
-    <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-purple-arrow)" marker-end="url(#pae-purple-arrow)"></line>
+    <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
+    <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
+    <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <path id="pae-area-square-chain" class="area-square"></path>
-    <line id="pae-area-far-edge-witness" class="area-far-edge-witness"></line>
     <text id="pae-area-chain-right-label" class="label area-label">15 ft</text>
     <text id="pae-area-chain-inner-label" class="label area-label">50 ft</text>
     <text id="pae-area-chain-left-label" class="label area-label">15 ft</text>
@@ -579,8 +617,11 @@
   <h2 id="pae-fit-heading">LINES PARALLEL TO THE TOP EDGE — EVERYTHING FITS</h2>
   <svg id="pae-fit-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-fit-svg-title pae-fit-svg-desc">
     <title id="pae-fit-svg-title">The 65 and 50 foot lines drawn parallel to the top edge</title>
-    <desc id="pae-fit-svg-desc">The same parallelogram with the 65 foot and 50 foot lines drawn parallel to the 80 foot top edge instead of at a right angle to the side. A starts at the right corner and reaches 65 feet; B starts 15 feet along and reaches 50 feet. Because 15 plus 50 equals 65, both lines end on the same line at every angle, and 65 plus the remaining 15 feet fills the whole 80 foot side with no overlap and nothing left over.</desc>
+    <desc id="pae-fit-svg-desc">The same parallelogram with the 65 foot and 50 foot lines drawn parallel to the 80 foot top edge instead of at a right angle to the side. The 15, 50 and 15 foot dimensions sit above the top edge, with dashed boundary lines extending down the full length of the diagram. A starts at the right corner and reaches 65 feet; B starts 15 feet along and reaches 50 feet. Because 15 plus 50 equals 65, both lines end on the same line at every angle, and 65 plus the remaining 15 feet fills the whole 80 foot side with no overlap and nothing left over.</desc>
     <defs>
+      <marker id="pae-fit-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#1c6d43"></path>
+      </marker>
       <clipPath id="pae-fit-clip">
         <path id="pae-fit-clip-shape"></path>
       </clipPath>
@@ -593,9 +634,18 @@
       <rect id="pae-fit-strip-left" class="fit-strip-outer"></rect>
     </g>
     <path id="pae-fit-shape" class="shape"></path>
+    <line id="pae-fit-boundary-right-inset" class="fit-boundary-line"></line>
+    <line id="pae-fit-boundary-inner" class="fit-boundary-line"></line>
+    <line id="pae-fit-top-dim-right" class="fit-top-dimension" marker-start="url(#pae-fit-green-arrow)" marker-end="url(#pae-fit-green-arrow)"></line>
+    <line id="pae-fit-top-dim-inner" class="fit-top-dimension" marker-start="url(#pae-fit-green-arrow)" marker-end="url(#pae-fit-green-arrow)"></line>
+    <line id="pae-fit-top-dim-left" class="fit-top-dimension" marker-start="url(#pae-fit-green-arrow)" marker-end="url(#pae-fit-green-arrow)"></line>
+    <line id="pae-fit-top-ext-right" class="fit-dimension-extension"></line>
+    <line id="pae-fit-top-ext-right-inset" class="fit-dimension-extension"></line>
+    <line id="pae-fit-top-ext-inner" class="fit-dimension-extension"></line>
+    <line id="pae-fit-top-ext-left" class="fit-dimension-extension"></line>
     <line id="pae-fit-match-line" class="fit-match-line"></line>
-    <line id="pae-fit-guide-a" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
-    <line id="pae-fit-guide-b" class="fit-guide" marker-start="url(#pae-green-arrow)" marker-end="url(#pae-green-arrow)"></line>
+    <line id="pae-fit-guide-a" class="fit-guide" marker-start="url(#pae-fit-green-arrow)" marker-end="url(#pae-fit-green-arrow)"></line>
+    <line id="pae-fit-guide-b" class="fit-guide" marker-start="url(#pae-fit-green-arrow)" marker-end="url(#pae-fit-green-arrow)"></line>
     <text id="pae-fit-strip-right-label" class="label fit-label">15 ft</text>
     <text id="pae-fit-strip-inner-label" class="label fit-label">50 ft</text>
     <text id="pae-fit-strip-left-label" class="label fit-label">15 ft</text>
@@ -643,7 +693,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=9"></script>
+  <script type="module" src="./main.mjs?v=10"></script>
 </div>
 
 </body>

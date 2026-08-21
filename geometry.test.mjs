@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=9";
+} from "./geometry.mjs?v=10";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -317,8 +317,14 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   }
   assert.equal(areas.chain.rightInset.y1, rightTop.y);
   approximately(areas.labels.chainInner.x, (areas.chain.inner.x1 + areas.chain.inner.x2) / 2);
-  assert.equal(areas.farEdgeWitness.x1, leftTop.x);
-  assert.equal(areas.farEdgeWitness.x2, leftTop.x);
+  assert.equal(areas.chainWitnesses.right.x1, areas.chain.rightInset.x1);
+  assert.equal(areas.chainWitnesses.rightInset.x1, areas.chain.rightInset.x2);
+  assert.equal(areas.chainWitnesses.inner.x1, areas.chain.inner.x2);
+  assert.equal(areas.chainWitnesses.left.x1, areas.chain.leftInset.x2);
+  for (const witness of Object.values(areas.chainWitnesses)) {
+    assert.equal(witness.x1, witness.x2);
+    assert.ok(witness.y2 > witness.y1);
+  }
   assert.equal(areas.squares.chain.length, 3);
   approximately(areas.measurements.perpendicularWidth, DIMENSIONS.side * Math.sin(
     EXAMPLE_ANGLE * Math.PI / 180,
@@ -356,6 +362,14 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.ok(areas.labels.rightBottom.x > rightTop.x);
   assert.ok(areas.labels.leftTop.x < leftTop.x);
   assert.ok(areas.labels.leftBottom.x < leftTop.x);
+
+  const verticalSpan = ({ y1, y2 }) => Math.abs(y2 - y1) / 1.72;
+  approximately(verticalSpan(areas.cornerDimensions.rt), areas.measurements.overhang);
+  approximately(verticalSpan(areas.cornerDimensions.rb), areas.measurements.overhang);
+  approximately(verticalSpan(areas.cornerDimensions.lt), areas.measurements.leftGap);
+  approximately(verticalSpan(areas.cornerDimensions.lb), areas.measurements.overhang);
+  approximately(verticalSpan(areas.cornerDimensions.mt), areas.measurements.middleEnds);
+  approximately(verticalSpan(areas.cornerDimensions.mb), areas.measurements.middleEnds);
 
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
@@ -446,6 +460,9 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
   approximately(topLength / 1.72, DIMENSIONS.side, 1e-9);
   approximately(length(fit.guides.a) / 1.72, DIMENSIONS.arrowA, 1e-9);
   approximately(length(fit.guides.b) / 1.72, DIMENSIONS.innerSpan, 1e-9);
+  approximately(length(fit.topDimensions.rightInset) / 1.72, DIMENSIONS.inset, 1e-9);
+  approximately(length(fit.topDimensions.inner) / 1.72, DIMENSIONS.innerSpan, 1e-9);
+  approximately(length(fit.topDimensions.leftInset) / 1.72, DIMENSIONS.inset, 1e-9);
   approximately(
     direction(fit.guides.a),
     Math.atan2(leftTop.y - rightTop.y, leftTop.x - rightTop.x),
@@ -460,6 +477,13 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
     rightTop.x - leftTop.x,
   );
   approximately(fit.strips.rightInset.width, fit.strips.leftInset.width);
+  approximately(fit.boundaryLines.rightInset.x1, fit.strips.rightInset.x);
+  approximately(fit.boundaryLines.inner.x1, fit.strips.inner.x);
+  assert.ok(fit.boundaryLines.rightInset.y2 > fit.boundaryLines.rightInset.y1);
+  assert.ok(fit.boundaryLines.inner.y2 > fit.boundaryLines.inner.y1);
+  assert.ok(fit.labels.rightInset.y < Math.min(leftTop.y, rightTop.y));
+  assert.ok(fit.labels.inner.y < Math.max(leftTop.y, rightTop.y));
+  assert.ok(fit.labels.leftInset.y < Math.max(leftTop.y, rightTop.y));
   approximately(fit.strips.rightInset.y, Math.min(leftTop.y, rightTop.y));
   approximately(
     fit.strips.inner.height,
