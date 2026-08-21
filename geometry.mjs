@@ -104,10 +104,16 @@ export function calculateDiagram(angleDegrees) {
   const perpendicularY = CENTER_Y - 48;
   const perpendicularInset = DIMENSIONS.inset * sine;
   const perpendicularInner = DIMENSIONS.innerSpan * sine;
+  // The chain the assessor's numbers force: the right 15 ft runs to the green
+  // inset line, the 50 ft carries on from there to A's far end at 65 ft, and
+  // the last 15 ft is whatever is left from A to the parcel's left side.
+  const perpendicularRightMark = rightInsetTop.x;
+  const perpendicularInnerMark = rightX - DIMENSIONS.arrowA * SCALE;
+  const perpendicularLeftOver = perpendicularWidth - DIMENSIONS.arrowA;
   const perpendicular = {
-    left: line(point(leftX, perpendicularY), point(leftInsetTop.x, perpendicularY)),
-    inner: line(point(leftInsetTop.x, perpendicularY), point(rightInsetTop.x, perpendicularY)),
-    right: line(point(rightInsetTop.x, perpendicularY), point(rightX, perpendicularY)),
+    left: line(point(leftX, perpendicularY), point(perpendicularInnerMark, perpendicularY)),
+    inner: line(point(perpendicularInnerMark, perpendicularY), point(perpendicularRightMark, perpendicularY)),
+    right: line(point(perpendicularRightMark, perpendicularY), point(rightX, perpendicularY)),
     leftSquare: [
       point(leftX, perpendicularY - 8),
       point(leftX + 8, perpendicularY - 8),
@@ -119,9 +125,9 @@ export function calculateDiagram(angleDegrees) {
       point(rightX - 8, perpendicularY),
     ],
     methodLabel: point(leftX - 10, perpendicularY + 4),
-    leftLabel: point((leftX + leftInsetTop.x) / 2, perpendicularY - 10),
-    innerLabel: point((leftInsetTop.x + rightInsetTop.x) / 2, perpendicularY - 10),
-    rightLabel: point((rightInsetTop.x + rightX) / 2, perpendicularY - 10),
+    leftLabel: point((leftX + perpendicularInnerMark) / 2, perpendicularY - 10),
+    innerLabel: point((perpendicularInnerMark + perpendicularRightMark) / 2, perpendicularY - 10),
+    rightLabel: point((perpendicularRightMark + rightX) / 2, perpendicularY - 10),
   };
 
   const staticAY = CENTER_Y + 48;
@@ -172,6 +178,7 @@ export function calculateDiagram(angleDegrees) {
     perpendicularInset,
     perpendicularInner,
     perpendicularWidth,
+    perpendicularLeftOver,
     overlap,
     projectionLoss,
   };
@@ -221,6 +228,10 @@ export function calculateDiagram(angleDegrees) {
       fixedArrows: {
         expression: "A = 65 ft",
         result: "· B = 50 ft",
+      },
+      leftOver: {
+        expression: `80 ft × sin(${angleDegrees.toFixed(2)}°) − 65 ft`,
+        result: `= ${formatFeet(perpendicularLeftOver)} ft left where 15 ft was claimed`,
       },
       overlap: {
         expression: `65 ft − 65 ft × sin(${angleDegrees.toFixed(2)}°)`,

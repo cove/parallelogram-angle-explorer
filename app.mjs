@@ -134,17 +134,18 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-perp-inset-left-label"),
       diagram.perpendicular.leftLabel,
-      `${diagram.measurements.perpendicularInset.toFixed(2)} ft`,
+      // What the method claims for the last part, not what the parcel offers.
+      `${DIMENSIONS.inset} ft`,
     );
     setText(
       element("pae-perp-inner-label"),
       diagram.perpendicular.innerLabel,
-      `${diagram.measurements.perpendicularInner.toFixed(2)} ft`,
+      `${DIMENSIONS.innerSpan} ft`,
     );
     setText(
       element("pae-perp-inset-right-label"),
       diagram.perpendicular.rightLabel,
-      `${diagram.measurements.perpendicularInset.toFixed(2)} ft`,
+      `${DIMENSIONS.inset} ft`,
     );
 
     setLine(element("pae-static-a"), diagram.guides.a);
@@ -185,6 +186,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
+    setFormula("pae-calc-left-over", diagram.formulas.leftOver);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
     setFormula("pae-calc-projection-loss", diagram.formulas.projectionLoss);
   }

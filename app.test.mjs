@@ -94,8 +94,8 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
   assert.equal(nodes.get("pae-angle-output").textContent, "69.69°");
   assert.equal(nodes.has("pae-forced-title-label"), false);
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
-  assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-perp-inner-label").textContent, "50 ft");
   assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
@@ -128,7 +128,7 @@ test("updates the diagram and formulas from slider input", async () => {
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft");
 });
 
-test("handles all preset buttons and the 180 degree extreme", async () => {
+test("handles both preset buttons and the 180 degree extreme", async () => {
   const { controller, nodes } = await createHarness();
   const slider = nodes.get("pae-angle");
 
@@ -136,18 +136,13 @@ test("handles all preset buttons and the 180 degree extreme", async () => {
   assert.equal(slider.value, "90");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft");
 
-  nodes.get("pae-snap-10080").dispatch("click");
-  assert.equal(slider.value, "100.8");
-  assert.equal(nodes.get("pae-angle-output").textContent, "100.80°");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 1.15 ft");
-
   nodes.get("pae-snap-11023").dispatch("click");
   assert.equal(slider.value, "110.23");
   assert.equal(nodes.get("pae-angle-output").textContent, "110.23°");
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "0.00 ft");
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "15 ft");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
 });
 
@@ -437,14 +432,6 @@ test("keeps the right-angle page's two sliders in step", async () => {
   }
   for (const output of outputs) {
     assert.equal(output.textContent, "90.00°");
-  }
-
-  nodes.get("pae-snap-10080").dispatch("click");
-  for (const slider of sliders) {
-    assert.equal(slider.value, "100.8");
-  }
-  for (const output of outputs) {
-    assert.equal(output.textContent, "100.80°");
   }
 });
 
