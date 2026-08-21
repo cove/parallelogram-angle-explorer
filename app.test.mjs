@@ -94,8 +94,9 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-svg").getAttribute("viewBox"), "0 0 620 676");
   assert.equal(nodes.get("pae-angle-output").textContent, "69.69°");
   assert.equal(nodes.has("pae-forced-title-label"), false);
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-perp-inner-label").textContent, "50 ft");
+  // The chain carries what it actually measures, not the claimed 15/50/15.
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "10.03 ft");
+  assert.equal(nodes.get("pae-perp-inner-label").textContent, "50.93 ft");
   assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
@@ -142,7 +143,7 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "65.00 ft");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
 });
 

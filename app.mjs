@@ -134,18 +134,17 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-perp-inset-left-label"),
       diagram.perpendicular.leftLabel,
-      // What the method claims for the last part, not what the parcel offers.
-      `${DIMENSIONS.inset} ft`,
+      `${diagram.measurements.perpendicularChain.left.toFixed(2)} ft`,
     );
     setText(
       element("pae-perp-inner-label"),
       diagram.perpendicular.innerLabel,
-      `${DIMENSIONS.innerSpan} ft`,
+      `${diagram.measurements.perpendicularChain.inner.toFixed(2)} ft`,
     );
     setText(
       element("pae-perp-inset-right-label"),
       diagram.perpendicular.rightLabel,
-      `${DIMENSIONS.inset} ft`,
+      `${diagram.measurements.perpendicularChain.right.toFixed(2)} ft`,
     );
 
     setLine(element("pae-static-a"), diagram.guides.a);

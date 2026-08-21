@@ -110,6 +110,13 @@ export function calculateDiagram(angleDegrees) {
   const perpendicularRightMark = rightInsetTop.x;
   const perpendicularInnerMark = rightX - DIMENSIONS.arrowA * SCALE;
   const perpendicularLeftOver = perpendicularWidth - DIMENSIONS.arrowA;
+  // What each part of the chain actually measures across the shape, as
+  // against the 15, 50 and 15 the assessor's figures claim for them.
+  const perpendicularChain = {
+    left: Math.abs(perpendicularLeftOver),
+    inner: Math.abs(DIMENSIONS.arrowA - perpendicularInset),
+    right: perpendicularInset,
+  };
   const perpendicular = {
     left: line(point(leftX, perpendicularY), point(perpendicularInnerMark, perpendicularY)),
     inner: line(point(perpendicularInnerMark, perpendicularY), point(perpendicularRightMark, perpendicularY)),
@@ -179,6 +186,7 @@ export function calculateDiagram(angleDegrees) {
     perpendicularInner,
     perpendicularWidth,
     perpendicularLeftOver,
+    perpendicularChain,
     overlap,
     projectionLoss,
   };
