@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=10";
+} from "./geometry.mjs?v=11";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -371,6 +371,21 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   approximately(verticalSpan(areas.cornerDimensions.mt), areas.measurements.middleEnds);
   approximately(verticalSpan(areas.cornerDimensions.mb), areas.measurements.middleEnds);
 
+  approximately(areas.gapAreas.main, 666.7808714972274);
+  approximately(areas.gapAreas.left, 18.602836633529726);
+  assert.ok(areas.gapLeaders.main.x1 > areas.gapLeaders.main.x2);
+  assert.ok(areas.gapLeaders.left.x1 < areas.gapLeaders.left.x2);
+  assert.equal(
+    areas.formulas.mainGapArea.expression,
+    "½ × 60.03 ft × 22.22 ft",
+  );
+  assert.equal(areas.formulas.mainGapArea.result, "= 666.78 ft² unclaimed");
+  assert.equal(
+    areas.formulas.leftGapArea.expression,
+    "½ × 10.03 ft × 3.71 ft",
+  );
+  assert.equal(areas.formulas.leftGapArea.result, "= 18.60 ft² unclaimed");
+
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
   approximately(areas.stripColumns.left.width, areas.strips.left.width);
@@ -387,6 +402,8 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   assert.equal(square.formulas.middleShort.result, "= 0.00 ft short in the middle");
   assert.equal(square.measurements.middleEnds, 0);
   assert.equal(calculateRightAngleAreas(180).measurements.middleEnds, 0);
+  assert.equal(square.gapAreas.main, 0);
+  assert.equal(square.gapAreas.left, 0);
 
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   approximately(
@@ -567,9 +584,15 @@ test("shades where A and B run into the left 15 ft strip", () => {
   approximately(fullyCoveredGap.measurements.overhang, 11.846286185467141);
   approximately(fullyCoveredGap.measurements.leftStripOverlapA, 17.21789035735337);
   approximately(fullyCoveredGap.measurements.leftGap, 0);
+  approximately(fullyCoveredGap.gapAreas.left, 0);
+  approximately(fullyCoveredGap.gapAreas.main, 901.5537133718698);
   assert.equal(
     fullyCoveredGap.formulas.leftGap.expression,
     "max(0, 15 ft − 17.22 ft) × |cot(128.30°)|",
   );
   assert.equal(fullyCoveredGap.formulas.leftGap.result, "= 0.00 ft uncovered");
+  assert.equal(
+    fullyCoveredGap.formulas.leftGapArea.result,
+    "= 0.00 ft² unclaimed",
+  );
 });

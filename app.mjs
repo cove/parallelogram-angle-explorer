@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=10";
+} from "./geometry.mjs?v=11";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -264,35 +264,48 @@ export function initializeApp(documentRef, windowRef) {
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
     // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
-    const leftGap = areas.measurements.leftGap;
     const middleEnds = areas.measurements.middleEnds;
     const leftTopOverlap = !areas.leansRight;
     const leftBottomOverlap = areas.leansRight;
     const corners = [
       ["rt", areas.labels.rightTop, areas.leansRight, overhang],
       ["rb", areas.labels.rightBottom, !areas.leansRight, overhang],
-      ["lt", areas.labels.leftTop, leftTopOverlap, leftTopOverlap ? overhang : leftGap],
-      ["lb", areas.labels.leftBottom, leftBottomOverlap, leftBottomOverlap ? overhang : leftGap],
+      ["lt", areas.labels.leftTop, leftTopOverlap, overhang],
+      ["lb", areas.labels.leftBottom, leftBottomOverlap, overhang],
       ["mt", areas.labels.middleTop, areas.leansRight, middleEnds],
       ["mb", areas.labels.middleBottom, !areas.leansRight, middleEnds],
     ];
     for (const [corner, position, isOverlap, feet] of corners) {
       const node = element(`pae-area-corner-${corner}`);
       const dimensionNode = element(`pae-area-corner-dim-${corner}`);
-      const opacity = feet > 0 ? "1" : "0";
+      const opacity = isOverlap && feet > 0 ? "1" : "0";
       node.setAttribute("opacity", opacity);
       dimensionNode.setAttribute("opacity", opacity);
-      // Inline so it wins over the shared label colour in the stylesheet.
-      node.setAttribute("style", `fill: ${isOverlap ? "#c00000" : "#111111"}`);
-      dimensionNode.setAttribute("style", `stroke: ${isOverlap ? "#c00000" : "#111111"}`);
-      const marker = isOverlap ? "pae-area-red-arrow" : "pae-area-black-arrow";
-      dimensionNode.setAttribute("marker-start", `url(#${marker})`);
-      dimensionNode.setAttribute("marker-end", `url(#${marker})`);
+      node.setAttribute("style", "fill: #c00000");
+      dimensionNode.setAttribute("style", "stroke: #c00000");
+      dimensionNode.setAttribute("marker-start", "url(#pae-area-red-arrow)");
+      dimensionNode.setAttribute("marker-end", "url(#pae-area-red-arrow)");
       setLine(dimensionNode, areas.cornerDimensions[corner]);
       setText(
         node,
         position,
-        `${isOverlap ? "Overlap" : "Gap"} · ${feet.toFixed(2)} ft`,
+        `Overlap · ${feet.toFixed(2)} ft`,
+      );
+    }
+
+    for (const gap of ["main", "left"]) {
+      const labelNode = element(`pae-area-gap-${gap}`);
+      const leaderNode = element(`pae-area-gap-leader-${gap}`);
+      const squareFeet = areas.gapAreas[gap];
+      const opacity = squareFeet > 0 ? "1" : "0";
+      labelNode.setAttribute("opacity", opacity);
+      leaderNode.setAttribute("opacity", opacity);
+      leaderNode.setAttribute("marker-end", "url(#pae-area-black-arrow)");
+      setLine(leaderNode, areas.gapLeaders[gap]);
+      setText(
+        labelNode,
+        gap === "main" ? areas.labels.gapMain : areas.labels.gapLeft,
+        `Gap · ${squareFeet.toFixed(2)} ft²`,
       );
     }
 
@@ -305,6 +318,8 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapA);
     setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapB);
     setFormula("pae-area-calc-left-gap", areas.formulas.leftGap);
+    setFormula("pae-area-calc-main-gap-area", areas.formulas.mainGapArea);
+    setFormula("pae-area-calc-left-gap-area", areas.formulas.leftGapArea);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 
