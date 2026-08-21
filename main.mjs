@@ -1,5 +1,6 @@
-// The query is a cache buster: a browser holding an older app.mjs from a
-// previous visit would throw on a page that carries only some diagrams.
-import { initializeApp } from "./app.mjs?v=13";
+// The query is a cache buster. Every module carries the same number and it
+// only ever goes up: reusing one for changed content leaves browsers pairing
+// a fresh module with a stale one, which throws instead of drawing.
+import { initializeApp } from "./app.mjs?v=14";
 
 initializeApp(document, window);
