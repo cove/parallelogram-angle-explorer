@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=20";
+} from "./geometry.mjs?v=21";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -320,7 +320,11 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   assert.equal(areas.chainWitnesses.right.x1, areas.chain.rightInset.x1);
   assert.equal(areas.chainWitnesses.rightInset.x1, areas.chain.rightInset.x2);
   assert.equal(areas.chainWitnesses.inner.x1, areas.chain.inner.x2);
-  assert.equal(areas.chainWitnesses.left.x1, areas.chain.leftInset.x2);
+  // The left strip has already spilled past the parcel's own corner at this
+  // angle, so its witness is held to that corner rather than extrapolating
+  // the edge line out to where the chain mark actually falls.
+  assert.ok(areas.chain.leftInset.x2 < leftTop.x);
+  assert.equal(areas.chainWitnesses.left.x1, leftTop.x);
   for (const witness of Object.values(areas.chainWitnesses)) {
     assert.equal(witness.x1, witness.x2);
     assert.ok(witness.y2 > witness.y1);
@@ -529,6 +533,7 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
 test("both parallel guides end on the same line at every angle", () => {
   for (let angle = 1; angle <= 180; angle += 0.25) {
     const fit = calculateParallelAreas(angle);
+    const [leftTop, rightTop, rightBottom, leftBottom] = fit.shape;
     assert.equal(fit.measurements.gap, 0);
     assert.equal(fit.measurements.reach, DIMENSIONS.arrowA);
     assert.equal(fit.measurements.topEdge, DIMENSIONS.side);
@@ -536,6 +541,14 @@ test("both parallel guides end on the same line at every angle", () => {
     approximately(fit.matchLine.x1, fit.matchLine.x2, 1e-9);
     assert.ok(fit.labels.match.x >= fit.guides.a.x2 - 10);
     assert.ok(fit.labels.match.x >= 265);
+    // The two boundary witnesses always run inside the shape's own leaning
+    // top and bottom edges, never past the global top/bottom bounds.
+    const topY = Math.min(leftTop.y, rightTop.y);
+    const bottomY = Math.max(leftBottom.y, rightBottom.y);
+    for (const boundary of Object.values(fit.boundaryLines)) {
+      assert.ok(boundary.y1 >= topY - 1e-6);
+      assert.ok(boundary.y2 <= bottomY + 1e-6);
+    }
   }
 });
 

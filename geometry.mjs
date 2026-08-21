@@ -362,7 +362,14 @@ export function calculateRightAngleAreas(angleDegrees) {
     return leftTop.y + (rightTop.y - leftTop.y) * fraction;
   };
   const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
-  const chainWitness = (x) => line(point(x, topEdgeYAtX(x)), point(x, bottomEdgeYAtX(x)));
+  // A chain mark can fall past the shape's own corner once a strip has
+  // spilled off the parcel entirely. Past that corner there is no edge left
+  // to hit, so the witness is held to the corner itself rather than
+  // extrapolating the edge line beyond where the shape actually ends.
+  const chainWitness = (x) => {
+    const witnessX = clamp(x, leftTop.x, rightX);
+    return line(point(witnessX, topEdgeYAtX(witnessX)), point(witnessX, bottomEdgeYAtX(witnessX)));
+  };
   const chainWitnesses = {
     right: chainWitness(rightX),
     rightInset: chainWitness(chain.rightInset.x2),
@@ -656,7 +663,16 @@ export function calculateParallelAreas(angleDegrees) {
     point(guideA.x2, guideA.y2),
     point(guideB.x2, guideB.y2),
   );
-  const boundaryLine = (x) => line(point(x, topY), point(x, bottomY));
+  // The shape's top and bottom edges lean, so a boundary held to the global
+  // top/bottom bounds sticks out past whichever edge is higher or lower at
+  // that x. Stopping each one at the real edge keeps it inside the shape.
+  const topEdgeYAtX = (x) => {
+    const width = rightX - leftX;
+    const fraction = width === 0 ? 0.5 : (x - leftX) / width;
+    return leftTop.y + (rightTop.y - leftTop.y) * fraction;
+  };
+  const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
+  const boundaryLine = (x) => line(point(x, topEdgeYAtX(x)), point(x, bottomEdgeYAtX(x)));
   const boundaryLines = {
     rightInset: boundaryLine(rightInsetMark.x),
     inner: boundaryLine(innerMark.x),
