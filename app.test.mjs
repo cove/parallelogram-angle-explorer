@@ -96,7 +96,7 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.has("pae-forced-title-label"), false);
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 0.93 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
@@ -104,7 +104,7 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.has("pae-overlap-extent-b"), false);
   assert.equal(
     nodes.get("pae-overlap-span").getAttribute("x2"),
-    nodes.get("pae-inset-left").getAttribute("x1"),
+    nodes.get("pae-static-b").getAttribute("x2"),
   );
   assert.equal(nodes.get("pae-calc-shape-expression").textContent, "15 ft + 50 ft + 15 ft");
   assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
@@ -124,16 +124,21 @@ test("updates the diagram and formulas from slider input", async () => {
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
   assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "15 ft × sin(86.89°)");
   assert.equal(nodes.get("pae-calc-perp-insets-result").textContent, "= 14.98 ft each");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.02 ft");
 });
 
-test("handles both preset buttons and the 180 degree extreme", async () => {
+test("handles all preset buttons and the 180 degree extreme", async () => {
   const { controller, nodes } = await createHarness();
   const slider = nodes.get("pae-angle");
 
   nodes.get("pae-snap-90").dispatch("click");
   assert.equal(slider.value, "90");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft");
+
+  nodes.get("pae-snap-10080").dispatch("click");
+  assert.equal(slider.value, "100.8");
+  assert.equal(nodes.get("pae-angle-output").textContent, "100.80°");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.27 ft");
 
   nodes.get("pae-snap-11023").dispatch("click");
   assert.equal(slider.value, "110.23");
@@ -142,7 +147,7 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "0.00 ft");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 15.00 ft");
 });
 
 test("switches the SVG viewport at the mobile breakpoint", async () => {
@@ -369,6 +374,14 @@ test("keeps the right-angle page's two sliders in step", async () => {
   }
   for (const output of outputs) {
     assert.equal(output.textContent, "90.00°");
+  }
+
+  nodes.get("pae-snap-10080").dispatch("click");
+  for (const slider of sliders) {
+    assert.equal(slider.value, "100.8");
+  }
+  for (const output of outputs) {
+    assert.equal(output.textContent, "100.80°");
   }
 });
 
