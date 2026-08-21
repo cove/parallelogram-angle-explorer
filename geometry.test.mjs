@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=27";
+} from "./geometry.mjs?v=28";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -292,7 +292,7 @@ test("measures both right-angle areas from the right side", () => {
   assert.ok(areas.squares.a[1].y < areas.squares.a[0].y);
   assert.ok(areas.squares.b[1].y > areas.squares.b[0].y);
   assert.equal(areas.angleDegrees, EXAMPLE_ANGLE);
-  assert.equal(areas.formulas.method.result, "· A = 65 ft · B = 50 ft");
+  assert.equal(areas.formulas.method.result, "· the 50 ft center is fitted from the right");
   assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
   assert.equal(areas.formulas.width.result, "= 75.03 ft across");
   assert.equal(
@@ -305,14 +305,14 @@ test("measures both right-angle areas from the right side", () => {
   );
 });
 
-test("steps 15, 50 and 15 off the side at a right angle", () => {
+test("squares each 15 ft strip inward from its own side", () => {
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const diagram = calculateDiagram(EXAMPLE_ANGLE);
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
   assert.equal(areas.formulas.chain.expression, "15 ft + 50 ft + 15 ft");
-  assert.equal(areas.formulas.chain.result, "= 80 ft of room needed at 90°");
+  assert.equal(areas.formulas.chain.result, "= 80 ft claimed in 75.03 ft of room");
   // The naive top row and its long dashed insets are reproduced verbatim
   // from the forced-measurements diagram, so A's 65 ft line visibly crosses
   // the dashed line coming down from the left 15 ft boundary here too.
@@ -324,12 +324,11 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   approximately(areas.chain.rightInset.x1, rightTop.x);
   approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
   approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
-  // The chain now reads what a right angle actually measures - the same
-  // marks the forced-measurements diagram's "Right angle method" row uses -
-  // not the 15/50/15 the strips are squared off to claim.
-  approximately(areas.measurements.chainRightAngle.right, diagram.measurements.perpendicularChain.right);
-  approximately(areas.measurements.chainRightAngle.inner, diagram.measurements.perpendicularChain.inner);
-  approximately(areas.measurements.chainRightAngle.left, diagram.measurements.perpendicularChain.left);
+  // Each side contributes a true 15 ft perpendicular strip; the center row
+  // reports only the room actually left between their inner edges.
+  approximately(areas.measurements.chainRightAngle.right, DIMENSIONS.inset);
+  approximately(areas.measurements.chainRightAngle.inner, areas.measurements.middle);
+  approximately(areas.measurements.chainRightAngle.left, DIMENSIONS.inset);
   approximately(span(areas.chain.rightInset), areas.measurements.chainRightAngle.right);
   approximately(span(areas.chain.inner), areas.measurements.chainRightAngle.inner);
   approximately(span(areas.chain.leftInset), areas.measurements.chainRightAngle.left);
@@ -360,20 +359,19 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
 
-  // The right strip hugs its own side; the left one is stepped off the far end
-  // of A's 65 ft line, so it runs from 65 ft to 80 ft in from the right side.
+  // Each strip hugs its own side and extends inward by 15 ft.
   approximately(areas.strips.right.x + areas.strips.right.width, rightTop.x);
-  approximately(areas.strips.left.x, rightTop.x - DIMENSIONS.side * 1.72);
-  approximately(areas.strips.left.x + areas.strips.left.width, areas.areaA.x);
+  approximately(areas.strips.left.x, leftTop.x);
   approximately(areas.strips.right.width / 1.72, DIMENSIONS.inset);
   approximately(areas.strips.left.width / 1.72, DIMENSIONS.inset);
 
-  // Square ends: every part of the chain carries the right side's ends.
+  // The square ends inherit the height of the side each strip starts from.
   approximately(areas.strips.right.y, rightTop.y);
   approximately(areas.strips.right.height, rightBottom.y - rightTop.y);
-  approximately(areas.strips.left.y, rightTop.y);
-  approximately(areas.strips.left.height, rightBottom.y - rightTop.y);
+  approximately(areas.strips.left.y, leftTop.y);
+  approximately(areas.strips.left.height, leftBottom.y - leftTop.y);
   approximately(areas.strips.right.height, areas.strips.left.height);
+  assert.notEqual(areas.strips.left.y, areas.strips.right.y);
 
   // Those square ends sit clear of the leaning top and bottom edges.
   const radians = EXAMPLE_ANGLE * Math.PI / 180;
@@ -385,20 +383,16 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.equal(areas.leansRight, true);
   assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
 
-  // One combined total for the whole unclaimed wedge, not the strips' three
-  // separate shortfalls added up piecemeal by the reader - and neither
-  // wedge is let to run past the left inset line, so it stays one clean
-  // triangle rather than pinching down to a sliver at the shape's corner.
-  approximately(areas.gapArea, 687.660169045606);
-  assert.equal(
-    areas.formulas.gapArea.expression,
-    "½ × 60.96 ft × 22.56 ft",
-  );
-  assert.equal(areas.formulas.gapArea.result, "= 687.66 ft² unclaimed");
-  // The overlap wedge on the opposite corner is congruent to the gap wedge -
-  // a parallelogram is symmetric about its center - so it totals the same.
-  approximately(areas.overlapArea, areas.gapArea, 1e-6);
-  assert.equal(areas.formulas.overlapArea.result, "= 687.66 ft² over-claimed");
+  // The fixed center and left strip overlap horizontally because 80 ft of
+  // claims are being fitted into only 80 × sin(theta) ft of room. Separate
+  // triangles remain unclaimed beside their differently aligned square ends.
+  approximately(areas.measurements.leftStripOverlapA, 4.973730509342867);
+  approximately(areas.overlapArea, 687.1808177272268);
+  approximately(areas.gapArea, 685.3837081307572);
+  assert.equal(areas.gapPolygons.length, 2);
+  assert.equal(areas.formulas.gapArea.expression, "two unclaimed triangles inside the parcel");
+  assert.equal(areas.formulas.gapArea.result, "= 685.38 ft² unclaimed");
+  assert.equal(areas.formulas.overlapArea.result, "= 687.18 ft² claimed twice");
 
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
@@ -414,7 +408,7 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   assert.equal(square.formulas.middle.expression, "80.00 ft − 15 ft − 15 ft");
   assert.equal(square.formulas.middle.result, "= 50.00 ft for a 50 ft middle");
   assert.equal(square.formulas.middleShort.result, "= 0.00 ft short in the middle");
-  // Chained off the right side the drawn middle is a full 50 ft at any angle.
+  // The attempted center remains drawn at 50 ft even when less room is available.
   approximately(square.middleArea.width / 1.72, DIMENSIONS.innerSpan);
   assert.equal(square.measurements.middleEnds, 0);
   assert.equal(calculateRightAngleAreas(180).measurements.middleEnds, 0);
@@ -426,7 +420,7 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
     areas.measurements.middle,
     areas.measurements.perpendicularWidth - DIMENSIONS.inset * 2,
   );
-  approximately(areas.middleArea.x, areas.strips.left.x + areas.strips.left.width);
+  approximately(areas.middleArea.x, areas.areaA.x);
   approximately(
     areas.middleArea.x + areas.middleArea.width,
     areas.strips.right.x,
@@ -580,64 +574,48 @@ test("rejects invalid angles for the parallel diagram too", () => {
   assert.throws(() => calculateParallelAreas("90"), RangeError);
 });
 
-test("neither line reaches into the left 15 ft strip any more", () => {
-  // The left strip now starts where A's 65 ft ends, so 15 + 50 = 65 lands both
-  // lines on its inner edge at worst and nothing is shaded at any angle.
+test("the fitted center reaches into the independently measured left strip", () => {
+  // Square on, 15 + 50 + 15 fits exactly and no ground is claimed twice.
   const square = calculateRightAngleAreas(PRESET_ANGLES.rightAngle);
   approximately(square.measurements.leftStripOverlapA, 0);
   approximately(square.measurements.leftStripOverlapB, 0);
   approximately(square.leftStripOverlaps.a.rect.width, 0);
 
   const leaning = calculateRightAngleAreas(PRESET_ANGLES.reverse);
-  approximately(leaning.measurements.leftStripOverlapA, 0);
-  approximately(leaning.measurements.leftStripOverlapB, 0);
+  approximately(leaning.measurements.leftStripOverlapA, 0.928956323711849);
+  approximately(leaning.measurements.leftStripOverlapB, 0.7547770130158732);
 
-  // The shaded runs collapse onto the strip's inner edge, which is A's end.
+  // The overlap ends at the left strip's inner edge and uses only the shared
+  // vertical height of the independently anchored rectangles.
   const stripInnerX = leaning.strips.left.x + leaning.strips.left.width;
-  approximately(stripInnerX, leaning.areaA.x);
   for (const key of ["a", "b"]) {
-    const { rect } = leaning.leftStripOverlaps[key];
+    const { rect, feet } = leaning.leftStripOverlaps[key];
     approximately(rect.x + rect.width, stripInnerX);
-    approximately(rect.width, 0);
-    // Full length of the shape, like the strip it would eat into.
-    approximately(rect.y, leaning.areaA.y);
-    approximately(rect.height, leaning.areaA.height);
+    approximately(rect.width / 1.72, feet);
+    assert.ok(rect.height < leaning.strips.left.height);
   }
   assert.equal(
     leaning.formulas.leftStripOverlapA.expression,
-    "65 ft − (15 ft + 50 ft)",
+    "min(15 ft, 79.07 ft) − max(0, 79.07 ft − 65 ft)",
   );
-  assert.equal(leaning.formulas.leftStripOverlapA.result, "= 0.00 ft");
+  assert.equal(leaning.formulas.leftStripOverlapA.result, "= 0.93 ft");
   assert.equal(
     leaning.formulas.leftStripOverlapB.expression,
-    "(50 ft + 15 ft × sin(98.74°)) − 65 ft",
+    "intersection of B with the left 15 ft strip",
   );
-  assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.00 ft");
+  assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.75 ft");
 
-  // Past the strip's own corner the parcel keeps whatever ground the chain's
-  // square ends leave behind - one combined total for the whole wedge, held
-  // to the left inset line rather than the parcel's own corner.
-  approximately(leaning.gapArea, 317.268845175992);
-  // No vertex of the gap wedge falls strictly inside the left strip's own
-  // rectangle (sitting flush against its top edge is fine) - if it did, that
-  // ground would already be shaded, not a gap.
-  const strictlyInsideLeftStrip = (position) => (
-    position.x > leaning.strips.left.x + 1e-8
-    && position.x < leaning.strips.left.x + leaning.strips.left.width - 1e-8
-    && position.y > leaning.strips.left.y + 1e-8
-    && position.y < leaning.strips.left.y + leaning.strips.left.height - 1e-8
-  );
-  assert.equal(leaning.gapPolygon.some(strictlyInsideLeftStrip), false);
+  approximately(leaning.overlapArea, 142.84926415685547);
+  approximately(leaning.gapArea, 330.7702710639654);
 
-  // Leaned far enough the whole left strip is off the parcel, and the gap
-  // wedge is exactly what the right and middle strips alone leave behind,
-  // still held to the left inset line rather than the parcel's own corner.
+  // At steeper angles the fitted center covers the full 15 ft width of the
+  // left strip, while the remaining uncovered parcel is still nonnegative.
   const offParcel = calculateRightAngleAreas(128.3);
   approximately(offParcel.measurements.overhang, 11.846286185467141);
-  approximately(offParcel.gapArea, 1027.4945213586739);
+  approximately(offParcel.measurements.leftStripOverlapA, 15);
+  approximately(offParcel.gapArea, 901.5537133718691);
 
-  // Squeezed right down the parcel still keeps the corner the square ends miss.
+  // Once both claims span the whole narrow parcel, there is no internal gap.
   const narrow = calculateRightAngleAreas(10);
-  approximately(narrow.gapArea, 361.2587763877361);
+  approximately(narrow.gapArea, 0);
 });
-

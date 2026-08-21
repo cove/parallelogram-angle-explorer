@@ -188,16 +188,16 @@ test("renders the second right-angle area diagram", async () => {
     Number(nodes.get("pae-area-inset-left").getAttribute("y2"))
       > Number(nodes.get("pae-area-inset-left").getAttribute("y1")),
   );
-  // One label for the whole over-claimed wedge and one for the whole
-  // unclaimed wedge, each reporting a single combined total rather than a
-  // per-strip breakdown.
-  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlap · 687.66 ft²");
+  // The overlap label reports ground claimed by both the fitted center and
+  // the independently squared left strip; the gap label totals both white
+  // triangles left inside the parcel.
+  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlap · 687.18 ft²");
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(
     nodes.get("pae-area-overlap-leader").getAttribute("marker-end"),
     "url(#pae-area-red-arrow)",
   );
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 687.66 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 685.38 ft²");
   assert.equal(
     nodes.get("pae-area-gap-leader").getAttribute("marker-end"),
     "url(#pae-area-black-arrow)",
@@ -216,11 +216,10 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-calc-overhang-result").textContent,
     "= 5.55 ft over one edge, short of the other",
   );
-  // The overlap wedge is a single filled triangle, not the strips' own
-  // squared-off rectangles - those can run past the parcel on both the
-  // leaning edge and the real left edge, which is exactly what the wedge is
-  // bounded to avoid.
-  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
+  // The overlap is the four-corner intersection of the fitted center and the
+  // left strip, clipped to the parcel.
+  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
+  assert.equal(nodes.get("pae-area-left-overlap-a").getAttribute("opacity"), "0");
   // The shaded length covers the same rectangle as the outline.
   for (const side of ["right", "left"]) {
     for (const attribute of ["x", "y", "width", "height"]) {
@@ -244,23 +243,23 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(
     nodes.get("pae-area-calc-gap-area-result").textContent,
-    "= 687.66 ft² unclaimed",
+    "= 685.38 ft² unclaimed",
   );
   assert.equal(
     nodes.get("pae-area-calc-overlap-area-result").textContent,
-    "= 687.66 ft² over-claimed",
+    "= 687.18 ft² claimed twice",
   );
 });
 
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
   const { controller, nodes } = await createHarness("./overlaps.html");
 
-  // The chain now reads what a right angle actually measures, the same way
-  // the forced-measurements diagram's "Right angle method" row does.
-  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "14.07 ft");
-  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50.93 ft");
-  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "10.03 ft");
-  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft of room needed at 90°");
+  // Both end strips are a true 15 ft perpendicular measurement; the center
+  // label exposes the smaller amount of room actually left between them.
+  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "15.00 ft");
+  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "45.03 ft");
+  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "15.00 ft");
+  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft claimed in 75.03 ft of room");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
     nodes.get("pae-area-chain-witness-right-inset").getAttribute("x1"),
@@ -275,6 +274,10 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(
     nodes.get("pae-area-strip-right").getAttribute("height"),
     nodes.get("pae-area-strip-left").getAttribute("height"),
+  );
+  assert.notEqual(
+    nodes.get("pae-area-strip-right").getAttribute("y"),
+    nodes.get("pae-area-strip-left").getAttribute("y"),
   );
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap").getAttribute("opacity"), "1");
@@ -300,28 +303,25 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1040.20 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 790.51 ft²");
 
   // Past 90 degrees the lean flips.
   controller.draw(110.23);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 685.42 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 683.44 ft²");
 
-  // Leaned far enough that the left strip has walked off the parcel entirely,
-  // the total is exactly what the right and middle strips alone leave behind.
+  // Leaned far enough that the center covers the full width of the left strip.
   controller.draw(128.3);
   assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
-  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 1027.49 ft²");
+  assert.equal(nodes.get("pae-area-gap").textContent, "Gap · 901.55 ft²");
 
-  // The chain's square ends still leave the parcel's own far corner uncovered.
+  // Narrow enough, the two side-anchored claims cover the whole parcel.
   controller.draw(10);
-  assert.equal(nodes.get("pae-area-gap").getAttribute("opacity"), "1");
+  assert.equal(nodes.get("pae-area-gap").getAttribute("opacity"), "0");
 
-  // Leaned steep enough that most of the middle's nominal 50 ft sits past
-  // the parcel's true edge, the overlap wedge is still a single triangle
-  // bounded at the left inset line.
+  // At steep angles the overlap remains a four-corner shared area.
   controller.draw(20);
-  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
+  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
 });
 
 test("keeps both right-angle diagrams on the same mobile viewport", async () => {

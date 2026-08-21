@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=27";
+} from "./geometry.mjs?v=28";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -231,8 +231,8 @@ export function initializeApp(documentRef, windowRef) {
       areas.shortRotation,
     );
 
-    // Either the middle still lands on the parcel, or it has leaned far
-    // enough that its far end has walked off the parcel entirely.
+    // Draw the attempted fixed 50 ft center from the right-hand strip. Its
+    // far end can overlap the independently measured left strip.
     setRect(element("pae-area-middle"), areas.middleArea);
     // Outline, shaded length inside the shape, and the mask that turns each
     // strip into a hole for the gap slivers.
@@ -295,21 +295,20 @@ export function initializeApp(documentRef, windowRef) {
       areas.labels.b,
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
-    // Either line reaching past the inner edge of the left 15 ft strip is
-    // claiming ground that strip already claims. A always reaches farther, so
-    // it alone defines the visible red overlap; B remains in the hidden math.
+    // A's fixed 65 ft reach meets the independently squared left strip. The
+    // shared rectangle is rendered by the combined overlap path below; keep
+    // this legacy rectangle transparent so it cannot double-darken the fill.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
-    // The overlap wedge itself, drawn as a single filled triangle bounded at
-    // the left inset line - not the strips' own squared-off rectangles,
-    // which can run past the parcel on both the leaning edge and the real
-    // left edge alike.
+    element("pae-area-left-overlap-a").setAttribute("opacity", "0");
+    // The overlap is the ground claimed by both the fitted center and the
+    // independently measured left strip.
     const overlapOpacity = areas.overlapVisible ? "1" : "0";
     element("pae-area-overlap-fill").setAttribute("opacity", overlapOpacity);
     element("pae-area-overlap-fill").setAttribute(
       "d",
       pathFromPoints(areas.overlapPolygon, true),
     );
-    // One label for the whole over-claimed wedge, held off far enough that
+    // One label for the whole double-claimed area, held off far enough that
     // the leader reads as a line with an arrowhead, not just the arrowhead.
     const overlapLabel = element("pae-area-overlap-label");
     const overlapLeader = element("pae-area-overlap-leader");
@@ -319,9 +318,8 @@ export function initializeApp(documentRef, windowRef) {
     setLine(overlapLeader, areas.overlapLeader);
     setText(overlapLabel, areas.labels.overlap, `Overlap · ${areas.overlapArea.toFixed(2)} ft²`);
 
-    // One label for the whole unclaimed wedge, held directly above it when
-    // the wedge sits on the top edge and directly below when it sits on the
-    // bottom, rather than splitting it into per-strip totals.
+    // One label for both unclaimed triangles; the leader targets the larger
+    // triangle so the arrow remains legible as the lean changes.
     const gapLabel = element("pae-area-gap");
     const gapLeader = element("pae-area-gap-leader");
     const gapOpacity = areas.gapVisible ? "1" : "0";

@@ -473,8 +473,8 @@
   <p class="diagram-disclaimer" role="note"><strong>Disclaimer:</strong> These diagrams are illustrative only and are not guaranteed to be accurate. They are intended solely to provide an intuitive understanding of how parallelograms change at different angles.</p>
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
-    <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. The top dimension chain reports what a right-angle measurement actually gets at each mark, the same way the forced-measurements diagram's right angle method does, not the 15/50/15 the strips are squared off to claim. Dashed witnesses connect that chain to its exact boundaries without crossing outside the shape. A 15 foot strip is squared off the right side, the 50 foot middle carries on from it, and the second 15 foot strip is stepped off the far end of A's 65 foot line, so all three parts chain off the right side with the same square ends. A single overlap triangle - filled in red, bounded at the left inset line rather than running past it - reports the whole square-foot area the strips claim outside the parallelogram, and a single gap label reports the whole square-foot area left unclaimed inside it, each as one combined total rather than broken out strip by strip. Both labels sit on the left, out of the way, each with a leader long enough to read as a line and an arrowhead pointing back in at its own triangle. Everything lines up only when the shape is square on at 90 degrees.</desc>
+    <title id="pae-area-svg-title">Incorrect right-angle fit measured inward from both sides</title>
+    <desc id="pae-area-svg-desc">The same parallelogram incorrectly fitted with a 15 foot strip squared inward from each side and a 50 foot center squared inward from the right strip. The left purple strip begins at the real left side and extends right, so its square top and bottom shift above or below the green center as the lean changes. Away from 90 degrees the parcel is less than 80 feet wide when measured perpendicular to its sides. The fixed 50 foot center therefore reaches into the left strip, shown in red as double-claimed overlap, while white triangles show ground inside the parcel that none of the squared rectangles reaches. Both overlap and gaps close only at 90 degrees.</desc>
     <defs>
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
@@ -510,7 +510,7 @@
       <rect id="pae-area-strip-left-gap" class="area-strip-gap"></rect>
       <rect id="pae-area-middle-gap" class="area-strip-gap"></rect>
     </g>
-    <path id="pae-area-overlap-fill" class="area-overlap"></path>
+    <path id="pae-area-overlap-fill" class="area-overlap" clip-path="url(#pae-area-clip)"></path>
     <rect id="pae-area-strip-right" class="area-strip"></rect>
     <rect id="pae-area-strip-left" class="area-strip"></rect>
     <rect id="pae-area-left-overlap-a" class="area-overlap"></rect>
@@ -565,7 +565,7 @@
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">Every part — 15, 50, 15 — is measured square to the right side and chained one after the other, the last 15 ft stepped off the far end of A&rsquo;s 65 ft line. The top and bottom edges lean, so every part <strong>overlaps</strong> past one edge (red: ground the parcel does not have) and leaves a <strong>gap</strong> at the other (white: ground nothing claims). Both grow the further a part reaches from the side, and both close only at 90°.</p>
+    <p class="calculation-note">The two 15 ft strips are measured square inward from their own left and right sides; the 50 ft center is then fitted inward from the right strip. Away from 90°, the perpendicular width is less than the claimed 80 ft. The center therefore <strong>overlaps</strong> the left strip (red: ground claimed twice), while the different square-ended levels leave <strong>gaps</strong> inside the parallelogram (white: ground nothing claims). The purple left strip reaches above or below the green center as the lean reverses. Everything fits only at 90°.</p>
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
@@ -594,7 +594,7 @@
           <span class="calculation-formula"><span id="pae-area-calc-overhang-expression">Calculating…</span><strong id="pae-area-calc-overhang-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">A into left strip</span>
+          <span class="calculation-name">Center into left strip</span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-a-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-a-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
@@ -695,7 +695,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=27"></script>
+  <script type="module" src="./main.mjs?v=28"></script>
 </div>
 
 </body>

@@ -293,12 +293,10 @@ export function calculateRightAngleAreas(angleDegrees) {
     height,
   };
 
-  const chainMark = (feet) => rightX - feet * SCALE;
-  // A 15 ft strip squared off each side keeps square ends, but the top and
-  // bottom edges lean away from those ends, so each strip runs past the shape.
-  // The left strip is stepped off the far end of A's 65 ft line rather than
-  // from the left edge, so all three parts chain off the right side and carry
-  // the same square ends.
+  // Each 15 ft end strip is squared inward from its own side. The left strip
+  // therefore starts at the real left side and runs right, while the right
+  // strip starts at the real right side and runs left. Their square ends sit
+  // at different heights whenever the parcel is not square on.
   const stripWidth = DIMENSIONS.inset * SCALE;
   const strips = {
     right: {
@@ -308,10 +306,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       height: rightBottom.y - rightTop.y,
     },
     left: {
-      x: chainMark(DIMENSIONS.side),
-      y: rightTop.y,
+      x: leftTop.x,
+      y: leftTop.y,
       width: stripWidth,
-      height: rightBottom.y - rightTop.y,
+      height: leftBottom.y - leftTop.y,
     },
   };
   // How far a square end runs past the leaning edge, measured along the side.
@@ -328,32 +326,28 @@ export function calculateRightAngleAreas(angleDegrees) {
   // each strip still claims a full 15 ft of that narrower width, so what is
   // left for the middle falls short of 50 ft - and on a steep lean the two
   // strips meet and there is no middle at all.
-  const middleStart = strips.left.x + stripWidth;
-  const middleEnd = strips.right.x;
-  const middleFeet = perpendicularWidth - DIMENSIONS.inset * 2;
+  const middleFeet = Math.max(0, perpendicularWidth - DIMENSIONS.inset * 2);
   const middleShortFeet = DIMENSIONS.innerSpan - middleFeet;
-  // The middle carries on from the right strip, so it keeps the same square
-  // ends and runs past one leaning edge and short of the other in its turn.
+  // The incorrect fit still lays out a full 50 ft center from the right-hand
+  // strip. Since the perpendicular parcel width is less than 80 ft away from
+  // 90 degrees, that fixed center reaches into the independently measured
+  // left strip. This is the overlap the diagram is meant to expose.
+  const middleStart = rightX - (DIMENSIONS.inset + DIMENSIONS.innerSpan) * SCALE;
   const middleArea = {
-    x: Math.min(middleStart, middleEnd),
+    x: middleStart,
     y: strips.right.y,
-    width: Math.abs(middleEnd - middleStart),
+    width: DIMENSIONS.innerSpan * SCALE,
     height: strips.right.height,
   };
   const middleColumn = { x: middleArea.x, y: topY, width: middleArea.width, height };
-  // The middle now ends on the left strip's inner edge, a flat 65 ft in from
-  // the right side, so that is the reach its square ends are measured over.
+  // The fixed center ends a flat 65 ft in from the right side.
   const middleEndFeet = DIMENSIONS.arrowA * cotangentMagnitude;
-  // Chained off the right side the middle always measures its full 50 ft, but
-  // leaned far enough its far end walks off the parcel altogether.
   const middleOffParcel = perpendicularWidth < DIMENSIONS.arrowA;
-  // The chain shows where a right-angle measurement actually puts the marks
-  // - the same marks the forced-measurements diagram's "Right angle method"
-  // row uses, not the 15/50/15 the strips are squared off to claim - held at
-  // that same row's fixed height so the two diagrams line up.
+  // This row reports the two independently squared 15 ft strips and the room
+  // actually left between them. It is 15 / 50 / 15 only at 90 degrees.
   const chainY = CENTER_Y - 48;
-  const chainRightMarkX = base.perpendicular.right.x1;
-  const chainInnerMarkX = base.perpendicular.inner.x1;
+  const chainRightMarkX = strips.right.x;
+  const chainInnerMarkX = strips.left.x + strips.left.width;
   const chain = {
     rightInset: line(point(rightX, chainY), point(chainRightMarkX, chainY)),
     inner: line(point(chainRightMarkX, chainY), point(chainInnerMarkX, chainY)),
@@ -402,27 +396,27 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(x - 9, y + 9 * direction),
     point(x, y + 9 * direction),
   ];
-  // The left strip now starts exactly where A's 65 ft ends, so its inner edge
-  // sits a flat 65 ft in from the right side at every angle.
-  const leftStripInnerFeet = DIMENSIONS.arrowA;
   const leftStripInnerX = strips.left.x + stripWidth;
-  // Each shaded run spans the whole length of the shape, the way the strip it
-  // is eating into does.
-  const stripEncroachment = (endFeet) => {
-    const feet = Math.max(0, endFeet - leftStripInnerFeet);
+  // Linear encroachment into the left strip. A is the right strip plus the
+  // fitted 50 ft center; B is retained as a second diagnostic guide.
+  const stripEncroachment = (claimLeftX) => {
+    const overlapRightX = Math.min(leftStripInnerX, rightX);
+    const overlapLeftX = clamp(claimLeftX, leftTop.x, overlapRightX);
+    const feet = Math.max(0, (overlapRightX - overlapLeftX) / SCALE);
     return {
       feet,
       rect: {
-        x: leftStripInnerX - feet * SCALE,
-        y: topY,
+        x: overlapLeftX,
+        y: Math.max(leftTop.y, rightTop.y),
         width: feet * SCALE,
-        height,
+        height: Math.max(0, Math.min(leftBottom.y, rightBottom.y)
+          - Math.max(leftTop.y, rightTop.y)),
       },
     };
   };
   const leftStripOverlaps = {
-    a: stripEncroachment(DIMENSIONS.arrowA),
-    b: stripEncroachment(areaBEndFeet),
+    a: stripEncroachment(areaA.x),
+    b: stripEncroachment(areaB.x),
   };
   const leansRight = base.cosine > 0;
 
@@ -439,36 +433,37 @@ export function calculateRightAngleAreas(angleDegrees) {
     }
     return Math.abs(twiceArea) / (2 * SCALE * SCALE);
   };
-  // Measuring a static distance at a right angle from the right side (the
-  // flat strip line) against the real, leaning edges leaves a triangle of
-  // mismatch on each side of the shape: overlap where the flat line runs
-  // past the real edge, gap where it falls short. Neither triangle is let
-  // to run past the left inset line - the same offset line the naive top
-  // row already marks 15 ft in from the real left edge - so both stay a
-  // single clean triangle sitting between the two offset lines instead of
-  // pinching down to a sliver at the shape's own far corner.
-  const wedgeFarX = base.insetLines.left.x1;
-  const wedgeFarTopY = topEdgeYAtX(wedgeFarX);
-  const wedgeFarBottomY = bottomEdgeYAtX(wedgeFarX);
-  const gapFlatY = leansRight ? rightBottom.y : rightTop.y;
-  const gapEdgeY = leansRight ? wedgeFarBottomY : wedgeFarTopY;
-  const gapBaseFeet = (rightX - wedgeFarX) / SCALE;
-  const gapHeightFeet = Math.abs(gapEdgeY - gapFlatY) / SCALE;
-  const gapWedge = leansRight
-    ? [rightBottom, point(wedgeFarX, gapFlatY), point(wedgeFarX, gapEdgeY)]
-    : [rightTop, point(wedgeFarX, gapFlatY), point(wedgeFarX, gapEdgeY)];
-  const gapArea = polygonAreaFeet(gapWedge);
-  const gapTarget = polygonCentroid(gapWedge);
+  // The double-claimed overlap is the intersection of the left 15 ft strip
+  // with A (the right 15 ft plus the fitted 50 ft center). Its purple/red
+  // rectangle shifts above or below the center as the lean reverses.
+  const overlapRect = leftStripOverlaps.a.rect;
+  const overlapPolygon = [
+    point(overlapRect.x, overlapRect.y),
+    point(overlapRect.x + overlapRect.width, overlapRect.y),
+    point(overlapRect.x + overlapRect.width, overlapRect.y + overlapRect.height),
+    point(overlapRect.x, overlapRect.y + overlapRect.height),
+  ];
+  const overlapArea = polygonAreaFeet(overlapPolygon);
+  const overlapTarget = polygonCentroid(overlapPolygon);
 
-  const overlapFlatY = leansRight ? rightTop.y : rightBottom.y;
-  const overlapEdgeY = leansRight ? wedgeFarTopY : wedgeFarBottomY;
-  const overlapBaseFeet = gapBaseFeet;
-  const overlapHeightFeet = Math.abs(overlapFlatY - overlapEdgeY) / SCALE;
-  const overlapWedge = leansRight
-    ? [rightTop, point(wedgeFarX, overlapFlatY), point(wedgeFarX, overlapEdgeY)]
-    : [rightBottom, point(wedgeFarX, overlapFlatY), point(wedgeFarX, overlapEdgeY)];
-  const overlapArea = polygonAreaFeet(overlapWedge);
-  const overlapTarget = polygonCentroid(overlapWedge);
+  // Fitting the left strip from the left and A from the right leaves two
+  // unclaimed triangles inside the parcel: one beside each independently
+  // anchored square end. The overlap between the claims covers the would-be
+  // gap between those two boundaries.
+  const areaLeftX = clamp(areaA.x, leftTop.x, rightX);
+  const stripInnerX = clamp(leftStripInnerX, leftTop.x, rightX);
+  const leftGap = leansRight
+    ? [leftTop, point(areaLeftX, leftTop.y), point(areaLeftX, topEdgeYAtX(areaLeftX))]
+    : [leftBottom, point(areaLeftX, leftBottom.y), point(areaLeftX, bottomEdgeYAtX(areaLeftX))];
+  const rightGap = leansRight
+    ? [rightBottom, point(stripInnerX, rightBottom.y), point(stripInnerX, bottomEdgeYAtX(stripInnerX))]
+    : [rightTop, point(stripInnerX, rightTop.y), point(stripInnerX, topEdgeYAtX(stripInnerX))];
+  const gapPolygons = [leftGap, rightGap];
+  const gapPolygonAreas = gapPolygons.map(polygonAreaFeet);
+  const gapArea = gapPolygonAreas.reduce((sum, area) => sum + area, 0);
+  // The right-side triangle always has at least as much horizontal base as
+  // the left-side triangle (W − 15 versus max(0, W − 65)).
+  const gapTarget = polygonCentroid(rightGap);
 
   // Both labels sit outside the shape on the left, clear of the strips,
   // the top row and the chain row alike, each pointing back in at its own
@@ -515,12 +510,13 @@ export function calculateRightAngleAreas(angleDegrees) {
     dimensions: { a: dimensionA, b: dimensionB },
     gapLeader,
     gapArea,
-    gapPolygon: gapWedge,
+    gapPolygon: rightGap,
+    gapPolygons,
     gapVisible: gapArea > 1e-9,
     leftStripOverlaps,
     overlapLeader,
     overlapArea,
-    overlapPolygon: overlapWedge,
+    overlapPolygon,
     overlapVisible: overlapArea > 1e-9,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
@@ -546,31 +542,34 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapB: leftStripOverlaps.b.feet,
       gapArea,
       overlapArea,
-      // What the chain actually measures at a right angle to the side, the
-      // same way the forced-measurements diagram's "Right angle method" row
-      // does - not the 15/50/15 the strips are squared off to claim.
-      chainRightAngle: base.measurements.perpendicularChain,
+      // The two true 15 ft end strips and the perpendicular room actually
+      // left between their inner edges.
+      chainRightAngle: {
+        right: DIMENSIONS.inset,
+        inner: middleFeet,
+        left: DIMENSIONS.inset,
+      },
     },
     formulas: {
       leftStripOverlapA: {
-        expression: `${DIMENSIONS.arrowA} ft − (${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft)`,
+        expression: `min(${DIMENSIONS.inset} ft, ${formatFeet(perpendicularWidth)} ft) − max(0, ${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.arrowA} ft)`,
         result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
       },
       leftStripOverlapB: {
-        expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − ${DIMENSIONS.arrowA} ft`,
+        expression: `intersection of B with the left ${DIMENSIONS.inset} ft strip`,
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       gapArea: {
-        expression: `½ × ${formatFeet(gapBaseFeet)} ft × ${formatFeet(gapHeightFeet)} ft`,
+        expression: "two unclaimed triangles inside the parcel",
         result: `= ${formatFeet(gapArea)} ft² unclaimed`,
       },
       overlapArea: {
-        expression: `½ × ${formatFeet(overlapBaseFeet)} ft × ${formatFeet(overlapHeightFeet)} ft`,
-        result: `= ${formatFeet(overlapArea)} ft² over-claimed`,
+        expression: `${formatFeet(leftStripOverlaps.a.feet)} ft × ${formatFeet(overlapRect.height / SCALE)} ft`,
+        result: `= ${formatFeet(overlapArea)} ft² claimed twice`,
       },
       method: {
-        expression: "both areas start at the right side, turned 90°",
-        result: `· A = ${DIMENSIONS.arrowA} ft · B = ${DIMENSIONS.arrowB} ft`,
+        expression: "each 15 ft strip starts at its own side, squared inward",
+        result: `· the ${DIMENSIONS.innerSpan} ft center is fitted from the right`,
       },
       width: {
         expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
@@ -594,7 +593,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       },
       chain: {
         expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft + ${DIMENSIONS.inset} ft`,
-        result: `= ${DIMENSIONS.side} ft of room needed at 90°`,
+        result: `= ${DIMENSIONS.side} ft claimed in ${formatFeet(perpendicularWidth)} ft of room`,
       },
     },
   };
