@@ -203,13 +203,15 @@
     }
     #parallelogram-angle-explorer .area-strip-spill { fill: #c00000; fill-opacity: 0.5; stroke: none; }
     #parallelogram-angle-explorer .area-strip-gap { fill: #ffffff; stroke: none; }
-    #parallelogram-angle-explorer text.area-corner-label {
+    #parallelogram-angle-explorer text.area-gap-label {
+      fill: #111111;
       font-size: 12px;
       font-weight: 700;
       paint-order: stroke fill;
       stroke: #ffffff;
       stroke-width: 5px;
       stroke-linejoin: round;
+      text-anchor: middle;
     }
     #parallelogram-angle-explorer .area-chain-witness {
       fill: none;
@@ -227,12 +229,6 @@
       stroke: #111111;
       stroke-width: 1.4;
       stroke-dasharray: 4 3;
-    }
-    #parallelogram-angle-explorer text.area-gap-main {
-      text-anchor: start;
-    }
-    #parallelogram-angle-explorer text.area-gap-left {
-      text-anchor: end;
     }
     #parallelogram-angle-explorer .area-square {
       fill: none;
@@ -479,7 +475,7 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. Dashed witnesses connect the top dimension chain to its exact boundaries without crossing outside the shape. A 15 foot strip is squared off the right side, the 50 foot middle carries on from it, and the second 15 foot strip is stepped off the far end of A's 65 foot line, so all three parts chain off the right side with the same square ends. A single overlap label points into the red area where a strip runs past a leaning edge. Gap labels report the square-foot area left unclaimed inside the parallelogram, with single-arrow leaders pointing into the corresponding white triangles. Everything lines up only when the shape is square on at 90 degrees.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. Dashed witnesses connect the top dimension chain to its exact boundaries without crossing outside the shape. A 15 foot strip is squared off the right side, the 50 foot middle carries on from it, and the second 15 foot strip is stepped off the far end of A's 65 foot line, so all three parts chain off the right side with the same square ends. A single overlap label reports the whole square-foot area the strips claim outside the parallelogram, and a single gap label reports the whole square-foot area left unclaimed inside it, each as one combined total rather than broken out strip by strip. Both labels sit directly above or below their area, whichever side it falls on, with a leader long enough to read as a line and an arrowhead pointing into it. Everything lines up only when the shape is square on at 90 degrees.</desc>
     <defs>
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
@@ -535,10 +531,8 @@
     <path id="pae-area-square-b" class="area-square"></path>
     <text id="pae-area-a-label" class="label area-label">A · 65 ft at 90°</text>
     <text id="pae-area-b-label" class="label area-label">B · 50 ft at 90°</text>
-    <line id="pae-area-gap-leader-main" class="area-gap-leader"></line>
-    <line id="pae-area-gap-leader-left" class="area-gap-leader"></line>
-    <text id="pae-area-gap-main" class="label area-corner-label area-gap-main">Gap · 0.00 ft²</text>
-    <text id="pae-area-gap-left" class="label area-corner-label area-gap-left">Gap · 0.00 ft²</text>
+    <line id="pae-area-gap-leader" class="area-gap-leader"></line>
+    <text id="pae-area-gap" class="label area-gap-label">Gap · 0.00 ft²</text>
     <line id="pae-area-chain-right" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <line id="pae-area-chain-inner" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
     <line id="pae-area-chain-left" class="area-dimension" marker-start="url(#pae-area-purple-arrow)" marker-end="url(#pae-area-purple-arrow)"></line>
@@ -601,17 +595,13 @@
           <span class="calculation-name">B into left strip</span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-b-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-b-result" class="calculation-result"></strong></span>
         </div>
-        <div class="calculation calculation-black">
-          <span class="calculation-name">Past the left strip</span>
-          <span class="calculation-formula"><span id="pae-area-calc-left-gap-expression">Calculating…</span><strong id="pae-area-calc-left-gap-result" class="calculation-result"></strong></span>
+        <div class="calculation calculation-red">
+          <span class="calculation-name">Overlap area</span>
+          <span class="calculation-formula"><span id="pae-area-calc-overlap-area-expression">Calculating…</span><strong id="pae-area-calc-overlap-area-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-black">
-          <span class="calculation-name">Main gap area</span>
-          <span class="calculation-formula"><span id="pae-area-calc-main-gap-area-expression">Calculating…</span><strong id="pae-area-calc-main-gap-area-result" class="calculation-result"></strong></span>
-        </div>
-        <div class="calculation calculation-black">
-          <span class="calculation-name">Left gap area</span>
-          <span class="calculation-formula"><span id="pae-area-calc-left-gap-area-expression">Calculating…</span><strong id="pae-area-calc-left-gap-area-result" class="calculation-result"></strong></span>
+          <span class="calculation-name">Gap area</span>
+          <span class="calculation-formula"><span id="pae-area-calc-gap-area-expression">Calculating…</span><strong id="pae-area-calc-gap-area-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
           <span class="calculation-name">Room needed</span>
@@ -699,7 +689,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=18"></script>
+  <script type="module" src="./main.mjs?v=19"></script>
 </div>
 
 </body>

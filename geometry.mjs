@@ -423,75 +423,60 @@ export function calculateRightAngleAreas(angleDegrees) {
     }
     return Math.abs(twiceArea) / (2 * SCALE * SCALE);
   };
+  // A label offset far enough that the leader reads as a line with an
+  // arrowhead, not just the arrowhead on its own.
+  const LEADER_GAP = 22;
+  const LEADER_START_GAP = 6;
+
   // The squared-off strips share one flat top and one flat bottom (both at
   // the right side's own height), while the real top and real bottom edges
-  // lean. That leaves one continuous wedge of real parcel - between the flat
-  // line and the leaning edge - running the full width from the left strip's
-  // own corner to the right side. It is split in two only because the right
-  // and middle strips already account for the near two-thirds of it; the
-  // rest, from the left strip's own corner out to that same split point, is
-  // what the left gap reports. Both wedges sit on the same side (top or
-  // bottom), whichever side the flat line falls short of the real edge on.
-  const mainGapBoundaryX = clamp(leftStripInnerX, leftTop.x, rightX);
-  const mainGapBaseFeet = (rightX - mainGapBoundaryX) / SCALE;
-  const mainGapFarTop = point(mainGapBoundaryX, topEdgeYAtX(mainGapBoundaryX));
-  const mainGapFarBottom = point(mainGapBoundaryX, bottomEdgeYAtX(mainGapBoundaryX));
-  const mainGapTriangle = leansRight
-    ? [
-      rightBottom,
-      point(mainGapBoundaryX, rightBottom.y),
-      mainGapFarBottom,
-    ]
-    : [
-      rightTop,
-      point(mainGapBoundaryX, rightTop.y),
-      mainGapFarTop,
-    ];
-  // The left strip's own corner, clamped to the real edge if the strip
-  // overshoots it and to the split point if the strip falls short of even
-  // reaching that far - either way, never past ground the main gap already
-  // claims.
-  const leftGapCornerX = clamp(strips.left.x, leftTop.x, mainGapBoundaryX);
-  const leftGapCornerFeet = (rightX - leftGapCornerX) / SCALE;
-  const leftGapBaseFeet = (mainGapBoundaryX - leftGapCornerX) / SCALE;
-  const leftGapFeet = leansRight
-    ? (bottomEdgeYAtX(leftGapCornerX) - rightBottom.y) / SCALE
-    : (rightTop.y - topEdgeYAtX(leftGapCornerX)) / SCALE;
-  const leftGapTriangle = leansRight
-    ? [
-      point(leftGapCornerX, bottomEdgeYAtX(leftGapCornerX)),
-      point(leftGapCornerX, rightBottom.y),
-      point(mainGapBoundaryX, rightBottom.y),
-      mainGapFarBottom,
-    ]
-    : [
-      point(leftGapCornerX, topEdgeYAtX(leftGapCornerX)),
-      point(leftGapCornerX, rightTop.y),
-      point(mainGapBoundaryX, rightTop.y),
-      mainGapFarTop,
-    ];
-  const mainGapArea = polygonAreaFeet(mainGapTriangle);
-  const leftGapArea = polygonAreaFeet(leftGapTriangle);
-  const mainGapTarget = polygonCentroid(mainGapTriangle);
-  const leftGapTarget = polygonCentroid(leftGapTriangle);
-  const gapLabels = {
-    main: point(rightX + 8, leansRight ? rightBottom.y - 12 : rightTop.y + 18),
-    left: point(leftTop.x - 8, leansRight ? leftBottom.y + 18 : leftTop.y - 8),
-  };
-  const gapLeaders = {
-    main: line(point(rightX + 3, gapLabels.main.y - 3), mainGapTarget),
-    left: line(point(leftTop.x - 3, gapLabels.left.y - 3), leftGapTarget),
-  };
+  // lean. That leaves exactly two triangular wedges of mismatch, one on each
+  // side of the shape: on the side the flat line falls short of the real
+  // edge, real parcel ground goes unclaimed (the gap); on the side it runs
+  // past the real edge, the strips claim ground that is not there (the
+  // overlap/spill). Each is reported as one whole-parcel total rather than
+  // broken out strip by strip.
+  const gapCornerX = clamp(strips.left.x, leftTop.x, rightX);
+  const gapFlatY = leansRight ? rightBottom.y : rightTop.y;
+  const gapEdgeY = leansRight ? bottomEdgeYAtX(gapCornerX) : topEdgeYAtX(gapCornerX);
+  const gapBaseFeet = (rightX - gapCornerX) / SCALE;
+  const gapHeightFeet = Math.abs(gapEdgeY - gapFlatY) / SCALE;
+  const gapWedge = leansRight
+    ? [rightBottom, point(gapCornerX, gapFlatY), point(gapCornerX, gapEdgeY)]
+    : [rightTop, point(gapCornerX, gapFlatY), point(gapCornerX, gapEdgeY)];
+  const gapArea = polygonAreaFeet(gapWedge);
+  const gapTarget = polygonCentroid(gapWedge);
+  const gapMidX = (rightX + gapCornerX) / 2;
+  const gapLabelPosition = point(
+    gapMidX,
+    gapFlatY + (leansRight ? 1 : -1) * LEADER_GAP,
+  );
+  const gapLeader = line(
+    point(gapMidX, gapLabelPosition.y + (leansRight ? -1 : 1) * LEADER_START_GAP),
+    gapTarget,
+  );
 
-  // A single label pointing into the red spill at the middle strip's end -
-  // the largest and most visible overlap - rather than measuring out every
-  // strip's corner separately. The arrow lines that will measure the
-  // distance come later.
-  const overlapTargetX = middleArea.x + middleArea.width / 2;
-  const overlapTarget = point(overlapTargetX, leansRight ? topY : bottomY);
-  const overlapLabelPosition = point(overlapTargetX, leansRight ? topY - 10 : bottomY + 20);
+  // The overlap wedge is the gap's mirror image, on the opposite side of the
+  // shape, running the full width to the far (left) corner rather than only
+  // to wherever the left strip's own edge happens to land.
+  const overlapCorner = leansRight ? leftTop : leftBottom;
+  const overlapFlatY = leansRight ? rightTop.y : rightBottom.y;
+  const overlapBaseFeet = (rightX - overlapCorner.x) / SCALE;
+  const overlapHeightFeet = Math.abs(overlapFlatY - overlapCorner.y) / SCALE;
+  const overlapWedge = [
+    leansRight ? rightTop : rightBottom,
+    point(overlapCorner.x, overlapFlatY),
+    overlapCorner,
+  ];
+  const overlapArea = polygonAreaFeet(overlapWedge);
+  const overlapTarget = polygonCentroid(overlapWedge);
+  const overlapMidX = (rightX + overlapCorner.x) / 2;
+  const overlapLabelPosition = point(
+    overlapMidX,
+    overlapFlatY + (leansRight ? -1 : 1) * LEADER_GAP,
+  );
   const overlapLeader = line(
-    point(overlapLabelPosition.x, overlapLabelPosition.y + (leansRight ? 4 : -4)),
+    point(overlapMidX, overlapLabelPosition.y + (leansRight ? 1 : -1) * LEADER_START_GAP),
     overlapTarget,
   );
 
@@ -514,12 +499,15 @@ export function calculateRightAngleAreas(angleDegrees) {
     chain,
     chainWitnesses,
     dimensions: { a: dimensionA, b: dimensionB },
-    gapLeaders,
-    gapAreas: { main: mainGapArea, left: leftGapArea },
-    gapPolygons: { main: mainGapTriangle, left: leftGapTriangle },
+    gapLeader,
+    gapArea,
+    gapPolygon: gapWedge,
+    gapVisible: gapArea > 1e-9,
     leftStripOverlaps,
     overlapLeader,
-    overlapVisible: overhangFeet > 0,
+    overlapArea,
+    overlapPolygon: overlapWedge,
+    overlapVisible: overlapArea > 1e-9,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
       b: rightAngleSquare(bandY(34), 1, rightX - areaBStartFeet * SCALE),
@@ -529,8 +517,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
       overlap: overlapLabelPosition,
-      gapMain: gapLabels.main,
-      gapLeft: gapLabels.left,
+      gap: gapLabelPosition,
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),
@@ -543,9 +530,8 @@ export function calculateRightAngleAreas(angleDegrees) {
       middleEnds: middleEndFeet,
       leftStripOverlapA: leftStripOverlaps.a.feet,
       leftStripOverlapB: leftStripOverlaps.b.feet,
-      leftGap: leftGapFeet,
-      mainGapArea,
-      leftGapArea,
+      gapArea,
+      overlapArea,
     },
     formulas: {
       leftStripOverlapA: {
@@ -556,17 +542,13 @@ export function calculateRightAngleAreas(angleDegrees) {
         expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − ${DIMENSIONS.arrowA} ft`,
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
-      leftGap: {
-        expression: `${formatFeet(leftGapCornerFeet)} ft × |cot(${angleDegrees.toFixed(2)}°)|`,
-        result: `= ${formatFeet(leftGapFeet)} ft uncovered`,
+      gapArea: {
+        expression: `½ × ${formatFeet(gapBaseFeet)} ft × ${formatFeet(gapHeightFeet)} ft`,
+        result: `= ${formatFeet(gapArea)} ft² unclaimed`,
       },
-      mainGapArea: {
-        expression: `½ × ${formatFeet(mainGapBaseFeet)} ft × ${formatFeet(middleEndFeet)} ft`,
-        result: `= ${formatFeet(mainGapArea)} ft² unclaimed`,
-      },
-      leftGapArea: {
-        expression: `½ × (${formatFeet(leftGapFeet)} ft + ${formatFeet(middleEndFeet)} ft) × ${formatFeet(leftGapBaseFeet)} ft`,
-        result: `= ${formatFeet(leftGapArea)} ft² unclaimed`,
+      overlapArea: {
+        expression: `½ × ${formatFeet(overlapBaseFeet)} ft × ${formatFeet(overlapHeightFeet)} ft`,
+        result: `= ${formatFeet(overlapArea)} ft² over-claimed`,
       },
       method: {
         expression: "both areas start at the right side, turned 90°",

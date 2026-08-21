@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=18";
+} from "./geometry.mjs?v=19";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -259,7 +259,8 @@ export function initializeApp(documentRef, windowRef) {
     // claiming ground that strip already claims. A always reaches farther, so
     // it alone defines the visible red overlap; B remains in the hidden math.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
-    // A single label pointing at the red band, no measurement yet.
+    // One label for the whole over-claimed wedge, held off far enough that
+    // the leader reads as a line with an arrowhead, not just the arrowhead.
     const overlapLabel = element("pae-area-overlap-label");
     const overlapLeader = element("pae-area-overlap-leader");
     const overlapOpacity = areas.overlapVisible ? "1" : "0";
@@ -267,23 +268,19 @@ export function initializeApp(documentRef, windowRef) {
     overlapLeader.setAttribute("opacity", overlapOpacity);
     overlapLeader.setAttribute("marker-end", "url(#pae-area-red-arrow)");
     setLine(overlapLeader, areas.overlapLeader);
-    setText(overlapLabel, areas.labels.overlap, "Overlap");
+    setText(overlapLabel, areas.labels.overlap, `Overlap · ${areas.overlapArea.toFixed(2)} ft²`);
 
-    for (const gap of ["main", "left"]) {
-      const labelNode = element(`pae-area-gap-${gap}`);
-      const leaderNode = element(`pae-area-gap-leader-${gap}`);
-      const squareFeet = areas.gapAreas[gap];
-      const opacity = squareFeet > 0 ? "1" : "0";
-      labelNode.setAttribute("opacity", opacity);
-      leaderNode.setAttribute("opacity", opacity);
-      leaderNode.setAttribute("marker-end", "url(#pae-area-black-arrow)");
-      setLine(leaderNode, areas.gapLeaders[gap]);
-      setText(
-        labelNode,
-        gap === "main" ? areas.labels.gapMain : areas.labels.gapLeft,
-        `Gap · ${squareFeet.toFixed(2)} ft²`,
-      );
-    }
+    // One label for the whole unclaimed wedge, held directly above it when
+    // the wedge sits on the top edge and directly below when it sits on the
+    // bottom, rather than splitting it into per-strip totals.
+    const gapLabel = element("pae-area-gap");
+    const gapLeader = element("pae-area-gap-leader");
+    const gapOpacity = areas.gapVisible ? "1" : "0";
+    gapLabel.setAttribute("opacity", gapOpacity);
+    gapLeader.setAttribute("opacity", gapOpacity);
+    gapLeader.setAttribute("marker-end", "url(#pae-area-black-arrow)");
+    setLine(gapLeader, areas.gapLeader);
+    setText(gapLabel, areas.labels.gap, `Gap · ${areas.gapArea.toFixed(2)} ft²`);
 
     setFormula("pae-area-calc-method", areas.formulas.method);
     setFormula("pae-area-calc-width", areas.formulas.width);
@@ -293,9 +290,8 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
     setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapA);
     setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapB);
-    setFormula("pae-area-calc-left-gap", areas.formulas.leftGap);
-    setFormula("pae-area-calc-main-gap-area", areas.formulas.mainGapArea);
-    setFormula("pae-area-calc-left-gap-area", areas.formulas.leftGapArea);
+    setFormula("pae-area-calc-gap-area", areas.formulas.gapArea);
+    setFormula("pae-area-calc-overlap-area", areas.formulas.overlapArea);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 

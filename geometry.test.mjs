@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=18";
+} from "./geometry.mjs?v=19";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -360,20 +360,18 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.equal(areas.leansRight, true);
   assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
 
-  approximately(areas.gapAreas.main, 781.8566570526729);
-  approximately(areas.gapAreas.left, 259.80608422350787);
-  assert.ok(areas.gapLeaders.main.x1 > areas.gapLeaders.main.x2);
-  assert.ok(areas.gapLeaders.left.x1 < areas.gapLeaders.left.x2);
+  // One combined total for the whole unclaimed wedge, not the strips' three
+  // separate shortfalls added up piecemeal by the reader.
+  approximately(areas.gapArea, 1041.6627412761852);
   assert.equal(
-    areas.formulas.mainGapArea.expression,
-    "½ × 65.00 ft × 24.06 ft",
+    areas.formulas.gapArea.expression,
+    "½ × 75.03 ft × 27.77 ft",
   );
-  assert.equal(areas.formulas.mainGapArea.result, "= 781.86 ft² unclaimed");
-  assert.equal(
-    areas.formulas.leftGapArea.expression,
-    "½ × (27.77 ft + 24.06 ft) × 10.03 ft",
-  );
-  assert.equal(areas.formulas.leftGapArea.result, "= 259.81 ft² unclaimed");
+  assert.equal(areas.formulas.gapArea.result, "= 1041.66 ft² unclaimed");
+  // The overlap wedge on the opposite corner is congruent to the gap wedge -
+  // a parallelogram is symmetric about its center - so it totals the same.
+  approximately(areas.overlapArea, areas.gapArea, 1e-6);
+  assert.equal(areas.formulas.overlapArea.result, "= 1041.66 ft² over-claimed");
 
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
@@ -393,8 +391,8 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   approximately(square.middleArea.width / 1.72, DIMENSIONS.innerSpan);
   assert.equal(square.measurements.middleEnds, 0);
   assert.equal(calculateRightAngleAreas(180).measurements.middleEnds, 0);
-  assert.equal(square.gapAreas.main, 0);
-  assert.equal(square.gapAreas.left, 0);
+  assert.equal(square.gapArea, 0);
+  assert.equal(square.overlapArea, 0);
 
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   approximately(
@@ -456,14 +454,12 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
       assert.equal(areas.measurements.overhang === 0, squareOn);
     }
     assert.ok(areas.measurements.overhang >= 0);
-    assert.ok(areas.measurements.leftGap >= -1e-8);
-    for (const gap of ["main", "left"]) {
-      assert.ok(areas.gapAreas[gap] >= 0);
-      assert.equal(
-        areas.gapPolygons[gap].every((position) => insideShape(position, areas.shape)),
-        true,
-      );
-    }
+    assert.ok(areas.gapArea >= 0);
+    assert.ok(areas.overlapArea >= 0);
+    assert.equal(
+      areas.gapPolygon.every((position) => insideShape(position, areas.shape)),
+      true,
+    );
   }
 });
 
@@ -583,37 +579,28 @@ test("neither line reaches into the left 15 ft strip any more", () => {
   assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.00 ft");
 
   // Past the strip's own corner the parcel keeps whatever ground the chain's
-  // square ends leave behind - the same wedge the main gap reports the near
-  // two-thirds of, continued out to the left strip's own corner.
-  approximately(leaning.measurements.leftGap, 12.156070579859545);
-  approximately(leaning.gapAreas.left, 155.82917073334067);
-  assert.equal(
-    leaning.formulas.leftGap.expression,
-    "79.07 ft × |cot(98.74°)|",
-  );
-  assert.equal(leaning.formulas.leftGap.result, "= 12.16 ft uncovered");
-  // No vertex of the left gap's wedge falls strictly inside the left strip's
-  // own rectangle (sitting flush against its top edge is fine) - if it did,
-  // that ground would already be shaded, not a gap.
+  // square ends leave behind - one combined total for the whole wedge, run
+  // out to the left strip's own corner.
+  approximately(leaning.gapArea, 480.5965938760579);
+  // No vertex of the gap wedge falls strictly inside the left strip's own
+  // rectangle (sitting flush against its top edge is fine) - if it did, that
+  // ground would already be shaded, not a gap.
   const strictlyInsideLeftStrip = (position) => (
     position.x > leaning.strips.left.x + 1e-8
     && position.x < leaning.strips.left.x + leaning.strips.left.width - 1e-8
     && position.y > leaning.strips.left.y + 1e-8
     && position.y < leaning.strips.left.y + leaning.strips.left.height - 1e-8
   );
-  assert.equal(leaning.gapPolygons.left.some(strictlyInsideLeftStrip), false);
+  assert.equal(leaning.gapPolygon.some(strictlyInsideLeftStrip), false);
 
-  // Leaned far enough the whole left strip is off the parcel, and there is
-  // nothing past its own corner left to call a gap.
+  // Leaned far enough the whole left strip is off the parcel, and the gap
+  // wedge is exactly what the right and middle strips alone leave behind.
   const offParcel = calculateRightAngleAreas(128.3);
   approximately(offParcel.measurements.overhang, 11.846286185467141);
-  approximately(offParcel.gapAreas.left, 0);
-  approximately(offParcel.gapAreas.main, 1556.4414051350343);
-  assert.equal(offParcel.formulas.leftGapArea.result, "= 0.00 ft² unclaimed");
+  approximately(offParcel.gapArea, 1556.4414051350336);
 
   // Squeezed right down the parcel still keeps the corner the square ends miss.
   const narrow = calculateRightAngleAreas(10);
-  approximately(narrow.gapAreas.main, 547.2322293210697);
-  approximately(narrow.gapAreas.left, 0);
+  approximately(narrow.gapArea, 547.2322293210672);
 });
 
