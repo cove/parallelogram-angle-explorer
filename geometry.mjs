@@ -431,6 +431,45 @@ export function calculateRightAngleAreas(angleDegrees) {
       middleArea.x + cornerDimensionLane,
     ),
   };
+  const triangleCentroid = (a, b, c) => point(
+    (a.x + b.x + c.x) / 3,
+    (a.y + b.y + c.y) / 3,
+  );
+  const mainGapBaseFeet = Math.max(0, perpendicularWidth - DIMENSIONS.inset);
+  const mainGapArea = 0.5 * mainGapBaseFeet * middleEndFeet;
+  const leftGapArea = 0.5 * leftGapWidthFeet * leftGapFeet;
+  const mainGapFarTop = point(leftStripInnerX, topEdgeYAtX(leftStripInnerX));
+  const mainGapFarBottom = point(leftStripInnerX, bottomEdgeYAtX(leftStripInnerX));
+  const mainGapTarget = leansRight
+    ? triangleCentroid(
+      rightBottom,
+      point(leftStripInnerX, rightBottom.y),
+      mainGapFarBottom,
+    )
+    : triangleCentroid(
+      rightTop,
+      point(leftStripInnerX, rightTop.y),
+      mainGapFarTop,
+    );
+  const leftGapTarget = leansRight
+    ? triangleCentroid(
+      leftTop,
+      point(leftGapMeasureX, leftTop.y),
+      point(leftGapMeasureX, topEdgeYAtX(leftGapMeasureX)),
+    )
+    : triangleCentroid(
+      leftBottom,
+      point(leftGapMeasureX, leftBottom.y),
+      point(leftGapMeasureX, bottomEdgeYAtX(leftGapMeasureX)),
+    );
+  const gapLabels = {
+    main: point(rightX + 8, leansRight ? rightBottom.y - 12 : rightTop.y + 18),
+    left: point(leftTop.x - 8, leansRight ? leftTop.y - 8 : leftBottom.y + 18),
+  };
+  const gapLeaders = {
+    main: line(point(rightX + 3, gapLabels.main.y - 3), mainGapTarget),
+    left: line(point(leftTop.x - 3, gapLabels.left.y - 3), leftGapTarget),
+  };
 
   return {
     angleDegrees,
@@ -452,6 +491,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     chainWitnesses,
     dimensions: { a: dimensionA, b: dimensionB },
     cornerDimensions,
+    gapLeaders,
+    gapAreas: { main: mainGapArea, left: leftGapArea },
     leftStripOverlaps,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
@@ -472,6 +513,8 @@ export function calculateRightAngleAreas(angleDegrees) {
       ),
       leftTop: point(leftTop.x - 6, leftTop.y - 8),
       leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
+      gapMain: gapLabels.main,
+      gapLeft: gapLabels.left,
       chainRightInset: chainLabel(chain.rightInset),
       chainInner: chainLabel(chain.inner),
       chainLeftInset: chainLabel(chain.leftInset),
@@ -485,6 +528,8 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapA: leftStripOverlaps.a.feet,
       leftStripOverlapB: leftStripOverlaps.b.feet,
       leftGap: leftGapFeet,
+      mainGapArea,
+      leftGapArea,
     },
     formulas: {
       leftStripOverlapA: {
@@ -498,6 +543,14 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftGap: {
         expression: `max(0, ${DIMENSIONS.inset} ft − ${formatFeet(leftStripOverlaps.a.feet)} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(leftGapFeet)} ft uncovered`,
+      },
+      mainGapArea: {
+        expression: `½ × ${formatFeet(mainGapBaseFeet)} ft × ${formatFeet(middleEndFeet)} ft`,
+        result: `= ${formatFeet(mainGapArea)} ft² unclaimed`,
+      },
+      leftGapArea: {
+        expression: `½ × ${formatFeet(leftGapWidthFeet)} ft × ${formatFeet(leftGapFeet)} ft`,
+        result: `= ${formatFeet(leftGapArea)} ft² unclaimed`,
       },
       method: {
         expression: "both areas start at the right side, turned 90°",
