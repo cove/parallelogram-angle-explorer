@@ -1,7 +1,7 @@
 export const PRESET_ANGLES = Object.freeze({
   initial: 110.23,
   rightAngle: 90,
-  angle11254: 112.54,
+  angle10080: 100.8,
   reverse: 110.23,
 });
 
@@ -131,9 +131,10 @@ export function calculateDiagram(angleDegrees) {
   const staticBStart = point(rightInsetTop.x, staticBY);
   const staticBEnd = point(rightInsetTop.x - DIMENSIONS.arrowB * SCALE, staticBY);
   const overlapY = (staticAY + staticBY) / 2;
-  // The separation between the assessor-line endpoints is the part of the
-  // nominal 15 ft inset lost when that inset is measured at a right angle.
-  const overlap = Math.abs(staticBEnd.x - staticAEnd.x) / SCALE;
+  // A's endpoint reaches into the projected left inset. This is the visible
+  // overlap; the separate loss from projecting 15 ft is kept in the math.
+  const overlap = (leftInsetTop.x - staticAEnd.x) / SCALE;
+  const projectionLoss = DIMENSIONS.inset - perpendicularInset;
   const fullLengthGuide = (x) => {
     const fractionAcrossShape = scaledWidth === 0
       ? 0.5
@@ -146,7 +147,7 @@ export function calculateDiagram(angleDegrees) {
     aLabel: point((staticAStart.x + staticAEnd.x) / 2, staticAY - 9),
     b: line(staticBStart, staticBEnd),
     bLabel: point((staticBStart.x + staticBEnd.x) / 2, staticBY - 9),
-    overlapSpan: line(point(staticAEnd.x, overlapY), point(staticBEnd.x, overlapY)),
+    overlapSpan: line(point(staticAEnd.x, overlapY), point(leftInsetTop.x, overlapY)),
     overlapExtentA: fullLengthGuide(staticAEnd.x),
     // Held clear of the left edge so the label is not clipped on a phone.
     overlapLabel: point(
@@ -172,6 +173,7 @@ export function calculateDiagram(angleDegrees) {
     perpendicularInner,
     perpendicularWidth,
     overlap,
+    projectionLoss,
   };
 
   return {
@@ -221,8 +223,12 @@ export function calculateDiagram(angleDegrees) {
         result: "· B = 50 ft",
       },
       overlap: {
-        expression: `15 ft − 15 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `65 ft − 65 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(overlap)} ft`,
+      },
+      projectionLoss: {
+        expression: `15 ft − 15 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(projectionLoss)} ft`,
       },
     },
   };
@@ -278,9 +284,10 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
   };
   // How far a square end runs past the leaning edge, measured along the side.
-  const overhangFeet = base.sine === 0
+  const cotangentMagnitude = base.sine === 0
     ? 0
-    : DIMENSIONS.inset * Math.abs(base.cosine) / base.sine;
+    : Math.abs(base.cosine) / base.sine;
+  const overhangFeet = DIMENSIONS.inset * cotangentMagnitude;
 
   // Laying 15 + 50 + 15 out at a right angle to the side needs a full 80 ft of
   // horizontal room, but the shape only offers 80 × sin(theta) of it.
@@ -303,10 +310,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     height: strips.right.height,
   };
   const middleColumn = { x: middleArea.x, y: topY, width: middleArea.width, height };
-  const middleEndFeet = base.sine === 0
-    ? 0
-    : Math.max(0, perpendicularWidth - DIMENSIONS.inset)
-      * Math.abs(base.cosine) / base.sine;
+  const middleEndFeet = Math.max(0, perpendicularWidth - DIMENSIONS.inset)
+    * cotangentMagnitude;
   const stripsCollide = middleFeet < 0;
   const chainMark = (feet) => rightX - feet * SCALE;
   // The chain rides the perpendicular off the top corner, so it shows where a
@@ -366,6 +371,13 @@ export function calculateRightAngleAreas(angleDegrees) {
     a: stripEncroachment(DIMENSIONS.arrowA),
     b: stripEncroachment(areaBEndFeet),
   };
+  // A's full-length claim can cover part or all of the triangular gap left by
+  // the squared-off strip. Report only the portion that remains uncovered.
+  const leftGapWidthFeet = Math.max(
+    0,
+    DIMENSIONS.inset - leftStripOverlaps.a.feet,
+  );
+  const leftGapFeet = leftGapWidthFeet * cotangentMagnitude;
 
   return {
     angleDegrees,
@@ -418,6 +430,7 @@ export function calculateRightAngleAreas(angleDegrees) {
       middleEnds: middleEndFeet,
       leftStripOverlapA: leftStripOverlaps.a.feet,
       leftStripOverlapB: leftStripOverlaps.b.feet,
+      leftGap: leftGapFeet,
     },
     formulas: {
       leftStripOverlapA: {
@@ -427,6 +440,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapB: {
         expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − (${DIMENSIONS.side} ft × sin(${angleDegrees.toFixed(2)}°) − ${DIMENSIONS.inset} ft)`,
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
+      },
+      leftGap: {
+        expression: `max(0, ${DIMENSIONS.inset} ft − ${formatFeet(leftStripOverlaps.a.feet)} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        result: `= ${formatFeet(leftGapFeet)} ft uncovered`,
       },
       method: {
         expression: "both areas start at the right side, turned 90°",

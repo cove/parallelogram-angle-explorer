@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=8";
+} from "./geometry.mjs?v=9";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -25,7 +25,7 @@ test("exports the supported presets and fixed dimensions", () => {
   assert.deepEqual(PRESET_ANGLES, {
     initial: 110.23,
     rightAngle: 90,
-    angle11254: 112.54,
+    angle10080: 100.8,
     reverse: 110.23,
   });
   assert.deepEqual(DIMENSIONS, {
@@ -49,7 +49,8 @@ test("calculates the initial 69.69 degree example", () => {
   approximately(diagram.measurements.perpendicularInset, 14.06742552949822);
   approximately(diagram.measurements.perpendicularInner, 46.89141843166073);
   approximately(diagram.measurements.perpendicularWidth, 75.02626949065717);
-  approximately(diagram.measurements.overlap, 0.9325744705018165);
+  approximately(diagram.measurements.overlap, 4.041156038841084);
+  approximately(diagram.measurements.projectionLoss, 0.9325744705018165);
   assert.deepEqual(diagram.formulas.outerOffsets, {
     expression: "15 ft × sin(69.69°)",
     result: "= 14.07 ft each",
@@ -60,9 +61,10 @@ test("calculates the initial 69.69 degree example", () => {
   });
   assert.equal(
     diagram.formulas.overlap.expression,
-    "15 ft − 15 ft × sin(69.69°)",
+    "65 ft − 65 ft × sin(69.69°)",
   );
-  assert.equal(diagram.formulas.overlap.result, "= 0.93 ft");
+  assert.equal(diagram.formulas.overlap.result, "= 4.04 ft");
+  assert.equal(diagram.formulas.projectionLoss.result, "= 0.93 ft");
 });
 
 test("produces exact right-angle measurements at 90 degrees", () => {
@@ -90,7 +92,7 @@ test("produces exact right-angle measurements at 90 degrees", () => {
   assert.equal(diagram.formulas.innerSpan.result, "= 50.00 ft");
   assert.equal(
     diagram.formulas.overlap.expression,
-    "15 ft − 15 ft × sin(90.00°)",
+    "65 ft − 65 ft × sin(90.00°)",
   );
   assert.equal(diagram.formulas.overlap.result, "= 0.00 ft");
 });
@@ -101,20 +103,17 @@ test("calculates the reverse 110.23 degree preset", () => {
   approximately(diagram.measurements.perpendicularInset, 14.074681446105192);
   approximately(diagram.measurements.perpendicularInner, 46.91560482035064);
   approximately(diagram.measurements.perpendicularWidth, 75.06496771256101);
-  approximately(diagram.measurements.overlap, 0.9253185538948083);
+  approximately(diagram.measurements.overlap, 4.009713733544191);
   assert.ok(diagram.projection < 0);
   assert.ok(diagram.shape[0].y < diagram.shape[1].y);
   assert.equal(diagram.formulas.innerSpan.result, "= 46.92 ft");
 });
 
-test("the 112.54 degree preset produces the requested overlap", () => {
-  const diagram = calculateDiagram(PRESET_ANGLES.angle11254);
+test("the 100.80 degree preset produces the requested visible overlap", () => {
+  const diagram = calculateDiagram(PRESET_ANGLES.angle10080);
 
-  approximately(
-    diagram.measurements.perpendicularInset + diagram.measurements.overlap,
-    DIMENSIONS.inset,
-  );
   assert.equal(diagram.formulas.overlap.result, "= 1.15 ft");
+  assert.equal(diagram.formulas.projectionLoss.result, "= 0.27 ft");
 });
 
 test("supports both slider boundaries without negative zero", () => {
@@ -122,14 +121,14 @@ test("supports both slider boundaries without negative zero", () => {
   const flat = calculateDiagram(180);
 
   approximately(nearZero.measurements.perpendicularInset, 0.26178609655925267);
-  approximately(nearZero.measurements.overlap, 14.738213903440732);
+  approximately(nearZero.measurements.overlap, 63.86559358157656);
   assert.equal(flat.sine, 0);
   assert.equal(flat.measurements.perpendicularInset, 0);
   assert.equal(flat.measurements.perpendicularInner, 0);
   assert.equal(flat.measurements.perpendicularWidth, 0);
-  approximately(flat.measurements.overlap, 15);
+  approximately(flat.measurements.overlap, 65);
   assert.equal(flat.formulas.outerOffsets.result, "= 0.00 ft each");
-  assert.equal(flat.formulas.overlap.result, "= 15.00 ft");
+  assert.equal(flat.formulas.overlap.result, "= 65.00 ft");
 });
 
 test("supports values immediately inside both slider boundaries", () => {
@@ -142,7 +141,7 @@ test("supports values immediately inside both slider boundaries", () => {
 });
 
 test("rounds displayed overlap values on both sides of a half-cent threshold", () => {
-  const threshold = Math.asin(1 - 0.005 / DIMENSIONS.inset) * 180 / Math.PI;
+  const threshold = Math.asin(1 - 0.005 / DIMENSIONS.arrowA) * 180 / Math.PI;
   const roundsUp = calculateDiagram(threshold - 0.000001);
   const roundsDown = calculateDiagram(threshold + 0.000001);
 
@@ -166,7 +165,12 @@ test("preserves geometry invariants at every slider step", () => {
     assert.ok(measurements.perpendicularWidth >= 0);
     assert.ok(measurements.perpendicularWidth <= DIMENSIONS.side);
     assert.ok(measurements.overlap >= 0);
-    assert.ok(measurements.overlap <= DIMENSIONS.inset + 1e-8);
+    assert.ok(measurements.overlap <= DIMENSIONS.arrowA + 1e-8);
+    approximately(
+      measurements.perpendicularInset + measurements.projectionLoss,
+      DIMENSIONS.inset,
+      1e-8,
+    );
     assert.equal(diagram.shape.length, 4);
     assert.equal(diagram.topDimensions.left.x2, diagram.topDimensions.inner.x1);
     assert.equal(diagram.topDimensions.inner.x2, diagram.topDimensions.right.x1);
@@ -223,7 +227,7 @@ test("returns a complete, internally connected drawing model", () => {
     diagram.insetLines.left.y2 - diagram.insetLines.left.y1,
   );
   assert.equal(diagram.guides.overlapSpan.x1, diagram.guides.overlapExtentA.x1);
-  assert.equal(diagram.guides.overlapSpan.x2, diagram.guides.b.x2);
+  assert.equal(diagram.guides.overlapSpan.x2, diagram.insetLines.left.x1);
   assert.equal(diagram.arc.radius, 28);
   assert.equal(diagram.angleDegrees, EXAMPLE_ANGLE);
   approximately(diagram.angleRadians, EXAMPLE_ANGLE * Math.PI / 180);
@@ -412,6 +416,8 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
       assert.equal(areas.measurements.overhang === 0, squareOn);
     }
     assert.ok(areas.measurements.overhang >= 0);
+    assert.ok(areas.measurements.leftGap >= 0);
+    assert.ok(areas.measurements.leftGap <= areas.measurements.overhang + 1e-8);
   }
 });
 
@@ -532,4 +538,14 @@ test("shades where A and B run into the left 15 ft strip", () => {
     leaning.formulas.leftStripOverlapB.result,
     `= ${leaning.measurements.leftStripOverlapB.toFixed(2)} ft`,
   );
+
+  const fullyCoveredGap = calculateRightAngleAreas(128.3);
+  approximately(fullyCoveredGap.measurements.overhang, 11.846286185467141);
+  approximately(fullyCoveredGap.measurements.leftStripOverlapA, 17.21789035735337);
+  approximately(fullyCoveredGap.measurements.leftGap, 0);
+  assert.equal(
+    fullyCoveredGap.formulas.leftGap.expression,
+    "max(0, 15 ft − 17.22 ft) × |cot(128.30°)|",
+  );
+  assert.equal(fullyCoveredGap.formulas.leftGap.result, "= 0.00 ft uncovered");
 });

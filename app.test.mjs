@@ -96,7 +96,7 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.has("pae-forced-title-label"), false);
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "14.07 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "46.89 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 0.93 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "Overlap · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
@@ -104,12 +104,13 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.has("pae-overlap-extent-b"), false);
   assert.equal(
     nodes.get("pae-overlap-span").getAttribute("x2"),
-    nodes.get("pae-static-b").getAttribute("x2"),
+    nodes.get("pae-inset-left").getAttribute("x1"),
   );
   assert.equal(nodes.get("pae-calc-shape-expression").textContent, "15 ft + 50 ft + 15 ft");
   assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
   assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "A = 65 ft");
   assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· B = 50 ft");
+  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft");
   assert.match(nodes.get("pae-shape").getAttribute("d"), /^M .+ Z$/);
   assert.match(nodes.get("pae-perp-square-left").getAttribute("d"), /^M .+ L .+ L /);
 });
@@ -124,7 +125,7 @@ test("updates the diagram and formulas from slider input", async () => {
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
   assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "15 ft × sin(86.89°)");
   assert.equal(nodes.get("pae-calc-perp-insets-result").textContent, "= 14.98 ft each");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.02 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft");
 });
 
 test("handles all preset buttons and the 180 degree extreme", async () => {
@@ -135,9 +136,9 @@ test("handles all preset buttons and the 180 degree extreme", async () => {
   assert.equal(slider.value, "90");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft");
 
-  nodes.get("pae-snap-11254").dispatch("click");
-  assert.equal(slider.value, "112.54");
-  assert.equal(nodes.get("pae-angle-output").textContent, "112.54°");
+  nodes.get("pae-snap-10080").dispatch("click");
+  assert.equal(slider.value, "100.8");
+  assert.equal(nodes.get("pae-angle-output").textContent, "100.80°");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 1.15 ft");
 
   nodes.get("pae-snap-11023").dispatch("click");
@@ -147,7 +148,7 @@ test("handles all preset buttons and the 180 degree extreme", async () => {
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "0.00 ft");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 15.00 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
 });
 
 test("switches the SVG viewport at the mobile breakpoint", async () => {
@@ -177,12 +178,13 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.get("pae-area-corner-rt").textContent, "Overlap · 5.55 ft");
   assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 5.55 ft");
   assert.equal(nodes.get("pae-area-corner-rb").textContent, "Gap · 5.55 ft");
-  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 5.55 ft");
+  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 3.71 ft");
   assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
   assert.equal(nodes.get("pae-area-corner-rb").getAttribute("style"), "fill: #111111");
   assert.equal(nodes.has("pae-area-strip-right-label"), false);
   assert.equal(nodes.has("pae-area-strip-left-label"), false);
   assert.equal(nodes.has("pae-area-title-label"), false);
+  assert.equal(nodes.has("pae-area-left-overlap-b"), false);
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
@@ -274,13 +276,19 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   controller.draw(40);
   assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 17.88 ft");
-  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 17.88 ft");
+  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Gap · 0.00 ft");
+  assert.equal(nodes.get("pae-area-corner-lt").getAttribute("opacity"), "0");
 
   // Past 90 degrees the lean flips, and so does each corner's role.
   controller.draw(110.23);
   assert.equal(nodes.get("pae-area-corner-rt").textContent, "Gap · 5.53 ft");
   assert.equal(nodes.get("pae-area-corner-rb").textContent, "Overlap · 5.53 ft");
   assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #111111");
+
+  // A covers the entire lower-left gap at 128.30 degrees.
+  controller.draw(128.3);
+  assert.equal(nodes.get("pae-area-corner-lb").textContent, "Gap · 0.00 ft");
+  assert.equal(nodes.get("pae-area-corner-lb").getAttribute("opacity"), "0");
 
   // Leaned far enough, the two strips run into each other.
   controller.draw(20);
@@ -376,12 +384,12 @@ test("keeps the right-angle page's two sliders in step", async () => {
     assert.equal(output.textContent, "90.00°");
   }
 
-  nodes.get("pae-snap-11254").dispatch("click");
+  nodes.get("pae-snap-10080").dispatch("click");
   for (const slider of sliders) {
-    assert.equal(slider.value, "112.54");
+    assert.equal(slider.value, "100.8");
   }
   for (const output of outputs) {
-    assert.equal(output.textContent, "112.54°");
+    assert.equal(output.textContent, "100.80°");
   }
 });
 

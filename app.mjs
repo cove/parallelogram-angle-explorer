@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=8";
+} from "./geometry.mjs?v=9";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -19,7 +19,7 @@ export function initializeApp(documentRef, windowRef) {
     .map((id) => root.querySelector(`#${id}`))
     .filter((output) => output !== null);
   const snap90Button = root.querySelector("#pae-snap-90");
-  const snap11254Button = root.querySelector("#pae-snap-11254");
+  const snap10080Button = root.querySelector("#pae-snap-10080");
   const snap11023Button = root.querySelector("#pae-snap-11023");
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
@@ -187,6 +187,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
+    setFormula("pae-calc-projection-loss", diagram.formulas.projectionLoss);
   }
 
   function drawAreas(angleDegrees) {
@@ -248,17 +249,20 @@ export function initializeApp(documentRef, windowRef) {
       `B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
     // Either line reaching past the inner edge of the left 15 ft strip is
-    // claiming ground that strip already claims, so that run is shaded red.
+    // claiming ground that strip already claims. A always reaches farther, so
+    // it alone defines the visible red overlap; B remains in the hidden math.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
-    setRect(element("pae-area-left-overlap-b"), areas.leftStripOverlaps.b.rect);
     // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
+    const leftGap = areas.measurements.leftGap;
     const middleEnds = areas.measurements.middleEnds;
+    const leftTopOverlap = !areas.leansRight;
+    const leftBottomOverlap = areas.leansRight;
     const corners = [
       ["rt", areas.labels.rightTop, areas.leansRight, overhang],
       ["rb", areas.labels.rightBottom, !areas.leansRight, overhang],
-      ["lt", areas.labels.leftTop, !areas.leansRight, overhang],
-      ["lb", areas.labels.leftBottom, areas.leansRight, overhang],
+      ["lt", areas.labels.leftTop, leftTopOverlap, leftTopOverlap ? overhang : leftGap],
+      ["lb", areas.labels.leftBottom, leftBottomOverlap, leftBottomOverlap ? overhang : leftGap],
       ["mt", areas.labels.middleTop, areas.leansRight, middleEnds],
       ["mb", areas.labels.middleBottom, !areas.leansRight, middleEnds],
     ];
@@ -282,6 +286,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
     setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapA);
     setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapB);
+    setFormula("pae-area-calc-left-gap", areas.formulas.leftGap);
     setFormula("pae-area-calc-chain", areas.formulas.chain);
   }
 
@@ -356,7 +361,7 @@ export function initializeApp(documentRef, windowRef) {
     input.addEventListener("input", () => setAngle(Number(input.value)));
   }
   snap90Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.rightAngle));
-  snap11254Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.angle11254));
+  snap10080Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.angle10080));
   snap11023Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();
