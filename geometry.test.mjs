@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=6";
+} from "./geometry.mjs?v=7";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -25,7 +25,7 @@ test("exports the supported presets and fixed dimensions", () => {
   assert.deepEqual(PRESET_ANGLES, {
     initial: 110.23,
     rightAngle: 90,
-    angle10080: 100.8,
+    angle11254: 112.54,
     reverse: 110.23,
   });
   assert.deepEqual(DIMENSIONS, {
@@ -107,14 +107,14 @@ test("calculates the reverse 110.23 degree preset", () => {
   assert.equal(diagram.formulas.innerSpan.result, "= 46.92 ft");
 });
 
-test("the 100.80 degree preset completes the projected inset to 15 ft", () => {
-  const diagram = calculateDiagram(PRESET_ANGLES.angle10080);
+test("the 112.54 degree preset produces the requested overlap", () => {
+  const diagram = calculateDiagram(PRESET_ANGLES.angle11254);
 
   approximately(
     diagram.measurements.perpendicularInset + diagram.measurements.overlap,
     DIMENSIONS.inset,
   );
-  assert.equal(diagram.formulas.overlap.result, "= 0.27 ft");
+  assert.equal(diagram.formulas.overlap.result, "= 1.15 ft");
 });
 
 test("supports both slider boundaries without negative zero", () => {
@@ -521,8 +521,19 @@ test("shades where A and B run into the left 15 ft strip", () => {
     approximately(rect.height, leaning.areaA.height);
   }
   assert.equal(
-    leaning.formulas.leftStripOverlap.result,
-    `A by ${leaning.measurements.leftStripOverlapA.toFixed(2)} ft`
-      + ` · B by ${leaning.measurements.leftStripOverlapB.toFixed(2)} ft`,
+    leaning.formulas.leftStripOverlapA.expression,
+    "65 ft − (80 ft × sin(110.23°) − 15 ft)",
+  );
+  assert.equal(
+    leaning.formulas.leftStripOverlapA.result,
+    `= ${leaning.measurements.leftStripOverlapA.toFixed(2)} ft`,
+  );
+  assert.equal(
+    leaning.formulas.leftStripOverlapB.expression,
+    "(50 ft + 15 ft × sin(110.23°)) − (80 ft × sin(110.23°) − 15 ft)",
+  );
+  assert.equal(
+    leaning.formulas.leftStripOverlapB.result,
+    `= ${leaning.measurements.leftStripOverlapB.toFixed(2)} ft`,
   );
 });
