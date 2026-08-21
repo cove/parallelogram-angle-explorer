@@ -202,12 +202,12 @@ export function initializeApp(documentRef, windowRef) {
     // The mask knocks the shape out, leaving only what the strips hang over.
     element("pae-area-mask-shape").setAttribute("d", shapePath);
 
-    // Either the middle still has room, or the two strips have run into
-    // each other and what is left is a clash rather than a middle.
+    // Either the middle still lands on the parcel, or it has leaned far
+    // enough that its far end has walked off the parcel entirely.
     setRect(element("pae-area-middle"), areas.middleArea);
     setRect(element("pae-area-middle-collide"), areas.middleArea);
-    element("pae-area-middle").setAttribute("opacity", areas.stripsCollide ? "0" : "1");
-    element("pae-area-middle-collide").setAttribute("opacity", areas.stripsCollide ? "1" : "0");
+    element("pae-area-middle").setAttribute("opacity", areas.middleOffParcel ? "0" : "1");
+    element("pae-area-middle-collide").setAttribute("opacity", areas.middleOffParcel ? "1" : "0");
     // Outline, shaded length inside the shape, the spill past its edges, and
     // the mask that turns each strip into a hole for the gap slivers.
     for (const part of ["", "-fill", "-spill"]) {
@@ -265,13 +265,15 @@ export function initializeApp(documentRef, windowRef) {
     // Square on, the strip ends land on the edges: nothing over, nothing short.
     const overhang = areas.measurements.overhang;
     const middleEnds = areas.measurements.middleEnds;
-    const leftTopOverlap = !areas.leansRight;
-    const leftBottomOverlap = areas.leansRight;
+    // The left strip is stepped off the end of A's 65 ft line, so it carries
+    // the same square ends as the right strip and the middle and runs past
+    // the same edge they do.
+    const leftEnd = areas.measurements.leftEnd;
     const corners = [
       ["rt", areas.labels.rightTop, areas.leansRight, overhang],
       ["rb", areas.labels.rightBottom, !areas.leansRight, overhang],
-      ["lt", areas.labels.leftTop, leftTopOverlap, overhang],
-      ["lb", areas.labels.leftBottom, leftBottomOverlap, overhang],
+      ["lt", areas.labels.leftTop, areas.leansRight, leftEnd],
+      ["lb", areas.labels.leftBottom, !areas.leansRight, leftEnd],
       ["mt", areas.labels.middleTop, areas.leansRight, middleEnds],
       ["mb", areas.labels.middleBottom, !areas.leansRight, middleEnds],
     ];

@@ -266,8 +266,12 @@ export function calculateRightAngleAreas(angleDegrees) {
     height,
   };
 
+  const chainMark = (feet) => rightX - feet * SCALE;
   // A 15 ft strip squared off each side keeps square ends, but the top and
   // bottom edges lean away from those ends, so each strip runs past the shape.
+  // The left strip is stepped off the far end of A's 65 ft line rather than
+  // from the left edge, so all three parts chain off the right side and carry
+  // the same square ends.
   const stripWidth = DIMENSIONS.inset * SCALE;
   const strips = {
     right: {
@@ -277,10 +281,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       height: rightBottom.y - rightTop.y,
     },
     left: {
-      x: leftTop.x,
-      y: leftTop.y,
+      x: chainMark(DIMENSIONS.side),
+      y: rightTop.y,
       width: stripWidth,
-      height: leftBottom.y - leftTop.y,
+      height: rightBottom.y - rightTop.y,
     },
   };
   // How far a square end runs past the leaning edge, measured along the side.
@@ -310,10 +314,12 @@ export function calculateRightAngleAreas(angleDegrees) {
     height: strips.right.height,
   };
   const middleColumn = { x: middleArea.x, y: topY, width: middleArea.width, height };
-  const middleEndFeet = Math.max(0, perpendicularWidth - DIMENSIONS.inset)
-    * cotangentMagnitude;
-  const stripsCollide = middleFeet < 0;
-  const chainMark = (feet) => rightX - feet * SCALE;
+  // The middle now ends on the left strip's inner edge, a flat 65 ft in from
+  // the right side, so that is the reach its square ends are measured over.
+  const middleEndFeet = DIMENSIONS.arrowA * cotangentMagnitude;
+  // Chained off the right side the middle always measures its full 50 ft, but
+  // leaned far enough its far end walks off the parcel altogether.
+  const middleOffParcel = perpendicularWidth < DIMENSIONS.arrowA;
   // The chain rides the perpendicular off the top corner, so it shows where a
   // right-angle measurement puts the marks against the real top edge.
   const chainY = rightTop.y;
@@ -352,9 +358,9 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(x - 9, y + 9 * direction),
     point(x, y + 9 * direction),
   ];
-  // Either line can reach so far in that it runs past the inner edge of the
-  // left 15 ft strip and starts claiming ground that strip already claims.
-  const leftStripInnerFeet = perpendicularWidth - DIMENSIONS.inset;
+  // The left strip now starts exactly where A's 65 ft ends, so its inner edge
+  // sits a flat 65 ft in from the right side at every angle.
+  const leftStripInnerFeet = DIMENSIONS.arrowA;
   const leftStripInnerX = strips.left.x + stripWidth;
   // Each shaded run spans the whole length of the shape, the way the strip it
   // is eating into does.
@@ -374,10 +380,11 @@ export function calculateRightAngleAreas(angleDegrees) {
     a: stripEncroachment(DIMENSIONS.arrowA),
     b: stripEncroachment(areaBEndFeet),
   };
-  // A's full-length claim can cover part or all of the triangular gap left by
-  // the squared-off strip. Report only the portion that remains uncovered.
+  // Everything out to the left strip's inner edge is claimed, so the only
+  // parcel ground still uncovered past that edge is what lies between it and
+  // the far corner.
   const leftGapWidthFeet = clamp(
-    DIMENSIONS.inset - leftStripOverlaps.a.feet,
+    perpendicularWidth - leftStripInnerFeet,
     0,
     perpendicularWidth,
   );
@@ -395,29 +402,26 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(drawX, edgeY),
   );
   const leftGapMeasureX = leftTop.x + leftGapWidthFeet * SCALE;
-  // The left-strip and middle measurements share a boundary. Adjacent lanes
-  // keep both arrows visible while retaining the exact vertical span.
+  // The left strip's own far end is the last link of the chain, 80 ft in from
+  // the right side. Past the parcel's corner there is no edge left to measure
+  // against, so the run is taken at the corner itself.
   const cornerDimensionLane = 5;
-  const leftTopMeasureX = !leansRight || leftGapFeet === 0
-    ? leftStripInnerX
-    : leftGapMeasureX;
-  const leftBottomMeasureX = leansRight || leftGapFeet === 0
-    ? leftStripInnerX
-    : leftGapMeasureX;
+  const leftEndMeasureX = clamp(chainMark(DIMENSIONS.side), leftTop.x, rightX);
+  const leftEndFeet = ((rightX - leftEndMeasureX) / SCALE) * cotangentMagnitude;
   const cornerDimensions = {
     rt: verticalDimension(strips.right.x, rightTop.y, topEdgeYAtX(strips.right.x)),
     rb: verticalDimension(strips.right.x, rightBottom.y, bottomEdgeYAtX(strips.right.x)),
     lt: verticalDimension(
-      leftTopMeasureX,
-      leftTop.y,
-      topEdgeYAtX(leftTopMeasureX),
-      leftTopMeasureX - cornerDimensionLane,
+      leftEndMeasureX,
+      strips.left.y,
+      topEdgeYAtX(leftEndMeasureX),
+      leftEndMeasureX - cornerDimensionLane,
     ),
     lb: verticalDimension(
-      leftBottomMeasureX,
-      leftBottom.y,
-      bottomEdgeYAtX(leftBottomMeasureX),
-      leftBottomMeasureX - cornerDimensionLane,
+      leftEndMeasureX,
+      strips.left.y + strips.left.height,
+      bottomEdgeYAtX(leftEndMeasureX),
+      leftEndMeasureX - cornerDimensionLane,
     ),
     mt: verticalDimension(
       middleArea.x,
@@ -496,7 +500,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
     middleArea,
     middleColumn,
-    stripsCollide,
+    middleOffParcel,
     chain,
     chainWitnesses,
     dimensions: { a: dimensionA, b: dimensionB },
@@ -533,6 +537,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     measurements: {
       perpendicularWidth,
       overhang: overhangFeet,
+      leftEnd: leftEndFeet,
       middle: middleFeet,
       middleShort: middleShortFeet,
       middleEnds: middleEndFeet,
@@ -544,15 +549,15 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
     formulas: {
       leftStripOverlapA: {
-        expression: `${DIMENSIONS.arrowA} ft − (${DIMENSIONS.side} ft × sin(${angleDegrees.toFixed(2)}°) − ${DIMENSIONS.inset} ft)`,
+        expression: `${DIMENSIONS.arrowA} ft − (${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft)`,
         result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
       },
       leftStripOverlapB: {
-        expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − (${DIMENSIONS.side} ft × sin(${angleDegrees.toFixed(2)}°) − ${DIMENSIONS.inset} ft)`,
+        expression: `(${DIMENSIONS.arrowB} ft + ${DIMENSIONS.inset} ft × sin(${angleDegrees.toFixed(2)}°)) − ${DIMENSIONS.arrowA} ft`,
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       leftGap: {
-        expression: `max(0, ${DIMENSIONS.inset} ft − ${formatFeet(leftStripOverlaps.a.feet)} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        expression: `(${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.arrowA} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(leftGapFeet)} ft uncovered`,
       },
       mainGapArea: {
@@ -580,7 +585,7 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(middleShortFeet)} ft short in the middle`,
       },
       middleEnds: {
-        expression: `(${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.inset} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        expression: `${DIMENSIONS.arrowA} ft × |cot(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(middleEndFeet)} ft at the middle's far end`,
       },
       overhang: {
