@@ -187,12 +187,12 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-shape").getAttribute("d"),
     nodes.get("pae-area-clip-shape").getAttribute("d"),
   );
-  assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
-  assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
+  assert.equal(nodes.get("pae-area-a-label").textContent, "g · A · 65 ft at 90°");
+  assert.equal(nodes.get("pae-area-b-label").textContent, "h · B · 50 ft at 90°");
   // The naive top row, reproduced from the forced-measurements diagram.
-  assert.equal(nodes.get("pae-area-top-dim-left-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-area-top-dim-inner-label").textContent, "50 ft");
-  assert.equal(nodes.get("pae-area-top-dim-right-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-area-top-dim-left-label").textContent, "a · 15 ft");
+  assert.equal(nodes.get("pae-area-top-dim-inner-label").textContent, "b · 50 ft");
+  assert.equal(nodes.get("pae-area-top-dim-right-label").textContent, "c · 15 ft");
   // The naive inset (this row's boundary) and the squared-off strip's own
   // edge are two different marks off the angle, not the same line.
   assert.notEqual(
@@ -269,9 +269,9 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   // The purple center/left boundary is A's fixed endpoint, not the green
   // top row's projected left inset witness.
-  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "14.07 ft");
-  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50.93 ft");
-  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "10.03 ft");
+  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "f · 14.07 ft");
+  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "e · 50.93 ft");
+  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "d · 10.03 ft");
   assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 10.03 / 50.93 / 14.07 ft, left to right");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
@@ -362,12 +362,12 @@ test("renders the third parallel-to-the-top diagram", async () => {
     nodes.get("pae-fit-shape").getAttribute("d"),
     nodes.get("pae-fit-clip-shape").getAttribute("d"),
   );
-  assert.equal(nodes.get("pae-fit-strip-right-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-fit-strip-inner-label").textContent, "50 ft");
-  assert.equal(nodes.get("pae-fit-strip-left-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "A · 65 ft along the top");
-  assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "B · 50 ft along the top");
-  assert.equal(nodes.get("pae-fit-match-label").textContent, "Ends match · 0.00 ft");
+  assert.equal(nodes.get("pae-fit-strip-right-label").textContent, "c · 15 ft");
+  assert.equal(nodes.get("pae-fit-strip-inner-label").textContent, "b · 50 ft");
+  assert.equal(nodes.get("pae-fit-strip-left-label").textContent, "a · 15 ft");
+  assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "g · A · 65 ft along the top");
+  assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "h · B · 50 ft along the top");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "i · Ends match · 0.00 ft");
   assert.equal(nodes.has("pae-fit-title-label"), false);
   assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
   assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
@@ -398,7 +398,7 @@ test("keeps the parallel guides matched after the angle changes", async () => {
   slider.dispatch("input");
 
   assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "0 0 620 676");
-  assert.equal(nodes.get("pae-fit-match-label").textContent, "Ends match · 0.00 ft");
+  assert.equal(nodes.get("pae-fit-match-label").textContent, "i · Ends match · 0.00 ft");
   assert.equal(
     nodes.get("pae-fit-guide-a").getAttribute("x2"),
     nodes.get("pae-fit-guide-b").getAttribute("x2"),

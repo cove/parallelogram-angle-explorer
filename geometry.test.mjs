@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=33";
+} from "./geometry.mjs?v=34";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -326,12 +326,12 @@ test("measures both right-angle areas from the right side", () => {
   assert.ok(areas.squares.a[1].y < areas.squares.a[0].y);
   assert.ok(areas.squares.b[1].y > areas.squares.b[0].y);
   assert.equal(areas.angleDegrees, EXAMPLE_ANGLE);
-  assert.equal(areas.formulas.method.result, "· the 50 ft center is fitted from the right");
-  assert.equal(areas.formulas.width.expression, "80 ft × sin(69.69°)");
+  assert.equal(areas.formulas.method.result, "· fixed b = 50 ft is fitted from c");
+  assert.equal(areas.formulas.width.expression, "(a + b + c) × sin(69.69°)");
   assert.equal(areas.formulas.width.result, "= 75.03 ft across");
   assert.equal(
     areas.formulas.overhang.expression,
-    "15 ft × |cos(69.69°)|",
+    "a, c = 15 ft × |cos(69.69°)|",
   );
   assert.equal(
     areas.formulas.overhang.result,
@@ -345,7 +345,7 @@ test("squares each 15 ft strip inward from its own side", () => {
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
-  assert.equal(areas.formulas.chain.expression, "right mark → A's 65 ft endpoint → left side");
+  assert.equal(areas.formulas.chain.expression, "f → g's 65 ft endpoint → d");
   assert.equal(areas.formulas.chain.result, "= 10.03 / 50.93 / 14.07 ft, left to right");
   // The naive top row and its long dashed insets are reproduced verbatim
   // from the forced-measurements diagram, so A's 65 ft line visibly crosses
@@ -464,7 +464,7 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   assert.equal(square.measurements.middle, DIMENSIONS.innerSpan);
   assert.equal(square.measurements.middleShort, 0);
   assert.equal(square.middleOffParcel, false);
-  assert.equal(square.formulas.middle.expression, "80.00 ft − 15.00 ft − 15.00 ft");
+  assert.equal(square.formulas.middle.expression, "projected b = 80.00 ft − projected a − projected c");
   assert.equal(square.formulas.middle.result, "= 50.00 ft for a 50 ft middle");
   assert.equal(square.formulas.middleShort.result, "= 0.00 ft short in the middle");
   // The attempted center remains drawn at 50 ft even when less room is available.
@@ -600,11 +600,11 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
     Math.max(leftBottom.y, rightBottom.y) - fit.strips.inner.y,
   );
   assert.equal(fit.formulas.method.result, "· no sine, no shrink");
-  assert.equal(fit.formulas.reach.expression, "15 ft + 50 ft");
+  assert.equal(fit.formulas.reach.expression, "c + h = 15 ft + 50 ft");
   assert.equal(fit.formulas.reach.result, "= 65.00 ft, exactly where A ends");
-  assert.equal(fit.formulas.total.expression, "65 ft + 15 ft");
+  assert.equal(fit.formulas.total.expression, "g + a = 65 ft + 15 ft");
   assert.equal(fit.formulas.total.result, "= 80.00 ft, the whole side");
-  assert.equal(fit.formulas.gap.expression, "|65 ft − (15 ft + 50 ft)|");
+  assert.equal(fit.formulas.gap.expression, "i = |g − (c + h)|");
   assert.equal(fit.formulas.gap.result, "= 0.00 ft at every angle");
 });
 
@@ -657,12 +657,12 @@ test("the fitted center reaches into the independently measured left strip", () 
   }
   assert.equal(
     leaning.formulas.leftStripOverlapA.expression,
-    "intersection of fixed A with the left projected strip",
+    "intersection of g with projected a",
   );
   assert.equal(leaning.formulas.leftStripOverlapA.result, "= 0.75 ft");
   assert.equal(
     leaning.formulas.leftStripOverlapB.expression,
-    "intersection of the fixed 50 ft center with the left projected strip",
+    "intersection of fixed b with projected a",
   );
   assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.58 ft");
 

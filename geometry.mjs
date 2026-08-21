@@ -587,11 +587,11 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
     formulas: {
       leftStripOverlapA: {
-        expression: `intersection of fixed A with the left projected strip`,
+        expression: `intersection of g with projected a`,
         result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
       },
       leftStripOverlapB: {
-        expression: `intersection of the fixed ${DIMENSIONS.innerSpan} ft center with the left projected strip`,
+        expression: `intersection of fixed b with projected a`,
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       gapArea: {
@@ -607,31 +607,31 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(spillArea)} ft² outside the parcel`,
       },
       method: {
-        expression: "each 15 ft mark follows the slanted edge, then is squared off",
-        result: `· the ${DIMENSIONS.innerSpan} ft center is fitted from the right`,
+        expression: "a and c follow the slanted edge, then are squared off",
+        result: `· fixed b = ${DIMENSIONS.innerSpan} ft is fitted from c`,
       },
       width: {
-        expression: `80 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `(a + b + c) × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularWidth)} ft across`,
       },
       middle: {
-        expression: `${formatFeet(perpendicularWidth)} ft − ${formatFeet(projectedInsetFeet)} ft − ${formatFeet(projectedInsetFeet)} ft`,
+        expression: `projected b = ${formatFeet(perpendicularWidth)} ft − projected a − projected c`,
         result: `= ${formatFeet(middleFeet)} ft for a ${DIMENSIONS.innerSpan} ft middle`,
       },
       middleShort: {
-        expression: `${DIMENSIONS.innerSpan} ft − ${formatFeet(middleFeet)} ft`,
+        expression: `fixed b − projected b = ${DIMENSIONS.innerSpan} ft − ${formatFeet(middleFeet)} ft`,
         result: `= ${formatFeet(middleShortFeet)} ft short in the middle`,
       },
       middleEnds: {
-        expression: `(${DIMENSIONS.innerSpan} ft + ${formatFeet(projectedInsetFeet)} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        expression: `(fixed b + projected c) × |cot(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(middleEndFeet)} ft at the middle's far end`,
       },
       overhang: {
-        expression: `${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)|`,
+        expression: `a, c = ${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(overhangFeet)} ft over one edge, short of the other`,
       },
       chain: {
-        expression: `right mark → A's ${DIMENSIONS.arrowA} ft endpoint → left side`,
+        expression: `f → g's ${DIMENSIONS.arrowA} ft endpoint → d`,
         result: `= ${formatFeet(perpendicularWidth - DIMENSIONS.arrowA)} / ${formatFeet(Math.abs(DIMENSIONS.arrowA - projectedInsetFeet))} / ${formatFeet(projectedInsetFeet)} ft, left to right`,
       },
     },
@@ -749,19 +749,19 @@ export function calculateParallelAreas(angleDegrees) {
     },
     formulas: {
       method: {
-        expression: "A and B run parallel to the 80 ft top edge",
+        expression: "g and h run parallel to a + b + c",
         result: "· no sine, no shrink",
       },
       reach: {
-        expression: `${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
+        expression: `c + h = ${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
         result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where A ends`,
       },
       total: {
-        expression: `${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
+        expression: `g + a = ${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
         result: `= ${formatFeet(DIMENSIONS.side)} ft, the whole side`,
       },
       gap: {
-        expression: `|${DIMENSIONS.arrowA} ft − (${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft)|`,
+        expression: `i = |g − (c + h)|`,
         result: `= ${formatFeet(gap)} ft at every angle`,
       },
     },

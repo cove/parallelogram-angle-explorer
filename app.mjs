@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=33";
+} from "./geometry.mjs?v=34";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -223,19 +223,19 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-area-top-dim-left-label"),
       areas.topLabels.left,
-      `${DIMENSIONS.inset} ft`,
+      `a · ${DIMENSIONS.inset} ft`,
       areas.shortRotation,
     );
     setText(
       element("pae-area-top-dim-inner-label"),
       areas.topLabels.inner,
-      `${DIMENSIONS.innerSpan} ft`,
+      `b · ${DIMENSIONS.innerSpan} ft`,
       areas.shortRotation,
     );
     setText(
       element("pae-area-top-dim-right-label"),
       areas.topLabels.right,
-      `${DIMENSIONS.inset} ft`,
+      `c · ${DIMENSIONS.inset} ft`,
       areas.shortRotation,
     );
 
@@ -271,17 +271,17 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-area-chain-right-label"),
       areas.labels.chainRightInset,
-      `${areas.measurements.chainRightAngle.right.toFixed(2)} ft`,
+      `f · ${areas.measurements.chainRightAngle.right.toFixed(2)} ft`,
     );
     setText(
       element("pae-area-chain-inner-label"),
       areas.labels.chainInner,
-      `${areas.measurements.chainRightAngle.inner.toFixed(2)} ft`,
+      `e · ${areas.measurements.chainRightAngle.inner.toFixed(2)} ft`,
     );
     setText(
       element("pae-area-chain-left-label"),
       areas.labels.chainLeftInset,
-      `${areas.measurements.chainRightAngle.left.toFixed(2)} ft`,
+      `d · ${areas.measurements.chainRightAngle.left.toFixed(2)} ft`,
     );
 
     setLine(element("pae-area-dim-a"), areas.dimensions.a);
@@ -296,12 +296,12 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-area-a-label"),
       areas.labels.a,
-      `A · ${DIMENSIONS.arrowA} ft at 90°`,
+      `g · A · ${DIMENSIONS.arrowA} ft at 90°`,
     );
     setText(
       element("pae-area-b-label"),
       areas.labels.b,
-      `B · ${DIMENSIONS.arrowB} ft at 90°`,
+      `h · B · ${DIMENSIONS.arrowB} ft at 90°`,
     );
     // A's fixed 65 ft reach meets the independently squared left strip. The
     // shared rectangle is rendered by the combined overlap path below; keep
@@ -373,37 +373,37 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-fit-strip-right-label"),
       fit.labels.rightInset,
-      `${DIMENSIONS.inset} ft`,
+      `c · ${DIMENSIONS.inset} ft`,
       fit.rotation,
     );
     setText(
       element("pae-fit-strip-inner-label"),
       fit.labels.inner,
-      `${DIMENSIONS.innerSpan} ft`,
+      `b · ${DIMENSIONS.innerSpan} ft`,
       fit.rotation,
     );
     setText(
       element("pae-fit-strip-left-label"),
       fit.labels.leftInset,
-      `${DIMENSIONS.inset} ft`,
+      `a · ${DIMENSIONS.inset} ft`,
       fit.rotation,
     );
     setText(
       element("pae-fit-guide-a-label"),
       fit.labels.a,
-      `A · ${DIMENSIONS.arrowA} ft along the top`,
+      `g · A · ${DIMENSIONS.arrowA} ft along the top`,
       fit.rotation,
     );
     setText(
       element("pae-fit-guide-b-label"),
       fit.labels.b,
-      `B · ${DIMENSIONS.innerSpan} ft along the top`,
+      `h · B · ${DIMENSIONS.innerSpan} ft along the top`,
       fit.rotation,
     );
     setText(
       element("pae-fit-match-label"),
       fit.labels.match,
-      `Ends match · ${fit.measurements.gap.toFixed(2)} ft`,
+      `i · Ends match · ${fit.measurements.gap.toFixed(2)} ft`,
     );
 
     setFormula("pae-fit-calc-method", fit.formulas.method);
