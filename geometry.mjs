@@ -344,11 +344,11 @@ export function calculateRightAngleAreas(angleDegrees) {
   // Chained off the right side the middle always measures its full 50 ft, but
   // leaned far enough its far end walks off the parcel altogether.
   const middleOffParcel = perpendicularWidth < DIMENSIONS.arrowA;
-  // The chain rides the perpendicular off the top corner, so it shows where a
-  // right-angle measurement actually puts the marks against the real top
-  // edge - the same marks the forced-measurements diagram's "Right angle
-  // method" row uses, not the 15/50/15 the strips are squared off to claim.
-  const chainY = rightTop.y;
+  // The chain shows where a right-angle measurement actually puts the marks
+  // - the same marks the forced-measurements diagram's "Right angle method"
+  // row uses, not the 15/50/15 the strips are squared off to claim - held at
+  // that same row's fixed height so the two diagrams line up.
+  const chainY = CENTER_Y - 48;
   const chainRightMarkX = base.perpendicular.right.x1;
   const chainInnerMarkX = base.perpendicular.inner.x1;
   const chain = {
@@ -382,7 +382,10 @@ export function calculateRightAngleAreas(angleDegrees) {
   const chainLabel = ({ x1, x2 }) => point((x1 + x2) / 2, chainY - 10);
 
 
-  const bandY = (offset) => topY + height / 2 + offset;
+  // Held below the chain row (now fixed, like the forced-measurements
+  // diagram's own rows) rather than centered on the shape, so the A/B
+  // dimensions never collide with it as the angle changes.
+  const bandY = (offset) => chainY + 90 + offset;
   const dimensionA = line(
     point(rightX, bandY(-34)),
     point(areaA.x, bandY(-34)),
@@ -514,6 +517,14 @@ export function calculateRightAngleAreas(angleDegrees) {
     middleOffParcel,
     chain,
     chainWitnesses,
+    // Reproducing the forced-measurements diagram's own naive top row and
+    // its long dashed insets, so it is visible here too how A's 65 ft line
+    // crosses the dashed line coming down from the left 15 ft boundary.
+    shortRotation: base.shortRotation,
+    insetLines: base.insetLines,
+    topDimensions: base.topDimensions,
+    topExtensions: base.topExtensions,
+    topLabels: base.topLabels,
     dimensions: { a: dimensionA, b: dimensionB },
     gapLeader,
     gapArea,

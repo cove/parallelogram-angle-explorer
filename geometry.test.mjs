@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=24";
+} from "./geometry.mjs?v=25";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -313,6 +313,14 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
 
   assert.equal(areas.formulas.chain.expression, "15 ft + 50 ft + 15 ft");
   assert.equal(areas.formulas.chain.result, "= 80 ft of room needed at 90°");
+  // The naive top row and its long dashed insets are reproduced verbatim
+  // from the forced-measurements diagram, so A's 65 ft line visibly crosses
+  // the dashed line coming down from the left 15 ft boundary here too.
+  assert.deepEqual(areas.insetLines, diagram.insetLines);
+  assert.deepEqual(areas.topDimensions, diagram.topDimensions);
+  assert.deepEqual(areas.topExtensions, diagram.topExtensions);
+  assert.deepEqual(areas.topLabels, diagram.topLabels);
+  assert.equal(areas.shortRotation, diagram.shortRotation);
   approximately(areas.chain.rightInset.x1, rightTop.x);
   approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
   approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
@@ -330,7 +338,9 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   for (const segment of Object.values(areas.chain)) {
     assert.equal(segment.y1, segment.y2);
   }
-  assert.equal(areas.chain.rightInset.y1, rightTop.y);
+  // Held at the same fixed height as the forced-measurements diagram's
+  // "Right angle method" row, not tied to the shape's own top corner.
+  assert.equal(areas.chain.rightInset.y1, diagram.perpendicular.right.y1);
   approximately(areas.labels.chainInner.x, (areas.chain.inner.x1 + areas.chain.inner.x2) / 2);
   assert.equal(areas.chainWitnesses.right.x1, areas.chain.rightInset.x1);
   assert.equal(areas.chainWitnesses.rightInset.x1, areas.chain.rightInset.x2);

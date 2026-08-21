@@ -172,6 +172,20 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
   assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
+  // The naive top row, reproduced from the forced-measurements diagram.
+  assert.equal(nodes.get("pae-area-top-dim-left-label").textContent, "15 ft");
+  assert.equal(nodes.get("pae-area-top-dim-inner-label").textContent, "50 ft");
+  assert.equal(nodes.get("pae-area-top-dim-right-label").textContent, "15 ft");
+  // The naive inset (this row's boundary) and the squared-off strip's own
+  // edge are two different marks off the angle, not the same line.
+  assert.notEqual(
+    nodes.get("pae-area-inset-left").getAttribute("x1"),
+    nodes.get("pae-area-strip-left").getAttribute("x"),
+  );
+  assert.ok(
+    Number(nodes.get("pae-area-inset-left").getAttribute("y2"))
+      > Number(nodes.get("pae-area-inset-left").getAttribute("y1")),
+  );
   // One label for the whole over-claimed wedge and one for the whole
   // unclaimed wedge, each reporting a single combined total rather than a
   // per-strip breakdown.

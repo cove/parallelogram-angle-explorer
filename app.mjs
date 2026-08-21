@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=24";
+} from "./geometry.mjs?v=25";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -201,6 +201,37 @@ export function initializeApp(documentRef, windowRef) {
     element("pae-area-clip-shape").setAttribute("d", shapePath);
     // The mask knocks the shape out, leaving only what the strips hang over.
     element("pae-area-mask-shape").setAttribute("d", shapePath);
+
+    // Reproducing the forced-measurements diagram's own naive top row and
+    // its long dashed insets, so A's 65 ft line visibly crosses the dashed
+    // line coming down from the left 15 ft boundary here too.
+    setLine(element("pae-area-inset-left"), areas.insetLines.left);
+    setLine(element("pae-area-inset-right"), areas.insetLines.right);
+    setLine(element("pae-area-top-dim-left"), areas.topDimensions.left);
+    setLine(element("pae-area-top-dim-inner"), areas.topDimensions.inner);
+    setLine(element("pae-area-top-dim-right"), areas.topDimensions.right);
+    setLine(element("pae-area-top-ext-left"), areas.topExtensions.left);
+    setLine(element("pae-area-top-ext-inset-left"), areas.topExtensions.insetLeft);
+    setLine(element("pae-area-top-ext-inset-right"), areas.topExtensions.insetRight);
+    setLine(element("pae-area-top-ext-right"), areas.topExtensions.right);
+    setText(
+      element("pae-area-top-dim-left-label"),
+      areas.topLabels.left,
+      `${DIMENSIONS.inset} ft`,
+      areas.shortRotation,
+    );
+    setText(
+      element("pae-area-top-dim-inner-label"),
+      areas.topLabels.inner,
+      `${DIMENSIONS.innerSpan} ft`,
+      areas.shortRotation,
+    );
+    setText(
+      element("pae-area-top-dim-right-label"),
+      areas.topLabels.right,
+      `${DIMENSIONS.inset} ft`,
+      areas.shortRotation,
+    );
 
     // Either the middle still lands on the parcel, or it has leaned far
     // enough that its far end has walked off the parcel entirely.
