@@ -201,7 +201,6 @@
       stroke-width: 1.4;
       stroke-dasharray: 6 4;
     }
-    #parallelogram-angle-explorer .area-strip-spill { fill: #c00000; fill-opacity: 0.5; stroke: none; }
     #parallelogram-angle-explorer .area-strip-gap { fill: #ffffff; stroke: none; }
     #parallelogram-angle-explorer text.area-gap-label {
       fill: #111111;
@@ -475,7 +474,7 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Right-angle areas measured from the right side</title>
-    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. The top dimension chain reports what a right-angle measurement actually gets at each mark, the same way the forced-measurements diagram's right angle method does, not the 15/50/15 the strips are squared off to claim. Dashed witnesses connect that chain to its exact boundaries without crossing outside the shape. A 15 foot strip is squared off the right side, the 50 foot middle carries on from it, and the second 15 foot strip is stepped off the far end of A's 65 foot line, so all three parts chain off the right side with the same square ends. A single overlap label reports the whole square-foot area the strips claim outside the parallelogram, and a single gap label reports the whole square-foot area left unclaimed inside it, each as one combined total rather than broken out strip by strip. Both labels sit directly above or below their area, whichever side it falls on, with a leader long enough to read as a line and an arrowhead pointing into it. Everything lines up only when the shape is square on at 90 degrees.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram divided 15 feet, 50 feet and 15 feet, every part measured at a right angle to the sides. The top dimension chain reports what a right-angle measurement actually gets at each mark, the same way the forced-measurements diagram's right angle method does, not the 15/50/15 the strips are squared off to claim. Dashed witnesses connect that chain to its exact boundaries without crossing outside the shape. A 15 foot strip is squared off the right side, the 50 foot middle carries on from it, and the second 15 foot strip is stepped off the far end of A's 65 foot line, so all three parts chain off the right side with the same square ends. A single overlap triangle - filled in red, bounded at the left inset line rather than running past it - reports the whole square-foot area the strips claim outside the parallelogram, and a single gap label reports the whole square-foot area left unclaimed inside it, each as one combined total rather than broken out strip by strip. Both labels sit on the left, out of the way, each with a leader long enough to read as a line and an arrowhead pointing back in at its own triangle. Everything lines up only when the shape is square on at 90 degrees.</desc>
     <defs>
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
@@ -492,10 +491,6 @@
       <clipPath id="pae-area-clip">
         <path id="pae-area-clip-shape"></path>
       </clipPath>
-      <mask id="pae-area-outside" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="676">
-        <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
-        <path id="pae-area-mask-shape" fill="#000000"></path>
-      </mask>
       <mask id="pae-area-off-strips" maskUnits="userSpaceOnUse" x="0" y="0" width="620" height="676">
         <rect x="0" y="0" width="620" height="676" fill="#ffffff"></rect>
         <rect id="pae-area-mask-strip-right" fill="#000000"></rect>
@@ -515,11 +510,7 @@
       <rect id="pae-area-strip-left-gap" class="area-strip-gap"></rect>
       <rect id="pae-area-middle-gap" class="area-strip-gap"></rect>
     </g>
-    <g mask="url(#pae-area-outside)">
-      <rect id="pae-area-strip-right-spill" class="area-strip-spill"></rect>
-      <rect id="pae-area-strip-left-spill" class="area-strip-spill"></rect>
-      <rect id="pae-area-middle-spill" class="area-strip-spill"></rect>
-    </g>
+    <path id="pae-area-overlap-fill" class="area-overlap"></path>
     <rect id="pae-area-strip-right" class="area-strip"></rect>
     <rect id="pae-area-strip-left" class="area-strip"></rect>
     <rect id="pae-area-left-overlap-a" class="area-overlap"></rect>
@@ -704,7 +695,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=26"></script>
+  <script type="module" src="./main.mjs?v=27"></script>
 </div>
 
 </body>

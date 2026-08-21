@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=26";
+} from "./geometry.mjs?v=27";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -199,8 +199,6 @@ export function initializeApp(documentRef, windowRef) {
     const shapePath = pathFromPoints(areas.shape, true);
     element("pae-area-shape").setAttribute("d", shapePath);
     element("pae-area-clip-shape").setAttribute("d", shapePath);
-    // The mask knocks the shape out, leaving only what the strips hang over.
-    element("pae-area-mask-shape").setAttribute("d", shapePath);
 
     // Reproducing the forced-measurements diagram's own naive top row and
     // its long dashed insets, so A's 65 ft line visibly crosses the dashed
@@ -236,14 +234,13 @@ export function initializeApp(documentRef, windowRef) {
     // Either the middle still lands on the parcel, or it has leaned far
     // enough that its far end has walked off the parcel entirely.
     setRect(element("pae-area-middle"), areas.middleArea);
-    // Outline, shaded length inside the shape, the spill past its edges, and
-    // the mask that turns each strip into a hole for the gap slivers.
-    for (const part of ["", "-fill", "-spill"]) {
+    // Outline, shaded length inside the shape, and the mask that turns each
+    // strip into a hole for the gap slivers.
+    for (const part of ["", "-fill"]) {
       setRect(element(`pae-area-strip-right${part}`), areas.strips.right);
       setRect(element(`pae-area-strip-left${part}`), areas.strips.left);
     }
     setRect(element("pae-area-mask-middle"), areas.middleArea);
-    setRect(element("pae-area-middle-spill"), areas.middleArea);
     setRect(element("pae-area-middle-gap"), areas.middleColumn);
     setRect(element("pae-area-mask-strip-right"), areas.strips.right);
     setRect(element("pae-area-mask-strip-left"), areas.strips.left);
@@ -302,11 +299,20 @@ export function initializeApp(documentRef, windowRef) {
     // claiming ground that strip already claims. A always reaches farther, so
     // it alone defines the visible red overlap; B remains in the hidden math.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
+    // The overlap wedge itself, drawn as a single filled triangle bounded at
+    // the left inset line - not the strips' own squared-off rectangles,
+    // which can run past the parcel on both the leaning edge and the real
+    // left edge alike.
+    const overlapOpacity = areas.overlapVisible ? "1" : "0";
+    element("pae-area-overlap-fill").setAttribute("opacity", overlapOpacity);
+    element("pae-area-overlap-fill").setAttribute(
+      "d",
+      pathFromPoints(areas.overlapPolygon, true),
+    );
     // One label for the whole over-claimed wedge, held off far enough that
     // the leader reads as a line with an arrowhead, not just the arrowhead.
     const overlapLabel = element("pae-area-overlap-label");
     const overlapLeader = element("pae-area-overlap-leader");
-    const overlapOpacity = areas.overlapVisible ? "1" : "0";
     overlapLabel.setAttribute("opacity", overlapOpacity);
     overlapLeader.setAttribute("opacity", overlapOpacity);
     overlapLeader.setAttribute("marker-end", "url(#pae-area-red-arrow)");

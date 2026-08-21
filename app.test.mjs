@@ -146,7 +146,9 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "65.00 ft");
+  // Flat, the parcel has no width left at all for A's 65 ft reach to
+  // measure against, so the left mark goes negative to say so.
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "-65.00 ft");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft");
 });
 
@@ -214,19 +216,11 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-calc-overhang-result").textContent,
     "= 5.55 ft over one edge, short of the other",
   );
-  // The mask uses the same outline, so only the overhang shows red.
-  assert.equal(
-    nodes.get("pae-area-mask-shape").getAttribute("d"),
-    nodes.get("pae-area-shape").getAttribute("d"),
-  );
-  assert.equal(
-    nodes.get("pae-area-strip-right-spill").getAttribute("x"),
-    nodes.get("pae-area-strip-right").getAttribute("x"),
-  );
-  assert.equal(
-    nodes.get("pae-area-strip-left-spill").getAttribute("width"),
-    nodes.get("pae-area-strip-left").getAttribute("width"),
-  );
+  // The overlap wedge is a single filled triangle, not the strips' own
+  // squared-off rectangles - those can run past the parcel on both the
+  // leaning edge and the real left edge, which is exactly what the wedge is
+  // bounded to avoid.
+  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
   // The shaded length covers the same rectangle as the outline.
   for (const side of ["right", "left"]) {
     for (const attribute of ["x", "y", "width", "height"]) {
@@ -324,13 +318,10 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-gap").getAttribute("opacity"), "1");
 
   // Leaned steep enough that most of the middle's nominal 50 ft sits past
-  // the parcel's true edge, the shaded fill still stops exactly at that edge
-  // rather than washing the whole rectangle red.
+  // the parcel's true edge, the overlap wedge is still a single triangle
+  // bounded at the left inset line.
   controller.draw(20);
-  assert.equal(
-    nodes.get("pae-area-middle-spill").getAttribute("width"),
-    nodes.get("pae-area-middle").getAttribute("width"),
-  );
+  assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ Z$/);
 });
 
 test("keeps both right-angle diagrams on the same mobile viewport", async () => {

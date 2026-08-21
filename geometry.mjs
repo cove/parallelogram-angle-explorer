@@ -111,9 +111,12 @@ export function calculateDiagram(angleDegrees) {
   const perpendicularInnerMark = rightX - DIMENSIONS.arrowA * SCALE;
   const perpendicularLeftOver = perpendicularWidth - DIMENSIONS.arrowA;
   // What each part of the chain actually measures across the shape, as
-  // against the 15, 50 and 15 the assessor's figures claim for them.
+  // against the 15, 50 and 15 the assessor's figures claim for them. Left
+  // stays signed rather than absolute: once A's 65 ft reach exceeds the
+  // parcel's own width, there is no ground left for the last 15 ft to
+  // measure, and a negative number says so instead of hiding it as 0.
   const perpendicularChain = {
-    left: Math.abs(perpendicularLeftOver),
+    left: perpendicularLeftOver,
     inner: Math.abs(DIMENSIONS.arrowA - perpendicularInset),
     right: perpendicularInset,
   };
