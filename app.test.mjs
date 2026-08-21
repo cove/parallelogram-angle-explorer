@@ -247,9 +247,11 @@ test("renders the second right-angle area diagram", async () => {
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
   const { controller, nodes } = await createHarness("./overlaps.html");
 
-  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "15 ft");
-  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50 ft");
-  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "15 ft");
+  // The chain now reads what a right angle actually measures, the same way
+  // the forced-measurements diagram's "Right angle method" row does.
+  assert.equal(nodes.get("pae-area-chain-right-label").textContent, "14.07 ft");
+  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50.93 ft");
+  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "10.03 ft");
   assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 80 ft of room needed at 90°");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(

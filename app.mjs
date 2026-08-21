@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=23";
+} from "./geometry.mjs?v=24";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -232,9 +232,21 @@ export function initializeApp(documentRef, windowRef) {
       "d",
       pathFromPoints(areas.squares.chain),
     );
-    setText(element("pae-area-chain-right-label"), areas.labels.chainRightInset, `${DIMENSIONS.inset} ft`);
-    setText(element("pae-area-chain-inner-label"), areas.labels.chainInner, `${DIMENSIONS.innerSpan} ft`);
-    setText(element("pae-area-chain-left-label"), areas.labels.chainLeftInset, `${DIMENSIONS.inset} ft`);
+    setText(
+      element("pae-area-chain-right-label"),
+      areas.labels.chainRightInset,
+      `${areas.measurements.chainRightAngle.right.toFixed(2)} ft`,
+    );
+    setText(
+      element("pae-area-chain-inner-label"),
+      areas.labels.chainInner,
+      `${areas.measurements.chainRightAngle.inner.toFixed(2)} ft`,
+    );
+    setText(
+      element("pae-area-chain-left-label"),
+      areas.labels.chainLeftInset,
+      `${areas.measurements.chainRightAngle.left.toFixed(2)} ft`,
+    );
 
     setLine(element("pae-area-dim-a"), areas.dimensions.a);
     setLine(element("pae-area-dim-b"), areas.dimensions.b);

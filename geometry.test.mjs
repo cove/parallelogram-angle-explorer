@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=23";
+} from "./geometry.mjs?v=24";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -307,6 +307,7 @@ test("measures both right-angle areas from the right side", () => {
 
 test("steps 15, 50 and 15 off the side at a right angle", () => {
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
+  const diagram = calculateDiagram(EXAMPLE_ANGLE);
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
@@ -315,9 +316,17 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   approximately(areas.chain.rightInset.x1, rightTop.x);
   approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
   approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
-  approximately(span(areas.chain.rightInset), DIMENSIONS.inset);
-  approximately(span(areas.chain.inner), DIMENSIONS.innerSpan);
-  approximately(span(areas.chain.leftInset), DIMENSIONS.inset);
+  // The chain now reads what a right angle actually measures - the same
+  // marks the forced-measurements diagram's "Right angle method" row uses -
+  // not the 15/50/15 the strips are squared off to claim.
+  approximately(areas.measurements.chainRightAngle.right, diagram.measurements.perpendicularChain.right);
+  approximately(areas.measurements.chainRightAngle.inner, diagram.measurements.perpendicularChain.inner);
+  approximately(areas.measurements.chainRightAngle.left, diagram.measurements.perpendicularChain.left);
+  approximately(span(areas.chain.rightInset), areas.measurements.chainRightAngle.right);
+  approximately(span(areas.chain.inner), areas.measurements.chainRightAngle.inner);
+  approximately(span(areas.chain.leftInset), areas.measurements.chainRightAngle.left);
+  // The chain's own last mark now lands exactly on the parcel's real corner.
+  approximately(areas.chain.leftInset.x2, leftTop.x);
   for (const segment of Object.values(areas.chain)) {
     assert.equal(segment.y1, segment.y2);
   }
@@ -326,10 +335,6 @@ test("steps 15, 50 and 15 off the side at a right angle", () => {
   assert.equal(areas.chainWitnesses.right.x1, areas.chain.rightInset.x1);
   assert.equal(areas.chainWitnesses.rightInset.x1, areas.chain.rightInset.x2);
   assert.equal(areas.chainWitnesses.inner.x1, areas.chain.inner.x2);
-  // The left strip has already spilled past the parcel's own corner at this
-  // angle, so its witness is held to that corner rather than extrapolating
-  // the edge line out to where the chain mark actually falls.
-  assert.ok(areas.chain.leftInset.x2 < leftTop.x);
   assert.equal(areas.chainWitnesses.left.x1, leftTop.x);
   for (const witness of Object.values(areas.chainWitnesses)) {
     assert.equal(witness.x1, witness.x2);

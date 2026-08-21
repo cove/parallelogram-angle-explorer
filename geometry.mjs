@@ -345,18 +345,16 @@ export function calculateRightAngleAreas(angleDegrees) {
   // leaned far enough its far end walks off the parcel altogether.
   const middleOffParcel = perpendicularWidth < DIMENSIONS.arrowA;
   // The chain rides the perpendicular off the top corner, so it shows where a
-  // right-angle measurement puts the marks against the real top edge.
+  // right-angle measurement actually puts the marks against the real top
+  // edge - the same marks the forced-measurements diagram's "Right angle
+  // method" row uses, not the 15/50/15 the strips are squared off to claim.
   const chainY = rightTop.y;
+  const chainRightMarkX = base.perpendicular.right.x1;
+  const chainInnerMarkX = base.perpendicular.inner.x1;
   const chain = {
-    rightInset: line(point(rightX, chainY), point(chainMark(DIMENSIONS.inset), chainY)),
-    inner: line(
-      point(chainMark(DIMENSIONS.inset), chainY),
-      point(chainMark(DIMENSIONS.inset + DIMENSIONS.innerSpan), chainY),
-    ),
-    leftInset: line(
-      point(chainMark(DIMENSIONS.inset + DIMENSIONS.innerSpan), chainY),
-      point(chainMark(DIMENSIONS.side), chainY),
-    ),
+    rightInset: line(point(rightX, chainY), point(chainRightMarkX, chainY)),
+    inner: line(point(chainRightMarkX, chainY), point(chainInnerMarkX, chainY)),
+    leftInset: line(point(chainInnerMarkX, chainY), point(leftTop.x, chainY)),
   };
   // The shape's top and bottom edges lean, so a witness held to the global
   // top/bottom bounds sticks out past whichever edge is higher or lower at
@@ -550,6 +548,10 @@ export function calculateRightAngleAreas(angleDegrees) {
       leftStripOverlapB: leftStripOverlaps.b.feet,
       gapArea,
       overlapArea,
+      // What the chain actually measures at a right angle to the side, the
+      // same way the forced-measurements diagram's "Right angle method" row
+      // does - not the 15/50/15 the strips are squared off to claim.
+      chainRightAngle: base.measurements.perpendicularChain,
     },
     formulas: {
       leftStripOverlapA: {
