@@ -353,7 +353,16 @@ export function calculateRightAngleAreas(angleDegrees) {
       point(chainMark(DIMENSIONS.side), chainY),
     ),
   };
-  const chainWitness = (x) => line(point(x, topY), point(x, bottomY));
+  // The shape's top and bottom edges lean, so a witness held to the global
+  // top/bottom bounds sticks out past whichever edge is higher or lower at
+  // that x. Stopping each witness at the real edge keeps it inside the shape.
+  const topEdgeYAtX = (x) => {
+    const width = rightX - leftTop.x;
+    const fraction = width === 0 ? 0.5 : (x - leftTop.x) / width;
+    return leftTop.y + (rightTop.y - leftTop.y) * fraction;
+  };
+  const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
+  const chainWitness = (x) => line(point(x, topEdgeYAtX(x)), point(x, bottomEdgeYAtX(x)));
   const chainWitnesses = {
     right: chainWitness(rightX),
     rightInset: chainWitness(chain.rightInset.x2),
@@ -410,51 +419,7 @@ export function calculateRightAngleAreas(angleDegrees) {
   const leftGapFeet = leftGapWidthFeet * cotangentMagnitude;
   const leansRight = base.cosine > 0;
 
-  const topEdgeYAtX = (x) => {
-    const width = rightX - leftTop.x;
-    const fraction = width === 0 ? 0.5 : (x - leftTop.x) / width;
-    return leftTop.y + (rightTop.y - leftTop.y) * fraction;
-  };
-  const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
-  const verticalDimension = (measureX, squareY, edgeY, drawX = measureX) => line(
-    point(drawX, squareY),
-    point(drawX, edgeY),
-  );
   const leftGapMeasureX = leftTop.x + leftGapWidthFeet * SCALE;
-  // The left strip's own far end is the last link of the chain, 80 ft in from
-  // the right side. Past the parcel's corner there is no edge left to measure
-  // against, so the run is taken at the corner itself.
-  const cornerDimensionLane = 5;
-  const leftEndMeasureX = clamp(chainMark(DIMENSIONS.side), leftTop.x, rightX);
-  const leftEndFeet = ((rightX - leftEndMeasureX) / SCALE) * cotangentMagnitude;
-  const cornerDimensions = {
-    rt: verticalDimension(strips.right.x, rightTop.y, topEdgeYAtX(strips.right.x)),
-    rb: verticalDimension(strips.right.x, rightBottom.y, bottomEdgeYAtX(strips.right.x)),
-    lt: verticalDimension(
-      leftEndMeasureX,
-      strips.left.y,
-      topEdgeYAtX(leftEndMeasureX),
-      leftEndMeasureX - cornerDimensionLane,
-    ),
-    lb: verticalDimension(
-      leftEndMeasureX,
-      strips.left.y + strips.left.height,
-      bottomEdgeYAtX(leftEndMeasureX),
-      leftEndMeasureX - cornerDimensionLane,
-    ),
-    mt: verticalDimension(
-      middleArea.x,
-      middleArea.y,
-      topEdgeYAtX(middleArea.x),
-      middleArea.x + cornerDimensionLane,
-    ),
-    mb: verticalDimension(
-      middleArea.x,
-      middleArea.y + middleArea.height,
-      bottomEdgeYAtX(middleArea.x),
-      middleArea.x + cornerDimensionLane,
-    ),
-  };
   const triangleCentroid = ([a, b, c]) => point(
     (a.x + b.x + c.x) / 3,
     (a.y + b.y + c.y) / 3,
@@ -504,6 +469,18 @@ export function calculateRightAngleAreas(angleDegrees) {
     left: line(point(leftTop.x - 3, gapLabels.left.y - 3), leftGapTarget),
   };
 
+  // A single label pointing into the red spill at the middle strip's end -
+  // the largest and most visible overlap - rather than measuring out every
+  // strip's corner separately. The arrow lines that will measure the
+  // distance come later.
+  const overlapTargetX = middleArea.x + middleArea.width / 2;
+  const overlapTarget = point(overlapTargetX, leansRight ? topY : bottomY);
+  const overlapLabelPosition = point(overlapTargetX, leansRight ? topY - 10 : bottomY + 20);
+  const overlapLeader = line(
+    point(overlapLabelPosition.x, overlapLabelPosition.y + (leansRight ? 4 : -4)),
+    overlapTarget,
+  );
+
   return {
     angleDegrees,
     shape: base.shape,
@@ -523,11 +500,12 @@ export function calculateRightAngleAreas(angleDegrees) {
     chain,
     chainWitnesses,
     dimensions: { a: dimensionA, b: dimensionB },
-    cornerDimensions,
     gapLeaders,
     gapAreas: { main: mainGapArea, left: leftGapArea },
     gapPolygons: { main: mainGapTriangle, left: leftGapTriangle },
     leftStripOverlaps,
+    overlapLeader,
+    overlapVisible: overhangFeet > 0,
     squares: {
       a: rightAngleSquare(bandY(-34), -1),
       b: rightAngleSquare(bandY(34), 1, rightX - areaBStartFeet * SCALE),
@@ -536,17 +514,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     labels: {
       a: point((rightX + areaA.x) / 2, bandY(-34) - 9),
       b: point((rightX + areaB.x) / 2, bandY(34) + 17),
-      // One label per corner: each strip end either runs past its edge or
-      // stops short of it, and which is which flips with the lean.
-      rightTop: point(rightX + 6, rightTop.y + 15),
-      rightBottom: point(rightX + 6, rightBottom.y + 15),
-      middleTop: point(middleArea.x + middleArea.width * 0.32, strips.right.y + 26),
-      middleBottom: point(
-        middleArea.x + middleArea.width * 0.32,
-        strips.right.y + strips.right.height + 24,
-      ),
-      leftTop: point(leftTop.x - 6, leftTop.y - 8),
-      leftBottom: point(leftTop.x - 6, leftBottom.y + 18),
+      overlap: overlapLabelPosition,
       gapMain: gapLabels.main,
       gapLeft: gapLabels.left,
       chainRightInset: chainLabel(chain.rightInset),
@@ -556,7 +524,6 @@ export function calculateRightAngleAreas(angleDegrees) {
     measurements: {
       perpendicularWidth,
       overhang: overhangFeet,
-      leftEnd: leftEndFeet,
       middle: middleFeet,
       middleShort: middleShortFeet,
       middleEnds: middleEndFeet,

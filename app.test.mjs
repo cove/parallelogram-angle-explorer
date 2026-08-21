@@ -169,19 +169,15 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(nodes.get("pae-area-a-label").textContent, "A · 65 ft at 90°");
   assert.equal(nodes.get("pae-area-b-label").textContent, "B · 50 ft at 90°");
-  // Leaning right: every part is squared off the same side, so all three run
-  // past the top edge and stop short of the bottom one.
-  assert.equal(nodes.get("pae-area-corner-rt").textContent, "Overlap · 5.55 ft");
-  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Overlap · 27.77 ft");
-  assert.equal(nodes.get("pae-area-corner-rb").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-corner-lb").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 781.86 ft²");
-  assert.equal(nodes.get("pae-area-gap-left").textContent, "Gap · 18.60 ft²");
-  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("style"), "fill: #c00000");
+  // A single label points into the red overlap band; no measurement yet.
+  assert.equal(nodes.get("pae-area-overlap-label").textContent, "Overlap");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(
-    nodes.get("pae-area-corner-dim-rt").getAttribute("marker-start"),
+    nodes.get("pae-area-overlap-leader").getAttribute("marker-end"),
     "url(#pae-area-red-arrow)",
   );
+  assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 781.86 ft²");
+  assert.equal(nodes.get("pae-area-gap-left").textContent, "Gap · 18.60 ft²");
   assert.equal(
     nodes.get("pae-area-gap-leader-main").getAttribute("marker-end"),
     "url(#pae-area-black-arrow)",
@@ -268,17 +264,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
     nodes.get("pae-area-strip-right").getAttribute("height"),
     nodes.get("pae-area-strip-left").getAttribute("height"),
   );
-  for (const corner of ["rt", "lt", "mt"]) {
-    assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "1");
-    assert.equal(nodes.get(`pae-area-corner-dim-${corner}`).getAttribute("opacity"), "1");
-  }
-  for (const corner of ["rb", "lb", "mb"]) {
-    assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "0");
-    assert.equal(nodes.get(`pae-area-corner-dim-${corner}`).getAttribute("opacity"), "0");
-  }
-  // The middle carries the same square ends further from the side, so its
-  // over and under run deeper than the strips'.
-  assert.equal(nodes.get("pae-area-corner-mt").textContent, "Overlap · 24.06 ft");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap-main").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "1");
   // The uncovered sliver is masked by the strip it belongs to.
@@ -293,10 +279,7 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
 
   // Square on, the ends line up with the edges and nothing hangs over.
   controller.draw(90);
-  for (const corner of ["rt", "rb", "lt", "lb", "mt", "mb"]) {
-    assert.equal(nodes.get(`pae-area-corner-${corner}`).getAttribute("opacity"), "0");
-    assert.equal(nodes.get(`pae-area-corner-dim-${corner}`).getAttribute("opacity"), "0");
-  }
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-main").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-leader-main").getAttribute("opacity"), "0");
@@ -307,21 +290,18 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   );
 
   controller.draw(40);
-  assert.equal(nodes.get("pae-area-corner-lt").textContent, "Overlap · 61.28 ft");
-  assert.equal(nodes.get("pae-area-corner-lb").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
 
-  // Past 90 degrees the lean flips, and so does each corner's role.
+  // Past 90 degrees the lean flips.
   controller.draw(110.23);
-  assert.equal(nodes.get("pae-area-corner-rt").getAttribute("opacity"), "0");
-  assert.equal(nodes.get("pae-area-corner-rb").textContent, "Overlap · 5.53 ft");
-  assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 27.66 ft");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 778.50 ft²");
 
   // Leaned far enough that the left strip has walked off the parcel entirely,
   // there is nothing left over past its inner edge to call a gap.
   controller.draw(128.3);
-  assert.equal(nodes.get("pae-area-corner-lb").textContent, "Overlap · 49.58 ft");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.equal(nodes.get("pae-area-gap-left").getAttribute("opacity"), "0");
   assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 1556.44 ft²");
 
@@ -449,14 +429,14 @@ test("each page carries only its own diagrams", async () => {
   assert.equal(nodes.has("pae-svg"), false);
   assert.equal(nodes.has("pae-fit-svg"), true);
   assert.equal(nodes.get("pae-area-angle-output").textContent, "69.69°");
-  assert.equal(nodes.get("pae-area-corner-mt").textContent, "Overlap · 24.06 ft");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "1");
   assert.match(nodes.get("pae-area-shape").getAttribute("d"), /^M .+ Z$/);
 
   const slider = nodes.get("pae-area-angle");
   slider.value = "90";
   slider.dispatch("input");
   assert.equal(nodes.get("pae-area-angle-output").textContent, "90.00°");
-  assert.equal(nodes.get("pae-area-corner-mt").getAttribute("opacity"), "0");
+  assert.equal(nodes.get("pae-area-overlap-label").getAttribute("opacity"), "0");
 
   nodes.get("pae-snap-9874").dispatch("click");
   assert.equal(nodes.get("pae-area-angle-output").textContent, "98.74°");

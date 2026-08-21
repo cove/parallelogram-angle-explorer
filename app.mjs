@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=15";
+} from "./geometry.mjs?v=16";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -262,38 +262,15 @@ export function initializeApp(documentRef, windowRef) {
     // claiming ground that strip already claims. A always reaches farther, so
     // it alone defines the visible red overlap; B remains in the hidden math.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
-    // Square on, the strip ends land on the edges: nothing over, nothing short.
-    const overhang = areas.measurements.overhang;
-    const middleEnds = areas.measurements.middleEnds;
-    // The left strip is stepped off the end of A's 65 ft line, so it carries
-    // the same square ends as the right strip and the middle and runs past
-    // the same edge they do.
-    const leftEnd = areas.measurements.leftEnd;
-    const corners = [
-      ["rt", areas.labels.rightTop, areas.leansRight, overhang],
-      ["rb", areas.labels.rightBottom, !areas.leansRight, overhang],
-      ["lt", areas.labels.leftTop, areas.leansRight, leftEnd],
-      ["lb", areas.labels.leftBottom, !areas.leansRight, leftEnd],
-      ["mt", areas.labels.middleTop, areas.leansRight, middleEnds],
-      ["mb", areas.labels.middleBottom, !areas.leansRight, middleEnds],
-    ];
-    for (const [corner, position, isOverlap, feet] of corners) {
-      const node = element(`pae-area-corner-${corner}`);
-      const dimensionNode = element(`pae-area-corner-dim-${corner}`);
-      const opacity = isOverlap && feet > 0 ? "1" : "0";
-      node.setAttribute("opacity", opacity);
-      dimensionNode.setAttribute("opacity", opacity);
-      node.setAttribute("style", "fill: #c00000");
-      dimensionNode.setAttribute("style", "stroke: #c00000");
-      dimensionNode.setAttribute("marker-start", "url(#pae-area-red-arrow)");
-      dimensionNode.setAttribute("marker-end", "url(#pae-area-red-arrow)");
-      setLine(dimensionNode, areas.cornerDimensions[corner]);
-      setText(
-        node,
-        position,
-        `Overlap · ${feet.toFixed(2)} ft`,
-      );
-    }
+    // A single label pointing at the red band, no measurement yet.
+    const overlapLabel = element("pae-area-overlap-label");
+    const overlapLeader = element("pae-area-overlap-leader");
+    const overlapOpacity = areas.overlapVisible ? "1" : "0";
+    overlapLabel.setAttribute("opacity", overlapOpacity);
+    overlapLeader.setAttribute("opacity", overlapOpacity);
+    overlapLeader.setAttribute("marker-end", "url(#pae-area-red-arrow)");
+    setLine(overlapLeader, areas.overlapLeader);
+    setText(overlapLabel, areas.labels.overlap, "Overlap");
 
     for (const gap of ["main", "left"]) {
       const labelNode = element(`pae-area-gap-${gap}`);

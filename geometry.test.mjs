@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=15";
+} from "./geometry.mjs?v=16";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -356,22 +356,9 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
     areas.measurements.overhang,
     DIMENSIONS.inset * Math.abs(Math.cos(radians)) / Math.sin(radians),
   );
-  // Corner labels sit outside their strip, and the lean decides which corner
-  // is an overlap and which is a gap.
+  // The lean decides which side the overlap band sits clear on.
   assert.equal(areas.leansRight, true);
   assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
-  assert.ok(areas.labels.rightTop.x > rightTop.x);
-  assert.ok(areas.labels.rightBottom.x > rightTop.x);
-  assert.ok(areas.labels.leftTop.x < leftTop.x);
-  assert.ok(areas.labels.leftBottom.x < leftTop.x);
-
-  const verticalSpan = ({ y1, y2 }) => Math.abs(y2 - y1) / 1.72;
-  approximately(verticalSpan(areas.cornerDimensions.rt), areas.measurements.overhang);
-  approximately(verticalSpan(areas.cornerDimensions.rb), areas.measurements.overhang);
-  approximately(verticalSpan(areas.cornerDimensions.lt), areas.measurements.leftEnd);
-  approximately(verticalSpan(areas.cornerDimensions.lb), areas.measurements.leftEnd);
-  approximately(verticalSpan(areas.cornerDimensions.mt), areas.measurements.middleEnds);
-  approximately(verticalSpan(areas.cornerDimensions.mb), areas.measurements.middleEnds);
 
   approximately(areas.gapAreas.main, 781.8566570526729);
   approximately(areas.gapAreas.left, 18.602836633529762);
@@ -429,7 +416,6 @@ test("the middle only measures a full 50 ft when the shape is square on", () => 
   assert.ok(areas.middleColumn.height > areas.middleArea.height);
   assert.ok(areas.measurements.middleEnds > areas.measurements.overhang);
   assert.equal(areas.formulas.middleEnds.result, "= 24.06 ft at the middle's far end");
-  approximately(areas.labels.middleTop.y, areas.strips.right.y + 26);
 
   // Leaned far enough the middle still measures 50 ft, but its far end has
   // walked clean off the parcel.
