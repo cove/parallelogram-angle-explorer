@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=14";
+} from "./geometry.mjs?v=15";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -19,7 +19,7 @@ export function initializeApp(documentRef, windowRef) {
     .map((id) => root.querySelector(`#${id}`))
     .filter((output) => output !== null);
   const snap90Button = root.querySelector("#pae-snap-90");
-  const snap11023Button = root.querySelector("#pae-snap-11023");
+  const snap9874Button = root.querySelector("#pae-snap-9874");
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
   const fitSvg = root.querySelector("#pae-fit-svg");
@@ -410,7 +410,7 @@ export function initializeApp(documentRef, windowRef) {
     input.addEventListener("input", () => setAngle(Number(input.value)));
   }
   snap90Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.rightAngle));
-  snap11023Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
+  snap9874Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();
   draw(Number(angleInputs[0].value));

@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=14";
+} from "./geometry.mjs?v=15";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -23,10 +23,10 @@ const EXAMPLE_ANGLE = 69.69;
 
 test("exports the supported presets and fixed dimensions", () => {
   assert.deepEqual(PRESET_ANGLES, {
-    initial: 110.23,
+    initial: 98.74,
     rightAngle: 90,
     angle10080: 100.8,
-    reverse: 110.23,
+    reverse: 98.74,
   });
   assert.deepEqual(DIMENSIONS, {
     side: 80,
@@ -97,16 +97,16 @@ test("produces exact right-angle measurements at 90 degrees", () => {
   assert.equal(diagram.formulas.overlap.result, "= 0.00 ft");
 });
 
-test("calculates the reverse 110.23 degree preset", () => {
+test("calculates the reverse 98.74 degree preset", () => {
   const diagram = calculateDiagram(PRESET_ANGLES.reverse);
 
-  approximately(diagram.measurements.perpendicularInset, 14.074681446105192);
-  approximately(diagram.measurements.perpendicularInner, 46.91560482035064);
-  approximately(diagram.measurements.perpendicularWidth, 75.06496771256101);
-  approximately(diagram.measurements.overlap, 4.009713733544191);
+  approximately(diagram.measurements.perpendicularInset, 14.825820689304035);
+  approximately(diagram.measurements.perpendicularInner, 49.419402297680115);
+  approximately(diagram.measurements.perpendicularWidth, 79.07104367628818);
+  approximately(diagram.measurements.overlap, 0.7547770130158732);
   assert.ok(diagram.projection < 0);
   assert.ok(diagram.shape[0].y < diagram.shape[1].y);
-  assert.equal(diagram.formulas.innerSpan.result, "= 46.92 ft");
+  assert.equal(diagram.formulas.innerSpan.result, "= 49.42 ft");
 });
 
 test("the 100.80 degree preset produces the requested visible overlap", () => {
@@ -593,19 +593,19 @@ test("neither line reaches into the left 15 ft strip any more", () => {
   assert.equal(leaning.formulas.leftStripOverlapA.result, "= 0.00 ft");
   assert.equal(
     leaning.formulas.leftStripOverlapB.expression,
-    "(50 ft + 15 ft × sin(110.23°)) − 65 ft",
+    "(50 ft + 15 ft × sin(98.74°)) − 65 ft",
   );
   assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.00 ft");
 
   // Past the strip's inner edge the parcel keeps whatever ground the chain's
   // square ends leave behind at its far corner.
-  approximately(leaning.measurements.leftGap, 3.7091716322656194);
-  approximately(leaning.gapAreas.left, 18.66634635955043);
+  approximately(leaning.measurements.leftGap, 2.1632267908528893);
+  approximately(leaning.gapAreas.left, 15.219429327904026);
   assert.equal(
     leaning.formulas.leftGap.expression,
-    "(75.06 ft − 65 ft) × |cot(110.23°)|",
+    "(79.07 ft − 65 ft) × |cot(98.74°)|",
   );
-  assert.equal(leaning.formulas.leftGap.result, "= 3.71 ft uncovered");
+  assert.equal(leaning.formulas.leftGap.result, "= 2.16 ft uncovered");
 
   // Leaned far enough the whole left strip is off the parcel, and there is
   // nothing past its inner edge left to call a gap.

@@ -137,9 +137,9 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
   assert.equal(slider.value, "90");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft");
 
-  nodes.get("pae-snap-11023").dispatch("click");
-  assert.equal(slider.value, "110.23");
-  assert.equal(nodes.get("pae-angle-output").textContent, "110.23°");
+  nodes.get("pae-snap-9874").dispatch("click");
+  assert.equal(slider.value, "98.74");
+  assert.equal(nodes.get("pae-angle-output").textContent, "98.74°");
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
@@ -458,8 +458,8 @@ test("each page carries only its own diagrams", async () => {
   assert.equal(nodes.get("pae-area-angle-output").textContent, "90.00°");
   assert.equal(nodes.get("pae-area-corner-mt").getAttribute("opacity"), "0");
 
-  nodes.get("pae-snap-11023").dispatch("click");
-  assert.equal(nodes.get("pae-area-angle-output").textContent, "110.23°");
+  nodes.get("pae-snap-9874").dispatch("click");
+  assert.equal(nodes.get("pae-area-angle-output").textContent, "98.74°");
 
   mediaQuery.setMatches(true);
   assert.equal(nodes.get("pae-area-svg").getAttribute("viewBox"), "70 0 480 676");

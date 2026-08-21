@@ -1,8 +1,8 @@
 export const PRESET_ANGLES = Object.freeze({
-  initial: 110.23,
+  initial: 98.74,
   rightAngle: 90,
   angle10080: 100.8,
-  reverse: 110.23,
+  reverse: 98.74,
 });
 
 export const DIMENSIONS = Object.freeze({
