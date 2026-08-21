@@ -358,6 +358,24 @@ test("squares each 15 ft strip inward from its own side", () => {
   ));
 });
 
+test("anchors the purple center and left measurements to A, not the green inset", () => {
+  // These angles keep A's endpoint inside the parcel while covering both
+  // lean directions. At steeper angles the witness is clamped to the corner.
+  for (const angle of [EXAMPLE_ANGLE, 86.89, PRESET_ANGLES.reverse, 110.23]) {
+    const areas = calculateRightAngleAreas(angle);
+    const aLeftX = areas.dimensions.a.x2;
+
+    // The center-50 line ends where the left-15 line begins: A's left end.
+    approximately(areas.chain.inner.x2, aLeftX);
+    approximately(areas.chain.leftInset.x1, aLeftX);
+    approximately(areas.chainWitnesses.inner.x1, aLeftX);
+    approximately(areas.chainWitnesses.inner.x2, aLeftX);
+
+    // Away from 90°, the green top-15 inset is a different boundary.
+    assert.notEqual(areas.chain.inner.x2, areas.insetLines.left.x1);
+  }
+});
+
 test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   const areas = calculateRightAngleAreas(EXAMPLE_ANGLE);
   const [leftTop, rightTop, rightBottom, leftBottom] = areas.shape;
