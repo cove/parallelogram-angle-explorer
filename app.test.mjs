@@ -177,7 +177,7 @@ test("renders the second right-angle area diagram", async () => {
     "url(#pae-area-red-arrow)",
   );
   assert.equal(nodes.get("pae-area-gap-main").textContent, "Gap · 781.86 ft²");
-  assert.equal(nodes.get("pae-area-gap-left").textContent, "Gap · 18.60 ft²");
+  assert.equal(nodes.get("pae-area-gap-left").textContent, "Gap · 259.81 ft²");
   assert.equal(
     nodes.get("pae-area-gap-leader-main").getAttribute("marker-end"),
     "url(#pae-area-black-arrow)",
@@ -236,7 +236,7 @@ test("renders the second right-angle area diagram", async () => {
   );
   assert.equal(
     nodes.get("pae-area-calc-left-gap-area-result").textContent,
-    "= 18.60 ft² unclaimed",
+    "= 259.81 ft² unclaimed",
   );
 });
 

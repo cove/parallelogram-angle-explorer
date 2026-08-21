@@ -408,29 +408,31 @@ export function calculateRightAngleAreas(angleDegrees) {
     a: stripEncroachment(DIMENSIONS.arrowA),
     b: stripEncroachment(areaBEndFeet),
   };
-  // Everything out to the left strip's inner edge is claimed, so the only
-  // parcel ground still uncovered past that edge is what lies between it and
-  // the far corner.
-  const leftGapWidthFeet = clamp(
-    perpendicularWidth - leftStripInnerFeet,
-    0,
-    perpendicularWidth,
-  );
-  const leftGapFeet = leftGapWidthFeet * cotangentMagnitude;
   const leansRight = base.cosine > 0;
 
-  const leftGapMeasureX = leftTop.x + leftGapWidthFeet * SCALE;
-  const triangleCentroid = ([a, b, c]) => point(
-    (a.x + b.x + c.x) / 3,
-    (a.y + b.y + c.y) / 3,
+  const polygonCentroid = (points) => point(
+    points.reduce((sum, p) => sum + p.x, 0) / points.length,
+    points.reduce((sum, p) => sum + p.y, 0) / points.length,
   );
-  const triangleAreaFeet = ([a, b, c]) => Math.abs(
-    a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y),
-  ) / (2 * SCALE * SCALE);
-  // Clamp candidate gaps to the parcel before measuring them. The portion
-  // beyond the black boundary is parcel geometry, not unclaimed parcel area.
+  const polygonAreaFeet = (points) => {
+    let twiceArea = 0;
+    for (let index = 0; index < points.length; index += 1) {
+      const a = points[index];
+      const b = points[(index + 1) % points.length];
+      twiceArea += a.x * b.y - b.x * a.y;
+    }
+    return Math.abs(twiceArea) / (2 * SCALE * SCALE);
+  };
+  // The squared-off strips share one flat top and one flat bottom (both at
+  // the right side's own height), while the real top and real bottom edges
+  // lean. That leaves one continuous wedge of real parcel - between the flat
+  // line and the leaning edge - running the full width from the left strip's
+  // own corner to the right side. It is split in two only because the right
+  // and middle strips already account for the near two-thirds of it; the
+  // rest, from the left strip's own corner out to that same split point, is
+  // what the left gap reports. Both wedges sit on the same side (top or
+  // bottom), whichever side the flat line falls short of the real edge on.
   const mainGapBoundaryX = clamp(leftStripInnerX, leftTop.x, rightX);
-  const leftGapBoundaryX = clamp(leftGapMeasureX, leftTop.x, rightX);
   const mainGapBaseFeet = (rightX - mainGapBoundaryX) / SCALE;
   const mainGapFarTop = point(mainGapBoundaryX, topEdgeYAtX(mainGapBoundaryX));
   const mainGapFarBottom = point(mainGapBoundaryX, bottomEdgeYAtX(mainGapBoundaryX));
@@ -445,24 +447,36 @@ export function calculateRightAngleAreas(angleDegrees) {
       point(mainGapBoundaryX, rightTop.y),
       mainGapFarTop,
     ];
+  // The left strip's own corner, clamped to the real edge if the strip
+  // overshoots it and to the split point if the strip falls short of even
+  // reaching that far - either way, never past ground the main gap already
+  // claims.
+  const leftGapCornerX = clamp(strips.left.x, leftTop.x, mainGapBoundaryX);
+  const leftGapCornerFeet = (rightX - leftGapCornerX) / SCALE;
+  const leftGapBaseFeet = (mainGapBoundaryX - leftGapCornerX) / SCALE;
+  const leftGapFeet = leansRight
+    ? (bottomEdgeYAtX(leftGapCornerX) - rightBottom.y) / SCALE
+    : (rightTop.y - topEdgeYAtX(leftGapCornerX)) / SCALE;
   const leftGapTriangle = leansRight
     ? [
-      leftTop,
-      point(leftGapBoundaryX, leftTop.y),
-      point(leftGapBoundaryX, topEdgeYAtX(leftGapBoundaryX)),
+      point(leftGapCornerX, bottomEdgeYAtX(leftGapCornerX)),
+      point(leftGapCornerX, rightBottom.y),
+      point(mainGapBoundaryX, rightBottom.y),
+      mainGapFarBottom,
     ]
     : [
-      leftBottom,
-      point(leftGapBoundaryX, leftBottom.y),
-      point(leftGapBoundaryX, bottomEdgeYAtX(leftGapBoundaryX)),
+      point(leftGapCornerX, topEdgeYAtX(leftGapCornerX)),
+      point(leftGapCornerX, rightTop.y),
+      point(mainGapBoundaryX, rightTop.y),
+      mainGapFarTop,
     ];
-  const mainGapArea = triangleAreaFeet(mainGapTriangle);
-  const leftGapArea = triangleAreaFeet(leftGapTriangle);
-  const mainGapTarget = triangleCentroid(mainGapTriangle);
-  const leftGapTarget = triangleCentroid(leftGapTriangle);
+  const mainGapArea = polygonAreaFeet(mainGapTriangle);
+  const leftGapArea = polygonAreaFeet(leftGapTriangle);
+  const mainGapTarget = polygonCentroid(mainGapTriangle);
+  const leftGapTarget = polygonCentroid(leftGapTriangle);
   const gapLabels = {
     main: point(rightX + 8, leansRight ? rightBottom.y - 12 : rightTop.y + 18),
-    left: point(leftTop.x - 8, leansRight ? leftTop.y - 8 : leftBottom.y + 18),
+    left: point(leftTop.x - 8, leansRight ? leftBottom.y + 18 : leftTop.y - 8),
   };
   const gapLeaders = {
     main: line(point(rightX + 3, gapLabels.main.y - 3), mainGapTarget),
@@ -543,7 +557,7 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
       },
       leftGap: {
-        expression: `(${formatFeet(perpendicularWidth)} ft − ${DIMENSIONS.arrowA} ft) × |cot(${angleDegrees.toFixed(2)}°)|`,
+        expression: `${formatFeet(leftGapCornerFeet)} ft × |cot(${angleDegrees.toFixed(2)}°)|`,
         result: `= ${formatFeet(leftGapFeet)} ft uncovered`,
       },
       mainGapArea: {
@@ -551,7 +565,7 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(mainGapArea)} ft² unclaimed`,
       },
       leftGapArea: {
-        expression: `½ × ${formatFeet(leftGapWidthFeet)} ft × ${formatFeet(leftGapFeet)} ft`,
+        expression: `½ × (${formatFeet(leftGapFeet)} ft + ${formatFeet(middleEndFeet)} ft) × ${formatFeet(leftGapBaseFeet)} ft`,
         result: `= ${formatFeet(leftGapArea)} ft² unclaimed`,
       },
       method: {

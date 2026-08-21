@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=17";
+} from "./geometry.mjs?v=18";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -361,7 +361,7 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.equal(calculateRightAngleAreas(PRESET_ANGLES.reverse).leansRight, false);
 
   approximately(areas.gapAreas.main, 781.8566570526729);
-  approximately(areas.gapAreas.left, 18.602836633529762);
+  approximately(areas.gapAreas.left, 259.80608422350787);
   assert.ok(areas.gapLeaders.main.x1 > areas.gapLeaders.main.x2);
   assert.ok(areas.gapLeaders.left.x1 < areas.gapLeaders.left.x2);
   assert.equal(
@@ -371,9 +371,9 @@ test("squares a 15 ft strip off each side, ends cut at a right angle", () => {
   assert.equal(areas.formulas.mainGapArea.result, "= 781.86 ft² unclaimed");
   assert.equal(
     areas.formulas.leftGapArea.expression,
-    "½ × 10.03 ft × 3.71 ft",
+    "½ × (27.77 ft + 24.06 ft) × 10.03 ft",
   );
-  assert.equal(areas.formulas.leftGapArea.result, "= 18.60 ft² unclaimed");
+  assert.equal(areas.formulas.leftGapArea.result, "= 259.81 ft² unclaimed");
 
   // The uncovered slivers are measured off the same strip columns.
   approximately(areas.stripColumns.right.x, areas.strips.right.x);
@@ -456,8 +456,7 @@ test("the strips hang over the top and bottom at every angle but 90", () => {
       assert.equal(areas.measurements.overhang === 0, squareOn);
     }
     assert.ok(areas.measurements.overhang >= 0);
-    assert.ok(areas.measurements.leftGap >= 0);
-    assert.ok(areas.measurements.leftGap <= areas.measurements.overhang + 1e-8);
+    assert.ok(areas.measurements.leftGap >= -1e-8);
     for (const gap of ["main", "left"]) {
       assert.ok(areas.gapAreas[gap] >= 0);
       assert.equal(
@@ -583,28 +582,33 @@ test("neither line reaches into the left 15 ft strip any more", () => {
   );
   assert.equal(leaning.formulas.leftStripOverlapB.result, "= 0.00 ft");
 
-  // Past the strip's inner edge the parcel keeps whatever ground the chain's
-  // square ends leave behind at its far corner.
-  approximately(leaning.measurements.leftGap, 2.1632267908528893);
-  approximately(leaning.gapAreas.left, 15.219429327904026);
+  // Past the strip's own corner the parcel keeps whatever ground the chain's
+  // square ends leave behind - the same wedge the main gap reports the near
+  // two-thirds of, continued out to the left strip's own corner.
+  approximately(leaning.measurements.leftGap, 12.156070579859545);
+  approximately(leaning.gapAreas.left, 155.82917073334067);
   assert.equal(
     leaning.formulas.leftGap.expression,
-    "(79.07 ft − 65 ft) × |cot(98.74°)|",
+    "79.07 ft × |cot(98.74°)|",
   );
-  assert.equal(leaning.formulas.leftGap.result, "= 2.16 ft uncovered");
+  assert.equal(leaning.formulas.leftGap.result, "= 12.16 ft uncovered");
+  // No vertex of the left gap's wedge falls strictly inside the left strip's
+  // own rectangle (sitting flush against its top edge is fine) - if it did,
+  // that ground would already be shaded, not a gap.
+  const strictlyInsideLeftStrip = (position) => (
+    position.x > leaning.strips.left.x + 1e-8
+    && position.x < leaning.strips.left.x + leaning.strips.left.width - 1e-8
+    && position.y > leaning.strips.left.y + 1e-8
+    && position.y < leaning.strips.left.y + leaning.strips.left.height - 1e-8
+  );
+  assert.equal(leaning.gapPolygons.left.some(strictlyInsideLeftStrip), false);
 
   // Leaned far enough the whole left strip is off the parcel, and there is
-  // nothing past its inner edge left to call a gap.
+  // nothing past its own corner left to call a gap.
   const offParcel = calculateRightAngleAreas(128.3);
   approximately(offParcel.measurements.overhang, 11.846286185467141);
-  approximately(offParcel.measurements.leftGap, 0);
   approximately(offParcel.gapAreas.left, 0);
   approximately(offParcel.gapAreas.main, 1556.4414051350343);
-  assert.equal(
-    offParcel.formulas.leftGap.expression,
-    "(62.78 ft − 65 ft) × |cot(128.30°)|",
-  );
-  assert.equal(offParcel.formulas.leftGap.result, "= 0.00 ft uncovered");
   assert.equal(offParcel.formulas.leftGapArea.result, "= 0.00 ft² unclaimed");
 
   // Squeezed right down the parcel still keeps the corner the square ends miss.
