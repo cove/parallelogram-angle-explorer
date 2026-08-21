@@ -111,11 +111,11 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "d · 10.03 ft");
   assert.equal(nodes.get("pae-perp-inner-label").textContent, "e · 50.93 ft");
   assert.equal(nodes.get("pae-perp-inset-right-label").textContent, "f · 14.07 ft");
-  assert.equal(nodes.get("pae-static-a-label").textContent, "g · A · 65 ft");
-  assert.equal(nodes.get("pae-static-b-label").textContent, "h · B · 50 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "i · A into left 15 · 4.04 ft");
+  assert.equal(nodes.get("pae-static-a-label").textContent, "line h · 65 ft");
+  assert.equal(nodes.get("pae-static-b-label").textContent, "line g · 50 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "i · line h into left 15 · 4.04 ft");
   assert.match(nodes.get("pae-top-dim-left-label").innerHTML, /class="math-variable">a<\/tspan>/);
-  assert.match(nodes.get("pae-static-a-label").innerHTML, /class="math-variable">g<\/tspan>/);
+  assert.match(nodes.get("pae-static-a-label").innerHTML, /class="math-variable">h<\/tspan>/);
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
@@ -127,17 +127,17 @@ test("renders the initial state from the shared geometry module", async () => {
   );
   assert.equal(nodes.get("pae-calc-shape-expression").textContent, "a + b + c = 15 ft + 50 ft + 15 ft");
   assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "g = A = 65 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· h = B = 50 ft");
+  assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "h = 65 ft");
+  assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· g = 50 ft");
   assert.equal(nodes.get("pae-calc-left-boundary-result").textContent, "= 60.96 ft from the right to the left-15 boundary");
-  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.07 ft from the right to B's end");
-  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 3.11 ft B enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-forced-inner-expression").textContent, "e = g − c × sin(69.69°)");
+  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.07 ft from the right to line g's end");
+  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 3.11 ft line g enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-forced-inner-expression").textContent, "e = h − c × sin(69.69°)");
   assert.equal(
     nodes.get("pae-calc-forced-inner-expression").innerHTML,
-    "<var>e</var> = <var>g</var> − <var>c</var> × sin(69.69°)",
+    "<var>e</var> = <var>h</var> − <var>c</var> × sin(69.69°)",
   );
-  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft A reaches farther left than B");
+  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft line h reaches farther left than line g");
   assert.match(nodes.get("pae-shape").getAttribute("d"), /^M .+ Z$/);
   assert.match(nodes.get("pae-perp-square-left").getAttribute("d"), /^M .+ L .+ L /);
 });
@@ -155,7 +155,7 @@ test("updates the diagram and formulas from slider input", async () => {
     nodes.get("pae-calc-perp-insets-result").textContent,
     "= 14.98 ft projected on both the left and right",
   );
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft A enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft line h enters the left 15 ft");
 });
 
 test("handles both preset buttons and the 180 degree extreme", async () => {
@@ -164,23 +164,23 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
 
   nodes.get("pae-snap-90").dispatch("click");
   assert.equal(slider.value, "90");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft A enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft line h enters the left 15 ft");
 
   nodes.get("pae-snap-9874").dispatch("click");
   assert.equal(slider.value, "98.74");
   assert.equal(nodes.get("pae-angle-output").textContent, "98.74°");
   assert.equal(nodes.get("pae-calc-left-boundary-result").textContent, "= 64.25 ft from the right to the left-15 boundary");
-  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.83 ft from the right to B's end");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.75 ft A enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 0.58 ft B enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.17 ft A reaches farther left than B");
+  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.83 ft from the right to line g's end");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.75 ft line h enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 0.58 ft line g enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.17 ft line h reaches farther left than line g");
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
-  // Flat, the parcel has no width left at all for A's 65 ft reach to
+  // Flat, the parcel has no width left at all for line h's 65 ft reach to
   // measure against, so the left mark goes negative to say so.
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "d · -65.00 ft");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft A enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft line h enters the left 15 ft");
 });
 
 test("switches the SVG viewport at the mobile breakpoint", async () => {
@@ -203,8 +203,8 @@ test("renders the second right-angle area diagram", async () => {
     nodes.get("pae-area-shape").getAttribute("d"),
     nodes.get("pae-area-clip-shape").getAttribute("d"),
   );
-  assert.equal(nodes.get("pae-area-a-label").textContent, "g · A · 65 ft at 90°");
-  assert.equal(nodes.get("pae-area-b-label").textContent, "h · B · 50 ft at 90°");
+  assert.equal(nodes.get("pae-area-a-label").textContent, "line h · 65 ft at 90°");
+  assert.equal(nodes.get("pae-area-b-label").textContent, "line g · 50 ft at 90°");
   // The naive top row, reproduced from the forced-measurements diagram.
   assert.equal(nodes.get("pae-area-top-dim-left-label").textContent, "a · 15 ft");
   assert.equal(nodes.get("pae-area-top-dim-inner-label").textContent, "b · 50 ft");
@@ -284,7 +284,7 @@ test("renders the second right-angle area diagram", async () => {
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
   const { controller, nodes } = await createHarness("./overlaps.html");
 
-  // The purple center/left boundary is A's fixed endpoint, not the green
+  // The purple center/left boundary is line h's endpoint, not the green
   // top row's projected left inset witness.
   assert.equal(nodes.get("pae-area-chain-right-label").textContent, "f · 14.07 ft");
   assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "e · 50.93 ft");
@@ -382,16 +382,16 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-strip-right-label").textContent, "c · 15 ft");
   assert.equal(nodes.get("pae-fit-strip-inner-label").textContent, "b · 50 ft");
   assert.equal(nodes.get("pae-fit-strip-left-label").textContent, "a · 15 ft");
-  assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "g · A · 65 ft along the top");
-  assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "h · B · 50 ft along the top");
+  assert.equal(nodes.get("pae-fit-guide-a-label").textContent, "line h · 65 ft along the top");
+  assert.equal(nodes.get("pae-fit-guide-b-label").textContent, "line g · 50 ft along the top");
   assert.equal(nodes.get("pae-fit-match-label").textContent, "i · Ends match · 0.00 ft");
   assert.match(nodes.get("pae-fit-match-label").innerHTML, /class="math-variable">i<\/tspan>/);
   assert.equal(
     nodes.get("pae-fit-calc-gap-expression").innerHTML,
-    "<var>i</var> = |<var>g</var> − (<var>c</var> + <var>h</var>)|",
+    "<var>i</var> = |<var>h</var> − (<var>c</var> + <var>g</var>)|",
   );
   assert.equal(nodes.has("pae-fit-title-label"), false);
-  assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where A ends");
+  assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where line h ends");
   assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
   assert.equal(nodes.get("pae-fit-calc-gap-result").textContent, "= 0.00 ft at every angle");
   assert.equal(
@@ -508,4 +508,20 @@ test("every module version query matches", async () => {
     }
   }
   assert.equal(versions.size, 1, `mixed module versions: ${[...versions].join(", ")}`);
+});
+
+test("measurement labels are smaller and use normal weight", async () => {
+  for (const file of ["index.html", "overlaps.html"]) {
+    const source = await readFile(new URL(`./${file}`, import.meta.url), "utf8");
+    assert.match(
+      source,
+      /text\.emphasized-dimension-label\s*\{[^}]*font-size:\s*11px;[^}]*font-weight:\s*400;/s,
+    );
+    for (const selector of ["inside-measurement-label", "area-label", "fit-label"]) {
+      assert.match(
+        source,
+        new RegExp(`text\\.${selector}\\s*\\{[^}]*font-size:\\s*9px;[^}]*font-weight:\\s*400;`, "s"),
+      );
+    }
+  }
 });

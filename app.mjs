@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=35";
+} from "./geometry.mjs?v=36";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -163,15 +163,15 @@ export function initializeApp(documentRef, windowRef) {
     );
 
     setLine(element("pae-static-a"), diagram.guides.a);
-    setVariableText(element("pae-static-a-label"), diagram.guides.aLabel, `g · A · ${DIMENSIONS.arrowA} ft`);
+    setVariableText(element("pae-static-a-label"), diagram.guides.aLabel, `line h · ${DIMENSIONS.arrowA} ft`);
     setLine(element("pae-static-b"), diagram.guides.b);
-    setVariableText(element("pae-static-b-label"), diagram.guides.bLabel, `h · B · ${DIMENSIONS.arrowB} ft`);
+    setVariableText(element("pae-static-b-label"), diagram.guides.bLabel, `line g · ${DIMENSIONS.arrowB} ft`);
     setLine(element("pae-overlap-extent-a"), diagram.guides.overlapExtentA);
     setLine(element("pae-overlap-span"), diagram.guides.overlapSpan);
     setVariableText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
-      `i · A into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
+      `i · line h into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
     );
 
     element("pae-angle-arc").setAttribute(
@@ -220,7 +220,7 @@ export function initializeApp(documentRef, windowRef) {
     element("pae-area-clip-shape").setAttribute("d", shapePath);
 
     // Reproducing the forced-measurements diagram's own naive top row and
-    // its long dashed insets, so A's 65 ft line visibly crosses the dashed
+    // its long dashed insets, so line h visibly crosses the dashed
     // line coming down from the left 15 ft boundary here too.
     setLine(element("pae-area-inset-left"), areas.insetLines.left);
     setLine(element("pae-area-inset-right"), areas.insetLines.right);
@@ -307,15 +307,15 @@ export function initializeApp(documentRef, windowRef) {
     setVariableText(
       element("pae-area-a-label"),
       areas.labels.a,
-      `g · A · ${DIMENSIONS.arrowA} ft at 90°`,
+      `line h · ${DIMENSIONS.arrowA} ft at 90°`,
     );
     setVariableText(
       element("pae-area-b-label"),
       areas.labels.b,
-      `h · B · ${DIMENSIONS.arrowB} ft at 90°`,
+      `line g · ${DIMENSIONS.arrowB} ft at 90°`,
     );
-    // A's fixed 65 ft reach meets the independently squared left strip. The
-    // shared rectangle is rendered by the combined overlap path below; keep
+    // Line h's fixed 65 ft reach meets the independently squared left strip.
+    // The shared rectangle is rendered by the combined overlap path below; keep
     // this legacy rectangle transparent so it cannot double-darken the fill.
     setRect(element("pae-area-left-overlap-a"), areas.leftStripOverlaps.a.rect);
     element("pae-area-left-overlap-a").setAttribute("opacity", "0");
@@ -402,13 +402,13 @@ export function initializeApp(documentRef, windowRef) {
     setVariableText(
       element("pae-fit-guide-a-label"),
       fit.labels.a,
-      `g · A · ${DIMENSIONS.arrowA} ft along the top`,
+      `line h · ${DIMENSIONS.arrowA} ft along the top`,
       fit.rotation,
     );
     setVariableText(
       element("pae-fit-guide-b-label"),
       fit.labels.b,
-      `h · B · ${DIMENSIONS.innerSpan} ft along the top`,
+      `line g · ${DIMENSIONS.innerSpan} ft along the top`,
       fit.rotation,
     );
     setVariableText(

@@ -105,14 +105,14 @@ export function calculateDiagram(angleDegrees) {
   const perpendicularInset = DIMENSIONS.inset * sine;
   const perpendicularInner = DIMENSIONS.innerSpan * sine;
   // The chain the assessor's numbers force: the right 15 ft runs to the green
-  // inset line, the 50 ft carries on from there to A's far end at 65 ft, and
-  // the last 15 ft is whatever is left from A to the parcel's left side.
+  // inset line, the 50 ft carries on from there to line h's far end at 65 ft,
+  // and the last 15 ft is whatever is left from line h to the parcel's side.
   const perpendicularRightMark = rightInsetTop.x;
   const perpendicularInnerMark = rightX - DIMENSIONS.arrowA * SCALE;
   const perpendicularLeftOver = perpendicularWidth - DIMENSIONS.arrowA;
   // What each part of the chain actually measures across the shape, as
   // against the 15, 50 and 15 the assessor's figures claim for them. Left
-  // stays signed rather than absolute: once A's 65 ft reach exceeds the
+  // stays signed rather than absolute: once line h's 65 ft reach exceeds the
   // parcel's own width, there is no ground left for the last 15 ft to
   // measure, and a negative number says so instead of hiding it as 0.
   const perpendicularChain = {
@@ -148,13 +148,13 @@ export function calculateDiagram(angleDegrees) {
   const staticBEnd = point(rightInsetTop.x - DIMENSIONS.arrowB * SCALE, staticBY);
   const overlapY = (staticAY + staticBY) / 2;
   // The true left-15 boundary is 15 + 50 = 65 ft along the top edge, then
-  // projected into this right-angle view. A and B both reach past it.
+  // projected into this right-angle view. Lines h and g both reach past it.
   const leftBoundaryReach = (DIMENSIONS.inset + DIMENSIONS.innerSpan) * sine;
   const bReach = perpendicularInset + DIMENSIONS.arrowB;
   const overlap = DIMENSIONS.arrowA - leftBoundaryReach;
   const bOverlap = bReach - leftBoundaryReach;
   const projectionLoss = DIMENSIONS.arrowA - bReach;
-  // A's endpoint can fall outside the shape's own width. Past that edge
+  // Line h's endpoint can fall outside the shape's own width. Past that edge
   // there is no real vertical to trace, so both the fraction and the x it is
   // drawn at are held to the corner - otherwise the line keeps the corner's
   // y while still being drawn out at the original, off-shape x.
@@ -252,32 +252,32 @@ export function calculateDiagram(angleDegrees) {
         result: `= ${formatFeet(leftBoundaryReach)} ft from the right to the left-15 boundary`,
       },
       fixedArrows: {
-        expression: "g = A = 65 ft",
-        result: "· h = B = 50 ft",
+        expression: "h = 65 ft",
+        result: "· g = 50 ft",
       },
       leftOver: {
-        expression: `d = 80 ft × sin(${angleDegrees.toFixed(2)}°) − g`,
-        result: `= ${formatFeet(perpendicularLeftOver)} ft between the left side and A's end`,
+        expression: `d = 80 ft × sin(${angleDegrees.toFixed(2)}°) − h`,
+        result: `= ${formatFeet(perpendicularLeftOver)} ft between the left side and line h`,
       },
       forcedInner: {
-        expression: `e = g − c × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularChain.inner)} ft from A's end to the right-15 mark`,
+        expression: `e = h − c × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularChain.inner)} ft from line h to the right-15 mark`,
       },
       overlap: {
-        expression: `i = g − (b + c) × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(overlap)} ft A enters the left 15 ft`,
+        expression: `i = h − (b + c) × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(overlap)} ft line h enters the left 15 ft`,
       },
       bReach: {
-        expression: `c × sin(${angleDegrees.toFixed(2)}°) + h`,
-        result: `= ${formatFeet(bReach)} ft from the right to B's end`,
+        expression: `c × sin(${angleDegrees.toFixed(2)}°) + g`,
+        result: `= ${formatFeet(bReach)} ft from the right to line g's end`,
       },
       bOverlap: {
-        expression: `(c × sin(θ) + h) − ((b + c) × sin(θ))`,
-        result: `= ${formatFeet(bOverlap)} ft B enters the left 15 ft`,
+        expression: `(c × sin(θ) + g) − ((b + c) × sin(θ))`,
+        result: `= ${formatFeet(bOverlap)} ft line g enters the left 15 ft`,
       },
       projectionLoss: {
-        expression: `g − (c × sin(θ) + h)`,
-        result: `= ${formatFeet(projectionLoss)} ft A reaches farther left than B`,
+        expression: `h − (c × sin(θ) + g)`,
+        result: `= ${formatFeet(projectionLoss)} ft line h reaches farther left than line g`,
       },
     },
   };
@@ -302,8 +302,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     height,
   });
   const areaA = bandRect(DIMENSIONS.arrowA);
-  // B starts where the 15 ft inset lands when it is stepped off along the
-  // leaning side, so its 50 ft ends up somewhere other than A's 65 ft and the
+  // Line g starts where the 15 ft inset lands along the leaning side, so its
+  // 50 ft endpoint differs from line h's 65 ft endpoint and the
   // two claims overlap by however far apart those ends fall.
   const insetAlongSide = DIMENSIONS.inset * base.sine;
   const areaBStartFeet = insetAlongSide;
@@ -368,7 +368,7 @@ export function calculateRightAngleAreas(angleDegrees) {
   const middleReachFeet = projectedInsetFeet + DIMENSIONS.innerSpan;
   const middleEndFeet = middleReachFeet * cotangentMagnitude;
   const middleOffParcel = perpendicularWidth < middleReachFeet;
-  // The purple row uses A's fixed 65 ft endpoint as the shared boundary
+  // The purple row uses line h's fixed 65 ft endpoint as the shared boundary
   // between the center-50 line and the left-15 line. This intentionally does
   // not use the projected left inset witness from the green top dimensions.
   const chainY = CENTER_Y - 48;
@@ -406,7 +406,7 @@ export function calculateRightAngleAreas(angleDegrees) {
 
 
   // Held below the chain row (now fixed, like the forced-measurements
-  // diagram's own rows) rather than centered on the shape, so the A/B
+  // diagram's own rows) rather than centered on the shape, so the h/g
   // dimensions never collide with it as the angle changes.
   const bandY = (offset) => chainY + 90 + offset;
   const dimensionA = line(
@@ -423,8 +423,8 @@ export function calculateRightAngleAreas(angleDegrees) {
     point(x, y + 9 * direction),
   ];
   const leftStripInnerX = strips.left.x + stripWidth;
-  // Linear encroachment into the left strip. A is the right strip plus the
-  // fitted 50 ft center; B is retained as a second diagnostic guide.
+  // Linear encroachment into the left strip. Line h is the 65 ft reach;
+  // line g is retained as the second diagnostic guide.
   const stripEncroachment = (claimLeftX) => {
     const overlapRightX = Math.min(leftStripInnerX, rightX);
     const overlapLeftX = clamp(claimLeftX, leftTop.x, overlapRightX);
@@ -467,7 +467,7 @@ export function calculateRightAngleAreas(angleDegrees) {
   ];
   const overlapArea = polygonAreaFeet(overlapPolygon);
 
-  // Fitting the left strip from the left and A from the right leaves two
+  // Fitting the left strip from the left and line h from the right leaves two
   // unclaimed triangles inside the parcel: one beside each independently
   // anchored square end. The overlap between the claims covers the would-be
   // gap between those two boundaries.
@@ -536,7 +536,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     chain,
     chainWitnesses,
     // Reproducing the forced-measurements diagram's own naive top row and
-    // its long dashed insets, so it is visible here too how A's 65 ft line
+    // its long dashed insets, so it is visible here too how line h
     // crosses the dashed line coming down from the left 15 ft boundary.
     shortRotation: base.shortRotation,
     insetLines: base.insetLines,
@@ -577,8 +577,8 @@ export function calculateRightAngleAreas(angleDegrees) {
       gapArea,
       overlapArea,
       spillArea,
-      // The purple row: right projected inset, then to A's fixed endpoint,
-      // then from A's endpoint to the real left side.
+      // The purple row: right projected inset, then to line h's endpoint,
+      // then from line h to the real left side.
       chainRightAngle: {
         right: projectedInsetFeet,
         inner: Math.abs(DIMENSIONS.arrowA - projectedInsetFeet),
@@ -587,7 +587,7 @@ export function calculateRightAngleAreas(angleDegrees) {
     },
     formulas: {
       leftStripOverlapA: {
-        expression: `intersection of g with projected a`,
+        expression: `intersection of h with projected a`,
         result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
       },
       leftStripOverlapB: {
@@ -631,7 +631,7 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(overhangFeet)} ft over one edge, short of the other`,
       },
       chain: {
-        expression: `f → g's ${DIMENSIONS.arrowA} ft endpoint → d`,
+        expression: `f → line h's ${DIMENSIONS.arrowA} ft endpoint → d`,
         result: `= ${formatFeet(perpendicularWidth - DIMENSIONS.arrowA)} / ${formatFeet(Math.abs(DIMENSIONS.arrowA - projectedInsetFeet))} / ${formatFeet(projectedInsetFeet)} ft, left to right`,
       },
     },
@@ -697,8 +697,8 @@ export function calculateParallelAreas(angleDegrees) {
     DIMENSIONS.innerSpan,
   );
 
-  // A starts at the corner and B starts 15 ft along, so 15 + 50 = 65 puts both
-  // far ends on the same line no matter how the shape leans.
+  // Line h starts at the corner and line g starts 15 ft along, so 15 + 50 = 65
+  // puts both far ends on the same line no matter how the shape leans.
   const gap = Math.abs(
     DIMENSIONS.arrowA - (DIMENSIONS.inset + DIMENSIONS.innerSpan),
   );
@@ -749,19 +749,19 @@ export function calculateParallelAreas(angleDegrees) {
     },
     formulas: {
       method: {
-        expression: "g and h run parallel to a + b + c",
+        expression: "h and g run parallel to a + b + c",
         result: "· no sine, no shrink",
       },
       reach: {
-        expression: `c + h = ${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
-        result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where A ends`,
+        expression: `c + g = ${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
+        result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where line h ends`,
       },
       total: {
-        expression: `g + a = ${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
+        expression: `h + a = ${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
         result: `= ${formatFeet(DIMENSIONS.side)} ft, the whole side`,
       },
       gap: {
-        expression: `i = |g − (c + h)|`,
+        expression: `i = |h − (c + g)|`,
         result: `= ${formatFeet(gap)} ft at every angle`,
       },
     },

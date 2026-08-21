@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=35";
+} from "./geometry.mjs?v=36";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -61,10 +61,10 @@ test("calculates the initial 69.69 degree example", () => {
   });
   assert.equal(
     diagram.formulas.overlap.expression,
-    "i = g − (b + c) × sin(69.69°)",
+    "i = h − (b + c) × sin(69.69°)",
   );
-  assert.equal(diagram.formulas.overlap.result, "= 4.04 ft A enters the left 15 ft");
-  assert.equal(diagram.formulas.projectionLoss.result, "= 0.93 ft A reaches farther left than B");
+  assert.equal(diagram.formulas.overlap.result, "= 4.04 ft line h enters the left 15 ft");
+  assert.equal(diagram.formulas.projectionLoss.result, "= 0.93 ft line h reaches farther left than line g");
 });
 
 test("produces exact right-angle measurements at 90 degrees", () => {
@@ -85,16 +85,16 @@ test("produces exact right-angle measurements at 90 degrees", () => {
     result: "= 80 ft; long sides = 165.93 ft",
   });
   assert.deepEqual(diagram.formulas.fixedArrows, {
-    expression: "g = A = 65 ft",
-    result: "· h = B = 50 ft",
+    expression: "h = 65 ft",
+    result: "· g = 50 ft",
   });
   assert.equal(diagram.formulas.outerOffsets.result, "= 15.00 ft projected on both the left and right");
   assert.equal(diagram.formulas.innerSpan.result, "= 50.00 ft for the true projected middle");
   assert.equal(
     diagram.formulas.overlap.expression,
-    "i = g − (b + c) × sin(90.00°)",
+    "i = h − (b + c) × sin(90.00°)",
   );
-  assert.equal(diagram.formulas.overlap.result, "= 0.00 ft A enters the left 15 ft");
+  assert.equal(diagram.formulas.overlap.result, "= 0.00 ft line h enters the left 15 ft");
 });
 
 test("calculates the reverse 98.74 degree preset", () => {
@@ -109,7 +109,7 @@ test("calculates the reverse 98.74 degree preset", () => {
   assert.equal(diagram.formulas.innerSpan.result, "= 49.42 ft for the true projected middle");
 });
 
-test("explains both A and B overlaps into the true left 15 ft at 98.74 degrees", () => {
+test("explains both fixed-line overlaps into the true left 15 ft at 98.74 degrees", () => {
   const diagram = calculateDiagram(PRESET_ANGLES.reverse);
   const { measurements, formulas } = diagram;
 
@@ -132,22 +132,22 @@ test("explains both A and B overlaps into the true left 15 ft at 98.74 degrees",
     result: "= 64.25 ft from the right to the left-15 boundary",
   });
   assert.deepEqual(formulas.bReach, {
-    expression: "c × sin(98.74°) + h",
-    result: "= 64.83 ft from the right to B's end",
+    expression: "c × sin(98.74°) + g",
+    result: "= 64.83 ft from the right to line g's end",
   });
-  assert.equal(formulas.overlap.result, "= 0.75 ft A enters the left 15 ft");
-  assert.equal(formulas.overlap.expression, "i = g − (b + c) × sin(98.74°)");
-  assert.equal(formulas.bOverlap.result, "= 0.58 ft B enters the left 15 ft");
-  assert.equal(formulas.bOverlap.expression, "(c × sin(θ) + h) − ((b + c) × sin(θ))");
-  assert.equal(formulas.projectionLoss.result, "= 0.17 ft A reaches farther left than B");
-  assert.equal(formulas.projectionLoss.expression, "g − (c × sin(θ) + h)");
+  assert.equal(formulas.overlap.result, "= 0.75 ft line h enters the left 15 ft");
+  assert.equal(formulas.overlap.expression, "i = h − (b + c) × sin(98.74°)");
+  assert.equal(formulas.bOverlap.result, "= 0.58 ft line g enters the left 15 ft");
+  assert.equal(formulas.bOverlap.expression, "(c × sin(θ) + g) − ((b + c) × sin(θ))");
+  assert.equal(formulas.projectionLoss.result, "= 0.17 ft line h reaches farther left than line g");
+  assert.equal(formulas.projectionLoss.expression, "h − (c × sin(θ) + g)");
 });
 
 test("the 100.80 degree preset produces the requested visible overlap", () => {
   const diagram = calculateDiagram(PRESET_ANGLES.angle10080);
 
-  assert.equal(diagram.formulas.overlap.result, "= 1.15 ft A enters the left 15 ft");
-  assert.equal(diagram.formulas.projectionLoss.result, "= 0.27 ft A reaches farther left than B");
+  assert.equal(diagram.formulas.overlap.result, "= 1.15 ft line h enters the left 15 ft");
+  assert.equal(diagram.formulas.projectionLoss.result, "= 0.27 ft line h reaches farther left than line g");
 });
 
 test("supports both slider boundaries without negative zero", () => {
@@ -162,7 +162,7 @@ test("supports both slider boundaries without negative zero", () => {
   assert.equal(flat.measurements.perpendicularWidth, 0);
   approximately(flat.measurements.overlap, 65);
   assert.equal(flat.formulas.outerOffsets.result, "= 0.00 ft projected on both the left and right");
-  assert.equal(flat.formulas.overlap.result, "= 65.00 ft A enters the left 15 ft");
+  assert.equal(flat.formulas.overlap.result, "= 65.00 ft line h enters the left 15 ft");
 });
 
 test("supports values immediately inside both slider boundaries", () => {
@@ -181,8 +181,8 @@ test("rounds displayed overlap values on both sides of a half-cent threshold", (
 
   assert.ok(roundsUp.measurements.overlap > 0.005);
   assert.ok(roundsDown.measurements.overlap < 0.005);
-  assert.equal(roundsUp.formulas.overlap.result, "= 0.01 ft A enters the left 15 ft");
-  assert.equal(roundsDown.formulas.overlap.result, "= 0.00 ft A enters the left 15 ft");
+  assert.equal(roundsUp.formulas.overlap.result, "= 0.01 ft line h enters the left 15 ft");
+  assert.equal(roundsDown.formulas.overlap.result, "= 0.00 ft line h enters the left 15 ft");
 });
 
 test("preserves geometry invariants at every slider step", () => {
@@ -345,7 +345,7 @@ test("squares each 15 ft strip inward from its own side", () => {
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
-  assert.equal(areas.formulas.chain.expression, "f → g's 65 ft endpoint → d");
+  assert.equal(areas.formulas.chain.expression, "f → line h's 65 ft endpoint → d");
   assert.equal(areas.formulas.chain.result, "= 10.03 / 50.93 / 14.07 ft, left to right");
   // The naive top row and its long dashed insets are reproduced verbatim
   // from the forced-measurements diagram, so A's 65 ft line visibly crosses
@@ -392,14 +392,14 @@ test("squares each 15 ft strip inward from its own side", () => {
   ));
 });
 
-test("anchors the purple center and left measurements to A, not the green inset", () => {
-  // These angles keep A's endpoint inside the parcel while covering both
+test("anchors the purple center and left measurements to line h, not the green inset", () => {
+  // These angles keep line h's endpoint inside the parcel while covering both
   // lean directions. At steeper angles the witness is clamped to the corner.
   for (const angle of [EXAMPLE_ANGLE, 86.89, PRESET_ANGLES.reverse, 110.23]) {
     const areas = calculateRightAngleAreas(angle);
     const aLeftX = areas.dimensions.a.x2;
 
-    // The center-50 line ends where the left-15 line begins: A's left end.
+    // The center-50 line ends where the left-15 line begins: line h's end.
     approximately(areas.chain.inner.x2, aLeftX);
     approximately(areas.chain.leftInset.x1, aLeftX);
     approximately(areas.chainWitnesses.inner.x1, aLeftX);
@@ -600,11 +600,11 @@ test("draws the 65 and 50 ft lines parallel to the top edge", () => {
     Math.max(leftBottom.y, rightBottom.y) - fit.strips.inner.y,
   );
   assert.equal(fit.formulas.method.result, "· no sine, no shrink");
-  assert.equal(fit.formulas.reach.expression, "c + h = 15 ft + 50 ft");
-  assert.equal(fit.formulas.reach.result, "= 65.00 ft, exactly where A ends");
-  assert.equal(fit.formulas.total.expression, "g + a = 65 ft + 15 ft");
+  assert.equal(fit.formulas.reach.expression, "c + g = 15 ft + 50 ft");
+  assert.equal(fit.formulas.reach.result, "= 65.00 ft, exactly where line h ends");
+  assert.equal(fit.formulas.total.expression, "h + a = 65 ft + 15 ft");
   assert.equal(fit.formulas.total.result, "= 80.00 ft, the whole side");
-  assert.equal(fit.formulas.gap.expression, "i = |g − (c + h)|");
+  assert.equal(fit.formulas.gap.expression, "i = |h − (c + g)|");
   assert.equal(fit.formulas.gap.result, "= 0.00 ft at every angle");
 });
 
@@ -657,7 +657,7 @@ test("the fitted center reaches into the independently measured left strip", () 
   }
   assert.equal(
     leaning.formulas.leftStripOverlapA.expression,
-    "intersection of g with projected a",
+    "intersection of h with projected a",
   );
   assert.equal(leaning.formulas.leftStripOverlapA.result, "= 0.75 ft");
   assert.equal(

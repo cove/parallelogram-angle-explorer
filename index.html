@@ -132,7 +132,7 @@
     }
     #parallelogram-angle-explorer .static-line-label {
       fill: #6a3d12;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 400;
     }
     #parallelogram-angle-explorer .overlap-dimension {
@@ -166,11 +166,13 @@
     }
     #parallelogram-angle-explorer text.overlap-label {
       fill: #c00000;
+      font-size: 10px;
+      font-weight: 400;
       text-anchor: end;
     }
     #parallelogram-angle-explorer text.emphasized-dimension-label {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 400;
       paint-order: stroke fill;
       stroke: #ffffff;
       stroke-width: 5px;
@@ -181,7 +183,8 @@
       font-style: italic;
     }
     #parallelogram-angle-explorer text.inside-measurement-label {
-      font-weight: 700;
+      font-size: 9px;
+      font-weight: 400;
       paint-order: stroke fill;
       stroke: #ffffff;
       stroke-width: 5px;
@@ -242,8 +245,8 @@
     }
     #parallelogram-angle-explorer text.area-label {
       fill: #7030a0;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 9px;
+      font-weight: 400;
       paint-order: stroke fill;
       stroke: #ffffff;
       stroke-width: 5px;
@@ -273,8 +276,8 @@
     }
     #parallelogram-angle-explorer text.fit-label {
       fill: #1c6d43;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 9px;
+      font-weight: 400;
       paint-order: stroke fill;
       stroke: #ffffff;
       stroke-width: 5px;
@@ -282,8 +285,8 @@
     }
     #parallelogram-angle-explorer text.fit-match-label {
       fill: #1c6d43;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 10px;
+      font-weight: 400;
       text-anchor: end;
       paint-order: stroke fill;
       stroke: #ffffff;
@@ -463,7 +466,7 @@
   <h2 id="pae-forced-heading">FORCED ASSESSOR MEASUREMENTS</h2>
   <svg id="pae-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-svg-title pae-svg-desc">
     <title id="pae-svg-title">Interactive parallelogram geometry</title>
-    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the span between the two inner green lines. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides measure A at 65 feet and B at 50 feet. The red span measures from A's endpoint to the left green boundary; only A receives a red full-length guide.</desc>
+    <desc id="pae-svg-desc">The forced assessor measurements: what the parcel becomes when every dimension is taken at a right angle to the side. Adjust the slant angle to see the linked geometry change. Purple right-angle dimensions show both edge insets and the forced span between them. Green dimensions show the fixed 15, 50, and 15 foot distances along the top edge. The lower guides are line h at 65 feet and line g at 50 feet. The red span measures from line h's endpoint to the left green boundary; only line h receives a red full-length guide.</desc>
     <defs>
       <marker id="pae-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
@@ -504,12 +507,12 @@
     <text id="pae-perp-inset-right-label" class="label inset-label inside-measurement-label right-angle-method-label">f · 14.83 ft</text>
 
     <line id="pae-static-a" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
-    <text id="pae-static-a-label" class="label static-line-label">g · A · 65 ft</text>
+    <text id="pae-static-a-label" class="label static-line-label">line h · 65 ft</text>
     <line id="pae-static-b" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
-    <text id="pae-static-b-label" class="label static-line-label">h · B · 50 ft</text>
+    <text id="pae-static-b-label" class="label static-line-label">line g · 50 ft</text>
     <line id="pae-overlap-extent-a" class="overlap-extent"></line>
     <line id="pae-overlap-span" class="overlap-dimension"></line>
-    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">i · A into left 15 · 0.75 ft</text>
+    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">i · line h into left 15 · 0.75 ft</text>
 
     <text id="pae-bottom-side-label" class="label">80 ft</text>
     <text id="pae-right-side-label" class="label">165.93 ft</text>
@@ -529,7 +532,7 @@
 
   <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
     <h3 id="pae-calculations-title">Measurement calculations</h3>
-    <p class="calculation-note">Lowercase letters match the measurement lines in the diagram: a–c are the green top row, d–f the purple right-angle row, g and h the fixed A/B lines, and i the A-to-left-15 encroachment. The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft, but no slider setting produces all three.</p>
+    <p class="calculation-note">Lowercase letters match the measurement lines in the diagram: a–c are the green top row, d–f the purple right-angle row, h is the fixed 65 ft line, g is the fixed 50 ft line, and i is line h's encroachment into the left 15. The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft, but no slider setting produces all three.</p>
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
@@ -550,11 +553,11 @@
           <span class="calculation-formula"><span id="pae-calc-left-boundary-expression">Calculating…</span><strong id="pae-calc-left-boundary-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-brown">
-          <span class="calculation-name"><var>g</var>, <var>h</var> · A and B</span>
+          <span class="calculation-name">lines <var>h</var>, <var>g</var></span>
           <span class="calculation-formula"><span id="pae-calc-fixed-arrows-expression">Calculating…</span><strong id="pae-calc-fixed-arrows-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-brown">
-          <span class="calculation-name"><var>c</var> + <var>h</var> · B endpoint</span>
+          <span class="calculation-name"><var>c</var> + <var>g</var> · line <var>g</var> endpoint</span>
           <span class="calculation-formula"><span id="pae-calc-b-reach-expression">Calculating…</span><strong id="pae-calc-b-reach-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
@@ -566,15 +569,15 @@
           <span class="calculation-formula"><span id="pae-calc-forced-inner-expression">Calculating…</span><strong id="pae-calc-forced-inner-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name"><var>i</var> · A into left 15</span>
+          <span class="calculation-name"><var>i</var> · line <var>h</var> into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name"><var>h</var> into left 15</span>
+          <span class="calculation-name">line <var>g</var> into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-b-overlap-expression">Calculating…</span><strong id="pae-calc-b-overlap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name"><var>g</var> past <var>h</var></span>
+          <span class="calculation-name">line <var>h</var> past line <var>g</var></span>
           <span class="calculation-formula"><span id="pae-calc-projection-loss-expression">Calculating…</span><strong id="pae-calc-projection-loss-result" class="calculation-result"></strong></span>
         </div>
       </div>
@@ -586,7 +589,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=35"></script>
+  <script type="module" src="./main.mjs?v=36"></script>
 </div>
 
 </body>
