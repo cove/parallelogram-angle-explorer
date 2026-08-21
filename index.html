@@ -483,9 +483,9 @@
     <line id="pae-top-ext-inset-left" class="top-dimension-extension"></line>
     <line id="pae-top-ext-inset-right" class="top-dimension-extension"></line>
     <line id="pae-top-ext-right" class="top-dimension-extension"></line>
-    <text id="pae-top-dim-left-label" class="label inset-label emphasized-dimension-label">15 ft</text>
-    <text id="pae-top-dim-right-label" class="label inset-label emphasized-dimension-label">15 ft</text>
-    <text id="pae-top-dim-inner-label" class="label inset-label emphasized-dimension-label">50 ft</text>
+    <text id="pae-top-dim-left-label" class="label inset-label emphasized-dimension-label">a · 15 ft</text>
+    <text id="pae-top-dim-right-label" class="label inset-label emphasized-dimension-label">c · 15 ft</text>
+    <text id="pae-top-dim-inner-label" class="label inset-label emphasized-dimension-label">b · 50 ft</text>
     <path id="pae-angle-arc" class="angle-arc"></path>
     <text id="pae-angle-label" class="label angle-label">98.74°</text>
 
@@ -495,17 +495,17 @@
     <path id="pae-perp-square-left" class="inset-offset right-angle-method"></path>
     <path id="pae-perp-square-right" class="inset-offset right-angle-method"></path>
     <text id="pae-right-angle-method-label" class="label right-angle-method-label right-angle-method-title">Right angle method</text>
-    <text id="pae-perp-inset-left-label" class="label inset-label inside-measurement-label right-angle-method-label">14.07 ft</text>
-    <text id="pae-perp-inner-label" class="label inset-label inside-measurement-label right-angle-method-label">46.88 ft</text>
-    <text id="pae-perp-inset-right-label" class="label inset-label inside-measurement-label right-angle-method-label">14.07 ft</text>
+    <text id="pae-perp-inset-left-label" class="label inset-label inside-measurement-label right-angle-method-label">d · 14.07 ft</text>
+    <text id="pae-perp-inner-label" class="label inset-label inside-measurement-label right-angle-method-label">e · 50.17 ft</text>
+    <text id="pae-perp-inset-right-label" class="label inset-label inside-measurement-label right-angle-method-label">f · 14.83 ft</text>
 
     <line id="pae-static-a" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
-    <text id="pae-static-a-label" class="label static-line-label">A · 65 ft</text>
+    <text id="pae-static-a-label" class="label static-line-label">g · A · 65 ft</text>
     <line id="pae-static-b" class="static-line" marker-start="url(#pae-static-arrow)" marker-end="url(#pae-static-arrow)"></line>
-    <text id="pae-static-b-label" class="label static-line-label">B · 50 ft</text>
+    <text id="pae-static-b-label" class="label static-line-label">h · B · 50 ft</text>
     <line id="pae-overlap-extent-a" class="overlap-extent"></line>
     <line id="pae-overlap-span" class="overlap-dimension"></line>
-    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">A into left 15 · 0.75 ft</text>
+    <text id="pae-overlap-label" class="label overlap-label emphasized-dimension-label">i · A into left 15 · 0.75 ft</text>
 
     <text id="pae-bottom-side-label" class="label">80 ft</text>
     <text id="pae-right-side-label" class="label">165.93 ft</text>
@@ -525,48 +525,52 @@
 
   <section id="pae-calculations" class="calculations" aria-labelledby="pae-calculations-title">
     <h3 id="pae-calculations-title">Measurement calculations</h3>
-    <p class="calculation-note">The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft. Drag the angle through its whole range: no setting produces those three numbers.</p>
+    <p class="calculation-note">Lowercase letters match the measurement lines in the diagram: a–c are the green top row, d–f the purple right-angle row, g and h the fixed A/B lines, and i the A-to-left-15 encroachment. The recorded 14.07, 50.72 and 15.21 add to exactly 80.00 ft, but no slider setting produces all three.</p>
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
         <div class="calculation calculation-green">
-          <span class="calculation-name">Shape</span>
+          <span class="calculation-name">a + b + c · Shape</span>
           <span class="calculation-formula"><span id="pae-calc-shape-expression">Calculating…</span><strong id="pae-calc-shape-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">Left/right 15 projection</span>
+          <span class="calculation-name">a, c, f · 15 projection</span>
           <span class="calculation-formula"><span id="pae-calc-perp-insets-expression">Calculating…</span><strong id="pae-calc-perp-insets-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">True middle projection</span>
+          <span class="calculation-name">b · True middle projection</span>
           <span class="calculation-formula"><span id="pae-calc-perp-inner-expression">Calculating…</span><strong id="pae-calc-perp-inner-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">Left-15 boundary</span>
+          <span class="calculation-name">b + c · Left-15 boundary</span>
           <span class="calculation-formula"><span id="pae-calc-left-boundary-expression">Calculating…</span><strong id="pae-calc-left-boundary-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-brown">
-          <span class="calculation-name">A and B</span>
+          <span class="calculation-name">g, h · A and B</span>
           <span class="calculation-formula"><span id="pae-calc-fixed-arrows-expression">Calculating…</span><strong id="pae-calc-fixed-arrows-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-brown">
-          <span class="calculation-name">B endpoint</span>
+          <span class="calculation-name">c + h · B endpoint</span>
           <span class="calculation-formula"><span id="pae-calc-b-reach-expression">Calculating…</span><strong id="pae-calc-b-reach-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">Left over</span>
+          <span class="calculation-name">d · Left remainder</span>
           <span class="calculation-formula"><span id="pae-calc-left-over-expression">Calculating…</span><strong id="pae-calc-left-over-result" class="calculation-result"></strong></span>
         </div>
+        <div class="calculation calculation-purple">
+          <span class="calculation-name">e · Forced center</span>
+          <span class="calculation-formula"><span id="pae-calc-forced-inner-expression">Calculating…</span><strong id="pae-calc-forced-inner-result" class="calculation-result"></strong></span>
+        </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">A into left 15</span>
+          <span class="calculation-name">i · A into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-overlap-expression">Calculating…</span><strong id="pae-calc-overlap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">B into left 15</span>
+          <span class="calculation-name">h into left 15</span>
           <span class="calculation-formula"><span id="pae-calc-b-overlap-expression">Calculating…</span><strong id="pae-calc-b-overlap-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-purple">
-          <span class="calculation-name">A past B</span>
+          <span class="calculation-name">g past h</span>
           <span class="calculation-formula"><span id="pae-calc-projection-loss-expression">Calculating…</span><strong id="pae-calc-projection-loss-result" class="calculation-result"></strong></span>
         </div>
       </div>

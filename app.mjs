@@ -103,19 +103,19 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-top-dim-left-label"),
       diagram.topLabels.left,
-      `${DIMENSIONS.inset} ft`,
+      `a · ${DIMENSIONS.inset} ft`,
       diagram.shortRotation,
     );
     setText(
       element("pae-top-dim-inner-label"),
       diagram.topLabels.inner,
-      `${DIMENSIONS.innerSpan} ft`,
+      `b · ${DIMENSIONS.innerSpan} ft`,
       diagram.shortRotation,
     );
     setText(
       element("pae-top-dim-right-label"),
       diagram.topLabels.right,
-      `${DIMENSIONS.inset} ft`,
+      `c · ${DIMENSIONS.inset} ft`,
       diagram.shortRotation,
     );
 
@@ -138,29 +138,29 @@ export function initializeApp(documentRef, windowRef) {
     setText(
       element("pae-perp-inset-left-label"),
       diagram.perpendicular.leftLabel,
-      `${diagram.measurements.perpendicularChain.left.toFixed(2)} ft`,
+      `d · ${diagram.measurements.perpendicularChain.left.toFixed(2)} ft`,
     );
     setText(
       element("pae-perp-inner-label"),
       diagram.perpendicular.innerLabel,
-      `${diagram.measurements.perpendicularChain.inner.toFixed(2)} ft`,
+      `e · ${diagram.measurements.perpendicularChain.inner.toFixed(2)} ft`,
     );
     setText(
       element("pae-perp-inset-right-label"),
       diagram.perpendicular.rightLabel,
-      `${diagram.measurements.perpendicularChain.right.toFixed(2)} ft`,
+      `f · ${diagram.measurements.perpendicularChain.right.toFixed(2)} ft`,
     );
 
     setLine(element("pae-static-a"), diagram.guides.a);
-    setText(element("pae-static-a-label"), diagram.guides.aLabel, `A · ${DIMENSIONS.arrowA} ft`);
+    setText(element("pae-static-a-label"), diagram.guides.aLabel, `g · A · ${DIMENSIONS.arrowA} ft`);
     setLine(element("pae-static-b"), diagram.guides.b);
-    setText(element("pae-static-b-label"), diagram.guides.bLabel, `B · ${DIMENSIONS.arrowB} ft`);
+    setText(element("pae-static-b-label"), diagram.guides.bLabel, `h · B · ${DIMENSIONS.arrowB} ft`);
     setLine(element("pae-overlap-extent-a"), diagram.guides.overlapExtentA);
     setLine(element("pae-overlap-span"), diagram.guides.overlapSpan);
     setText(
       element("pae-overlap-label"),
       diagram.guides.overlapLabel,
-      `A into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
+      `i · A into left 15 · ${diagram.measurements.overlap.toFixed(2)} ft`,
     );
 
     element("pae-angle-arc").setAttribute(
@@ -192,6 +192,7 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
     setFormula("pae-calc-b-reach", diagram.formulas.bReach);
     setFormula("pae-calc-left-over", diagram.formulas.leftOver);
+    setFormula("pae-calc-forced-inner", diagram.formulas.forcedInner);
     setFormula("pae-calc-overlap", diagram.formulas.overlap);
     setFormula("pae-calc-b-overlap", diagram.formulas.bOverlap);
     setFormula("pae-calc-projection-loss", diagram.formulas.projectionLoss);

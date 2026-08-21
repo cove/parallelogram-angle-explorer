@@ -52,16 +52,16 @@ test("calculates the initial 69.69 degree example", () => {
   approximately(diagram.measurements.overlap, 4.041156038841084);
   approximately(diagram.measurements.projectionLoss, 0.9325744705018165);
   assert.deepEqual(diagram.formulas.outerOffsets, {
-    expression: "15 ft × sin(69.69°)",
+    expression: "a = c = f = 15 ft × sin(69.69°)",
     result: "= 14.07 ft projected on both the left and right",
   });
   assert.deepEqual(diagram.formulas.innerSpan, {
-    expression: "50 ft × sin(69.69°)",
+    expression: "b = 50 ft × sin(69.69°)",
     result: "= 46.89 ft for the true projected middle",
   });
   assert.equal(
     diagram.formulas.overlap.expression,
-    "65 ft − (15 ft + 50 ft) × sin(69.69°)",
+    "i = g − (b + c) × sin(69.69°)",
   );
   assert.equal(diagram.formulas.overlap.result, "= 4.04 ft A enters the left 15 ft");
   assert.equal(diagram.formulas.projectionLoss.result, "= 0.93 ft A reaches farther left than B");
@@ -81,18 +81,18 @@ test("produces exact right-angle measurements at 90 degrees", () => {
   assert.equal(diagram.shape[0].y, diagram.shape[1].y);
   assert.equal(diagram.shape[2].y, diagram.shape[3].y);
   assert.deepEqual(diagram.formulas.shape, {
-    expression: "15 ft + 50 ft + 15 ft",
+    expression: "a + b + c = 15 ft + 50 ft + 15 ft",
     result: "= 80 ft; long sides = 165.93 ft",
   });
   assert.deepEqual(diagram.formulas.fixedArrows, {
-    expression: "A = 65 ft",
-    result: "· B = 50 ft",
+    expression: "g = A = 65 ft",
+    result: "· h = B = 50 ft",
   });
   assert.equal(diagram.formulas.outerOffsets.result, "= 15.00 ft projected on both the left and right");
   assert.equal(diagram.formulas.innerSpan.result, "= 50.00 ft for the true projected middle");
   assert.equal(
     diagram.formulas.overlap.expression,
-    "65 ft − (15 ft + 50 ft) × sin(90.00°)",
+    "i = g − (b + c) × sin(90.00°)",
   );
   assert.equal(diagram.formulas.overlap.result, "= 0.00 ft A enters the left 15 ft");
 });
@@ -128,16 +128,19 @@ test("explains both A and B overlaps into the true left 15 ft at 98.74 degrees",
   );
 
   assert.deepEqual(formulas.leftBoundary, {
-    expression: "(15 ft + 50 ft) × sin(98.74°)",
+    expression: "(b + c) × sin(98.74°)",
     result: "= 64.25 ft from the right to the left-15 boundary",
   });
   assert.deepEqual(formulas.bReach, {
-    expression: "15 ft × sin(98.74°) + 50 ft",
+    expression: "c × sin(98.74°) + h",
     result: "= 64.83 ft from the right to B's end",
   });
   assert.equal(formulas.overlap.result, "= 0.75 ft A enters the left 15 ft");
+  assert.equal(formulas.overlap.expression, "i = g − (b + c) × sin(98.74°)");
   assert.equal(formulas.bOverlap.result, "= 0.58 ft B enters the left 15 ft");
+  assert.equal(formulas.bOverlap.expression, "(c × sin(θ) + h) − ((b + c) × sin(θ))");
   assert.equal(formulas.projectionLoss.result, "= 0.17 ft A reaches farther left than B");
+  assert.equal(formulas.projectionLoss.expression, "g − (c × sin(θ) + h)");
 });
 
 test("the 100.80 degree preset produces the requested visible overlap", () => {

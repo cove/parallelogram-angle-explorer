@@ -236,43 +236,47 @@ export function calculateDiagram(angleDegrees) {
     measurements,
     formulas: {
       shape: {
-        expression: "15 ft + 50 ft + 15 ft",
+        expression: "a + b + c = 15 ft + 50 ft + 15 ft",
         result: "= 80 ft; long sides = 165.93 ft",
       },
       outerOffsets: {
-        expression: `15 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `a = c = f = 15 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularInset)} ft projected on both the left and right`,
       },
       innerSpan: {
-        expression: `50 ft × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `b = 50 ft × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularInner)} ft for the true projected middle`,
       },
       leftBoundary: {
-        expression: `(15 ft + 50 ft) × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `(b + c) × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(leftBoundaryReach)} ft from the right to the left-15 boundary`,
       },
       fixedArrows: {
-        expression: "A = 65 ft",
-        result: "· B = 50 ft",
+        expression: "g = A = 65 ft",
+        result: "· h = B = 50 ft",
       },
       leftOver: {
-        expression: `80 ft × sin(${angleDegrees.toFixed(2)}°) − 65 ft`,
+        expression: `d = 80 ft × sin(${angleDegrees.toFixed(2)}°) − g`,
         result: `= ${formatFeet(perpendicularLeftOver)} ft between the left side and A's end`,
       },
+      forcedInner: {
+        expression: `e = g − c × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularChain.inner)} ft from A's end to the right-15 mark`,
+      },
       overlap: {
-        expression: `65 ft − (15 ft + 50 ft) × sin(${angleDegrees.toFixed(2)}°)`,
+        expression: `i = g − (b + c) × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(overlap)} ft A enters the left 15 ft`,
       },
       bReach: {
-        expression: `15 ft × sin(${angleDegrees.toFixed(2)}°) + 50 ft`,
+        expression: `c × sin(${angleDegrees.toFixed(2)}°) + h`,
         result: `= ${formatFeet(bReach)} ft from the right to B's end`,
       },
       bOverlap: {
-        expression: `(${formatFeet(bReach)} ft) − (${formatFeet(leftBoundaryReach)} ft)`,
+        expression: `(c × sin(θ) + h) − ((b + c) × sin(θ))`,
         result: `= ${formatFeet(bOverlap)} ft B enters the left 15 ft`,
       },
       projectionLoss: {
-        expression: `65 ft − (${formatFeet(bReach)} ft)`,
+        expression: `g − (c × sin(θ) + h)`,
         result: `= ${formatFeet(projectionLoss)} ft A reaches farther left than B`,
       },
     },

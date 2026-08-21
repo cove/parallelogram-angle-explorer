@@ -95,9 +95,15 @@ test("renders the initial state from the shared geometry module", async () => {
   assert.equal(nodes.get("pae-angle-output").textContent, "69.69°");
   assert.equal(nodes.has("pae-forced-title-label"), false);
   // The chain carries what it actually measures, not the claimed 15/50/15.
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "10.03 ft");
-  assert.equal(nodes.get("pae-perp-inner-label").textContent, "50.93 ft");
-  assert.equal(nodes.get("pae-overlap-label").textContent, "A into left 15 · 4.04 ft");
+  assert.equal(nodes.get("pae-top-dim-left-label").textContent, "a · 15 ft");
+  assert.equal(nodes.get("pae-top-dim-inner-label").textContent, "b · 50 ft");
+  assert.equal(nodes.get("pae-top-dim-right-label").textContent, "c · 15 ft");
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "d · 10.03 ft");
+  assert.equal(nodes.get("pae-perp-inner-label").textContent, "e · 50.93 ft");
+  assert.equal(nodes.get("pae-perp-inset-right-label").textContent, "f · 14.07 ft");
+  assert.equal(nodes.get("pae-static-a-label").textContent, "g · A · 65 ft");
+  assert.equal(nodes.get("pae-static-b-label").textContent, "h · B · 50 ft");
+  assert.equal(nodes.get("pae-overlap-label").textContent, "i · A into left 15 · 4.04 ft");
   assert.equal(
     nodes.get("pae-overlap-extent-a").getAttribute("x1"),
     nodes.get("pae-static-a").getAttribute("x2"),
@@ -107,13 +113,14 @@ test("renders the initial state from the shared geometry module", async () => {
     nodes.get("pae-overlap-span").getAttribute("x2"),
     nodes.get("pae-inset-left").getAttribute("x1"),
   );
-  assert.equal(nodes.get("pae-calc-shape-expression").textContent, "15 ft + 50 ft + 15 ft");
+  assert.equal(nodes.get("pae-calc-shape-expression").textContent, "a + b + c = 15 ft + 50 ft + 15 ft");
   assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "A = 65 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· B = 50 ft");
+  assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "g = A = 65 ft");
+  assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· h = B = 50 ft");
   assert.equal(nodes.get("pae-calc-left-boundary-result").textContent, "= 60.96 ft from the right to the left-15 boundary");
   assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.07 ft from the right to B's end");
   assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 3.11 ft B enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-forced-inner-expression").textContent, "e = g − c × sin(69.69°)");
   assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft A reaches farther left than B");
   assert.match(nodes.get("pae-shape").getAttribute("d"), /^M .+ Z$/);
   assert.match(nodes.get("pae-perp-square-left").getAttribute("d"), /^M .+ L .+ L /);
@@ -127,7 +134,7 @@ test("updates the diagram and formulas from slider input", async () => {
   slider.dispatch("input");
 
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
-  assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "15 ft × sin(86.89°)");
+  assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "a = c = f = 15 ft × sin(86.89°)");
   assert.equal(
     nodes.get("pae-calc-perp-insets-result").textContent,
     "= 14.98 ft projected on both the left and right",
@@ -156,7 +163,7 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
   // Flat, the parcel has no width left at all for A's 65 ft reach to
   // measure against, so the left mark goes negative to say so.
-  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "-65.00 ft");
+  assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "d · -65.00 ft");
   assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft A enters the left 15 ft");
 });
 
