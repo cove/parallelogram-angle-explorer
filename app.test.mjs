@@ -252,11 +252,12 @@ test("renders the second right-angle area diagram", async () => {
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
   const { controller, nodes } = await createHarness("./overlaps.html");
 
-  // All three edge lengths project into the horizontal right-angle view.
+  // The purple center/left boundary is A's fixed endpoint, not the green
+  // top row's projected left inset witness.
   assert.equal(nodes.get("pae-area-chain-right-label").textContent, "14.07 ft");
-  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "46.89 ft");
-  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "14.07 ft");
-  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 75.03 ft projected across");
+  assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "50.93 ft");
+  assert.equal(nodes.get("pae-area-chain-left-label").textContent, "10.03 ft");
+  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 10.03 / 50.93 / 14.07 ft, left to right");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
     nodes.get("pae-area-chain-witness-right-inset").getAttribute("x1"),
@@ -265,6 +266,14 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(
     nodes.get("pae-area-chain-witness-inner").getAttribute("x1"),
     nodes.get("pae-area-chain-inner").getAttribute("x2"),
+  );
+  assert.equal(
+    nodes.get("pae-area-chain-inner").getAttribute("x2"),
+    nodes.get("pae-area-dim-a").getAttribute("x2"),
+  );
+  assert.notEqual(
+    nodes.get("pae-area-chain-inner").getAttribute("x2"),
+    nodes.get("pae-area-inset-left").getAttribute("x1"),
   );
 
   // Each strip spans its own side, so the two are the same length.

@@ -346,11 +346,12 @@ export function calculateRightAngleAreas(angleDegrees) {
   const middleReachFeet = projectedInsetFeet + DIMENSIONS.innerSpan;
   const middleEndFeet = middleReachFeet * cotangentMagnitude;
   const middleOffParcel = perpendicularWidth < middleReachFeet;
-  // This row reports the two independently squared 15 ft strips and the room
-  // actually left between them. It is 15 / 50 / 15 only at 90 degrees.
+  // The purple row uses A's fixed 65 ft endpoint as the shared boundary
+  // between the center-50 line and the left-15 line. This intentionally does
+  // not use the projected left inset witness from the green top dimensions.
   const chainY = CENTER_Y - 48;
   const chainRightMarkX = strips.right.x;
-  const chainInnerMarkX = strips.left.x + strips.left.width;
+  const chainInnerMarkX = areaA.x;
   const chain = {
     rightInset: line(point(rightX, chainY), point(chainRightMarkX, chainY)),
     inner: line(point(chainRightMarkX, chainY), point(chainInnerMarkX, chainY)),
@@ -554,12 +555,12 @@ export function calculateRightAngleAreas(angleDegrees) {
       gapArea,
       overlapArea,
       spillArea,
-      // The two true 15 ft end strips and the perpendicular room actually
-      // left between their inner edges.
+      // The purple row: right projected inset, then to A's fixed endpoint,
+      // then from A's endpoint to the real left side.
       chainRightAngle: {
         right: projectedInsetFeet,
-        inner: middleFeet,
-        left: projectedInsetFeet,
+        inner: Math.abs(DIMENSIONS.arrowA - projectedInsetFeet),
+        left: perpendicularWidth - DIMENSIONS.arrowA,
       },
     },
     formulas: {
@@ -608,8 +609,8 @@ export function calculateRightAngleAreas(angleDegrees) {
         result: `= ${formatFeet(overhangFeet)} ft over one edge, short of the other`,
       },
       chain: {
-        expression: `${DIMENSIONS.inset} ft × sin(θ) + ${DIMENSIONS.innerSpan} ft × sin(θ) + ${DIMENSIONS.inset} ft × sin(θ)`,
-        result: `= ${formatFeet(perpendicularWidth)} ft projected across`,
+        expression: `right mark → A's ${DIMENSIONS.arrowA} ft endpoint → left side`,
+        result: `= ${formatFeet(perpendicularWidth - DIMENSIONS.arrowA)} / ${formatFeet(Math.abs(DIMENSIONS.arrowA - projectedInsetFeet))} / ${formatFeet(projectedInsetFeet)} ft, left to right`,
       },
     },
   };

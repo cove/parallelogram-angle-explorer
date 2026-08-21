@@ -7,7 +7,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=31";
+} from "./geometry.mjs?v=32";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -311,8 +311,8 @@ test("squares each 15 ft strip inward from its own side", () => {
   const [leftTop, rightTop] = areas.shape;
   const span = ({ x1, x2 }) => Math.abs(x2 - x1) / 1.72;
 
-  assert.equal(areas.formulas.chain.expression, "15 ft × sin(θ) + 50 ft × sin(θ) + 15 ft × sin(θ)");
-  assert.equal(areas.formulas.chain.result, "= 75.03 ft projected across");
+  assert.equal(areas.formulas.chain.expression, "right mark → A's 65 ft endpoint → left side");
+  assert.equal(areas.formulas.chain.result, "= 10.03 / 50.93 / 14.07 ft, left to right");
   // The naive top row and its long dashed insets are reproduced verbatim
   // from the forced-measurements diagram, so A's 65 ft line visibly crosses
   // the dashed line coming down from the left 15 ft boundary here too.
@@ -324,11 +324,14 @@ test("squares each 15 ft strip inward from its own side", () => {
   approximately(areas.chain.rightInset.x1, rightTop.x);
   approximately(areas.chain.rightInset.x2, areas.chain.inner.x1);
   approximately(areas.chain.inner.x2, areas.chain.leftInset.x1);
-  // The edge lengths project into the horizontal right-angle view, so both
-  // 15 ft strips and the middle change displayed width with the angle.
+  // The purple center and left lines share A's fixed endpoint rather than
+  // the dashed projected-left-inset witness from the green top row.
   approximately(areas.measurements.chainRightAngle.right, diagram.measurements.perpendicularInset);
-  approximately(areas.measurements.chainRightAngle.inner, areas.measurements.middle);
-  approximately(areas.measurements.chainRightAngle.left, diagram.measurements.perpendicularInset);
+  approximately(areas.measurements.chainRightAngle.inner, diagram.measurements.perpendicularChain.inner);
+  approximately(areas.measurements.chainRightAngle.left, diagram.measurements.perpendicularChain.left);
+  approximately(areas.chain.inner.x2, areas.dimensions.a.x2);
+  approximately(areas.chain.leftInset.x1, areas.dimensions.a.x2);
+  assert.notEqual(areas.chain.inner.x2, areas.insetLines.left.x1);
   approximately(span(areas.chain.rightInset), areas.measurements.chainRightAngle.right);
   approximately(span(areas.chain.inner), areas.measurements.chainRightAngle.inner);
   approximately(span(areas.chain.leftInset), areas.measurements.chainRightAngle.left);

@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=31";
+} from "./geometry.mjs?v=32";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
