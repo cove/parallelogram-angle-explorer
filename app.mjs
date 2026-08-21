@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=28";
+} from "./geometry.mjs?v=29";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -335,8 +335,8 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
     setFormula("pae-area-calc-middle-ends", areas.formulas.middleEnds);
     setFormula("pae-area-calc-overhang", areas.formulas.overhang);
-    setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapA);
-    setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapB);
+    setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapB);
+    setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapA);
     setFormula("pae-area-calc-gap-area", areas.formulas.gapArea);
     setFormula("pae-area-calc-overlap-area", areas.formulas.overlapArea);
     setFormula("pae-area-calc-chain", areas.formulas.chain);

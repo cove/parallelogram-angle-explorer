@@ -474,7 +474,7 @@
   <h2 id="pae-area-heading">15 / 50 / 15 SQUARED OFF THE SIDES AT 90°</h2>
   <svg id="pae-area-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-area-svg-title pae-area-svg-desc">
     <title id="pae-area-svg-title">Incorrect right-angle fit measured inward from both sides</title>
-    <desc id="pae-area-svg-desc">The same parallelogram incorrectly fitted with a 15 foot strip squared inward from each side and a 50 foot center squared inward from the right strip. The left purple strip begins at the real left side and extends right, so its square top and bottom shift above or below the green center as the lean changes. Away from 90 degrees the parcel is less than 80 feet wide when measured perpendicular to its sides. The fixed 50 foot center therefore reaches into the left strip, shown in red as double-claimed overlap, while white triangles show ground inside the parcel that none of the squared rectangles reaches. Both overlap and gaps close only at 90 degrees.</desc>
+    <desc id="pae-area-svg-desc">The same parallelogram incorrectly fitted by carrying each 15 foot end mark along the slanted parcel edge, squaring it off from its own side, and then forcing a 50 foot center inward from the right strip. Each purple strip changes horizontal width with the angle because 15 feet along the slanted edge projects to 15 times sine theta. The left purple strip begins at the real left side and its square top and bottom shift above or below the green center as the lean changes. The fixed 50 foot center reaches into the smaller projected middle, shown in red as double-claimed overlap, while white triangles show ground inside the parcel that none of the squared rectangles reaches. Both overlap and gaps close only at 90 degrees.</desc>
     <defs>
       <marker id="pae-area-purple-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
         <path d="M 0 0 L 8 4 L 0 8 Z" fill="#7030a0"></path>
@@ -565,7 +565,7 @@
 
   <section id="pae-area-calculations" class="calculations" aria-labelledby="pae-area-calculations-title">
     <h3 id="pae-area-calculations-title">Right-angle area calculations</h3>
-    <p class="calculation-note">The two 15 ft strips are measured square inward from their own left and right sides; the 50 ft center is then fitted inward from the right strip. Away from 90°, the perpendicular width is less than the claimed 80 ft. The center therefore <strong>overlaps</strong> the left strip (red: ground claimed twice), while the different square-ended levels leave <strong>gaps</strong> inside the parallelogram (white: ground nothing claims). The purple left strip reaches above or below the green center as the lean reverses. Everything fits only at 90°.</p>
+    <p class="calculation-note">Each 15 ft end mark is carried along the slanted parcel edge and then squared off from its own side, so its purple horizontal width is <strong>15 × sin(θ)</strong> and changes with the angle. The 50 ft center is then incorrectly forced inward from the right strip. Away from 90°, that fixed center <strong>overlaps</strong> the smaller projected middle and left strip (red: ground claimed twice), while the different square-ended levels leave <strong>gaps</strong> inside the parallelogram (white: ground nothing claims). The purple left strip reaches above or below the green center as the lean reverses. Everything fits only at 90°.</p>
     <details class="math-details">
       <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
       <div class="calculation-grid">
@@ -598,7 +598,7 @@
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-a-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-a-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
-          <span class="calculation-name">B into left strip</span>
+          <span class="calculation-name">Fixed A into left strip</span>
           <span class="calculation-formula"><span id="pae-area-calc-left-overlap-b-expression">Calculating…</span><strong id="pae-area-calc-left-overlap-b-result" class="calculation-result"></strong></span>
         </div>
         <div class="calculation calculation-red">
@@ -695,7 +695,7 @@
     <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
   </footer>
 
-  <script type="module" src="./main.mjs?v=28"></script>
+  <script type="module" src="./main.mjs?v=29"></script>
 </div>
 
 </body>
