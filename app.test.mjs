@@ -125,19 +125,22 @@ test("renders the initial state from the shared geometry module", async () => {
     nodes.get("pae-overlap-span").getAttribute("x2"),
     nodes.get("pae-inset-left").getAttribute("x1"),
   );
-  assert.equal(nodes.get("pae-calc-shape-expression").textContent, "a + b + c = 15 ft + 50 ft + 15 ft");
-  assert.equal(nodes.get("pae-calc-shape-result").textContent, "= 80 ft; long sides = 165.93 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-expression").textContent, "h = 65 ft");
-  assert.equal(nodes.get("pae-calc-fixed-arrows-result").textContent, "· g = 50 ft");
-  assert.equal(nodes.get("pae-calc-left-boundary-result").textContent, "= 60.96 ft from the right to the left-15 boundary");
-  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.07 ft from the right to line g's end");
-  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 3.11 ft line g enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-forced-inner-expression").textContent, "e = h − c × sin(69.69°)");
+  assert.equal(nodes.get("pae-calc-a-result").textContent, "= 15 ft — left edge (given)");
+  assert.equal(nodes.get("pae-calc-b-result").textContent, "= 50 ft — middle edge (given)");
+  assert.equal(nodes.get("pae-calc-c-result").textContent, "= 15 ft — right edge (given)");
+  assert.equal(nodes.get("pae-calc-g-result").textContent, "= 50 ft — fixed assessor line (given)");
+  assert.equal(nodes.get("pae-calc-h-result").textContent, "= 65 ft — fixed assessor line (given)");
+  assert.equal(nodes.get("pae-calc-d-expression").textContent, "d = 80 ft × sin(69.69°) − h");
+  assert.equal(nodes.get("pae-calc-d-result").textContent, "= 10.03 ft between the left side and line h");
+  assert.equal(nodes.get("pae-calc-e-expression").textContent, "e = h − c × sin(69.69°)");
   assert.equal(
-    nodes.get("pae-calc-forced-inner-expression").innerHTML,
+    nodes.get("pae-calc-e-expression").innerHTML,
     "<var>e</var> = <var>h</var> − <var>c</var> × sin(69.69°)",
   );
-  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.93 ft line h reaches farther left than line g");
+  assert.equal(nodes.get("pae-calc-e-result").textContent, "= 50.93 ft from line h to the right-15 mark");
+  assert.equal(nodes.get("pae-calc-f-expression").textContent, "f = c × sin(69.69°)");
+  assert.equal(nodes.get("pae-calc-f-result").textContent, "= 14.07 ft, the right-15 projection");
+  assert.equal(nodes.get("pae-calc-i-result").textContent, "= 4.04 ft line h enters the left 15 ft");
   assert.match(nodes.get("pae-shape").getAttribute("d"), /^M .+ Z$/);
   assert.match(nodes.get("pae-perp-square-left").getAttribute("d"), /^M .+ L .+ L /);
 });
@@ -150,12 +153,12 @@ test("updates the diagram and formulas from slider input", async () => {
   slider.dispatch("input");
 
   assert.equal(nodes.get("pae-angle-output").textContent, "86.89°");
-  assert.equal(nodes.get("pae-calc-perp-insets-expression").textContent, "a = c = f = 15 ft × sin(86.89°)");
+  assert.equal(nodes.get("pae-calc-f-expression").textContent, "f = c × sin(86.89°)");
   assert.equal(
-    nodes.get("pae-calc-perp-insets-result").textContent,
-    "= 14.98 ft projected on both the left and right",
+    nodes.get("pae-calc-f-result").textContent,
+    "= 14.98 ft, the right-15 projection",
   );
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.10 ft line h enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-i-result").textContent, "= 0.10 ft line h enters the left 15 ft");
 });
 
 test("handles both preset buttons and the 180 degree extreme", async () => {
@@ -164,23 +167,21 @@ test("handles both preset buttons and the 180 degree extreme", async () => {
 
   nodes.get("pae-snap-90").dispatch("click");
   assert.equal(slider.value, "90");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.00 ft line h enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-i-result").textContent, "= 0.00 ft line h enters the left 15 ft");
 
   nodes.get("pae-snap-9874").dispatch("click");
   assert.equal(slider.value, "98.74");
   assert.equal(nodes.get("pae-angle-output").textContent, "98.74°");
-  assert.equal(nodes.get("pae-calc-left-boundary-result").textContent, "= 64.25 ft from the right to the left-15 boundary");
-  assert.equal(nodes.get("pae-calc-b-reach-result").textContent, "= 64.83 ft from the right to line g's end");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 0.75 ft line h enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-b-overlap-result").textContent, "= 0.58 ft line g enters the left 15 ft");
-  assert.equal(nodes.get("pae-calc-projection-loss-result").textContent, "= 0.17 ft line h reaches farther left than line g");
+  assert.equal(nodes.get("pae-calc-f-result").textContent, "= 14.83 ft, the right-15 projection");
+  assert.equal(nodes.get("pae-calc-e-result").textContent, "= 50.17 ft from line h to the right-15 mark");
+  assert.equal(nodes.get("pae-calc-i-result").textContent, "= 0.75 ft line h enters the left 15 ft");
 
   controller.draw(180);
   assert.equal(nodes.get("pae-angle-output").textContent, "180.00°");
   // Flat, the parcel has no width left at all for line h's 65 ft reach to
   // measure against, so the left mark goes negative to say so.
   assert.equal(nodes.get("pae-perp-inset-left-label").textContent, "d · -65.00 ft");
-  assert.equal(nodes.get("pae-calc-overlap-result").textContent, "= 65.00 ft line h enters the left 15 ft");
+  assert.equal(nodes.get("pae-calc-i-result").textContent, "= 65.00 ft line h enters the left 15 ft");
 });
 
 test("switches the SVG viewport at the mobile breakpoint", async () => {
@@ -234,10 +235,6 @@ test("renders the second right-angle area diagram", async () => {
   assert.equal(nodes.has("pae-area-left-overlap-b"), false);
   assert.match(nodes.get("pae-area-square-a").getAttribute("d"), /^M .+ L .+ L /);
   assert.match(nodes.get("pae-area-square-b").getAttribute("d"), /^M .+ L .+ L /);
-  assert.equal(
-    nodes.get("pae-area-calc-overhang-result").textContent,
-    "= 5.21 ft over one edge, short of the other",
-  );
   // The overlap is the four-corner intersection of the fitted center and the
   // left strip, clipped to the parcel.
   assert.match(nodes.get("pae-area-overlap-fill").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
@@ -255,30 +252,14 @@ test("renders the second right-angle area diagram", async () => {
       );
     }
   }
-  assert.equal(nodes.get("pae-area-calc-width-result").textContent, "= 75.03 ft across");
-
-  // The middle band is whatever the two squared-off strips leave behind.
-  assert.equal(nodes.get("pae-area-calc-middle-result").textContent, "= 46.89 ft for a 50 ft middle");
-  assert.equal(
-    nodes.get("pae-area-calc-middle-short-result").textContent,
-    "= 3.11 ft short in the middle",
-  );
-  assert.equal(
-    nodes.get("pae-area-calc-middle-ends-result").textContent,
-    "= 23.71 ft at the middle's far end",
-  );
-  assert.equal(
-    nodes.get("pae-area-calc-gap-area-result").textContent,
-    "= 709.88 ft² unclaimed",
-  );
-  assert.equal(
-    nodes.get("pae-area-calc-overlap-area-result").textContent,
-    "= 429.49 ft² claimed twice",
-  );
-  assert.equal(
-    nodes.get("pae-area-calc-spill-area-result").textContent,
-    "= 796.20 ft² outside the parcel",
-  );
+  assert.equal(nodes.get("pae-area-calc-a-result").textContent, "= 15 ft — left edge (given)");
+  assert.equal(nodes.get("pae-area-calc-b-result").textContent, "= 50 ft — middle edge (given)");
+  assert.equal(nodes.get("pae-area-calc-c-result").textContent, "= 15 ft — right edge (given)");
+  assert.equal(nodes.get("pae-area-calc-d-result").textContent, "= 10.03 ft between the left side and line h");
+  assert.equal(nodes.get("pae-area-calc-e-result").textContent, "= 50.93 ft from line h to the right-15 mark");
+  assert.equal(nodes.get("pae-area-calc-f-result").textContent, "= 14.07 ft, the right-15 projection");
+  assert.equal(nodes.get("pae-area-calc-g-result").textContent, "= 50 ft — fixed assessor line (given)");
+  assert.equal(nodes.get("pae-area-calc-h-result").textContent, "= 65 ft — fixed assessor line (given)");
 });
 
 test("squares a 15 ft strip off each side and shades what hangs over", async () => {
@@ -289,7 +270,6 @@ test("squares a 15 ft strip off each side and shades what hangs over", async () 
   assert.equal(nodes.get("pae-area-chain-right-label").textContent, "f · 14.07 ft");
   assert.equal(nodes.get("pae-area-chain-inner-label").textContent, "e · 50.93 ft");
   assert.equal(nodes.get("pae-area-chain-left-label").textContent, "d · 10.03 ft");
-  assert.equal(nodes.get("pae-area-calc-chain-result").textContent, "= 10.03 / 50.93 / 14.07 ft, left to right");
   assert.match(nodes.get("pae-area-square-chain").getAttribute("d"), /^M .+ L .+ L /);
   assert.equal(
     nodes.get("pae-area-chain-witness-right-inset").getAttribute("x1"),
@@ -387,13 +367,13 @@ test("renders the third parallel-to-the-top diagram", async () => {
   assert.equal(nodes.get("pae-fit-match-label").textContent, "i · Ends match · 0.00 ft");
   assert.match(nodes.get("pae-fit-match-label").innerHTML, /class="math-variable">i<\/tspan>/);
   assert.equal(
-    nodes.get("pae-fit-calc-gap-expression").innerHTML,
+    nodes.get("pae-fit-calc-i-expression").innerHTML,
     "<var>i</var> = |<var>h</var> − (<var>c</var> + <var>g</var>)|",
   );
   assert.equal(nodes.has("pae-fit-title-label"), false);
-  assert.equal(nodes.get("pae-fit-calc-reach-result").textContent, "= 65.00 ft, exactly where line h ends");
-  assert.equal(nodes.get("pae-fit-calc-total-result").textContent, "= 80.00 ft, the whole side");
-  assert.equal(nodes.get("pae-fit-calc-gap-result").textContent, "= 0.00 ft at every angle");
+  assert.equal(nodes.get("pae-fit-calc-g-result").textContent, "= 50 ft — fixed assessor line (given)");
+  assert.equal(nodes.get("pae-fit-calc-h-result").textContent, "= 65 ft — fixed assessor line (given)");
+  assert.equal(nodes.get("pae-fit-calc-i-result").textContent, "= 0.00 ft at every angle");
   assert.equal(
     nodes.get("pae-fit-boundary-right-inset").getAttribute("x1"),
     nodes.get("pae-fit-boundary-right-inset").getAttribute("x2"),
@@ -526,27 +506,28 @@ test("measurement labels are smaller and use normal weight", async () => {
   }
 });
 
-test("show-math rows are grouped in a readable derivation order", async () => {
-  const expectedGroups = {
-    "index.html": [
-      "1. Parcel and true projections",
-      "2. Forced lines and purple row",
-      "3. Left-15 overlap checks",
-    ],
-    "overlaps.html": [
-      "1. Build the squared-off construction",
-      "2. Compare the fixed fit with the available middle",
-      "3. Locate the vertical and area effects",
-      "1. Trace both lines along the top edge",
-      "2. Prove the endpoints match",
-    ],
-  };
+test("show-math is one row per lettered diagram line, nothing else", async () => {
+  const expectedSections = [
+    { file: "index.html", sectionId: "pae-calculations", letters: ["a", "b", "c", "d", "e", "f", "g", "h", "i"] },
+    { file: "overlaps.html", sectionId: "pae-area-calculations", letters: ["a", "b", "c", "d", "e", "f", "g", "h"] },
+    { file: "overlaps.html", sectionId: "pae-fit-calculations", letters: ["a", "b", "c", "g", "h", "i"] },
+  ];
 
-  for (const [file, expected] of Object.entries(expectedGroups)) {
-    const source = await readFile(new URL(`./${file}`, import.meta.url), "utf8");
-    const actual = [...source.matchAll(/class="calculation-group-title">([^<]+)/g)]
+  const sources = new Map();
+  for (const { file, sectionId, letters } of expectedSections) {
+    if (!sources.has(file)) {
+      sources.set(file, await readFile(new URL(`./${file}`, import.meta.url), "utf8"));
+    }
+    const source = sources.get(file);
+    const section = source.slice(source.indexOf(`id="${sectionId}"`));
+    const grid = section.slice(section.indexOf('class="calculation-grid"'), section.indexOf("</details>"));
+    const actual = [...grid.matchAll(/class="calculation-name"><var>([a-z])<\/var><\/span>/g)]
       .map((match) => match[1]);
-    assert.deepEqual(actual, expected);
-    assert.match(source, /\.calculation-group-title\s*\{[^}]*grid-column:\s*1 \/ -1;/s);
+    assert.deepEqual(actual, letters, `${file} #${sectionId}`);
+    assert.equal(
+      [...grid.matchAll(/class="calculation-group-title"/g)].length,
+      0,
+      `${file} #${sectionId} should have no sub-group headings`,
+    );
   }
 });

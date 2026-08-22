@@ -234,50 +234,44 @@ export function calculateDiagram(angleDegrees) {
     ),
     rightSideLabel: point(rightX + 13, (rightTop.y + rightBottom.y) / 2),
     measurements,
+    // One entry per lettered line in the diagram. Each shows only how that
+    // single letter's own value is derived - nothing about any other letter.
     formulas: {
-      shape: {
-        expression: "a + b + c = 15 ft + 50 ft + 15 ft",
-        result: "= 80 ft; long sides = 165.93 ft",
+      a: {
+        expression: "a",
+        result: "= 15 ft — left edge (given)",
       },
-      outerOffsets: {
-        expression: `a = c = f = 15 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularInset)} ft projected on both the left and right`,
+      b: {
+        expression: "b",
+        result: "= 50 ft — middle edge (given)",
       },
-      innerSpan: {
-        expression: `b = 50 ft × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularInner)} ft for the true projected middle`,
+      c: {
+        expression: "c",
+        result: "= 15 ft — right edge (given)",
       },
-      leftBoundary: {
-        expression: `(b + c) × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(leftBoundaryReach)} ft from the right to the left-15 boundary`,
-      },
-      fixedArrows: {
-        expression: "h = 65 ft",
-        result: "· g = 50 ft",
-      },
-      leftOver: {
+      d: {
         expression: `d = 80 ft × sin(${angleDegrees.toFixed(2)}°) − h`,
         result: `= ${formatFeet(perpendicularLeftOver)} ft between the left side and line h`,
       },
-      forcedInner: {
+      e: {
         expression: `e = h − c × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(perpendicularChain.inner)} ft from line h to the right-15 mark`,
       },
-      overlap: {
+      f: {
+        expression: `f = c × sin(${angleDegrees.toFixed(2)}°)`,
+        result: `= ${formatFeet(perpendicularInset)} ft, the right-15 projection`,
+      },
+      g: {
+        expression: "g",
+        result: "= 50 ft — fixed assessor line (given)",
+      },
+      h: {
+        expression: "h",
+        result: "= 65 ft — fixed assessor line (given)",
+      },
+      i: {
         expression: `i = h − (b + c) × sin(${angleDegrees.toFixed(2)}°)`,
         result: `= ${formatFeet(overlap)} ft line h enters the left 15 ft`,
-      },
-      bReach: {
-        expression: `c × sin(${angleDegrees.toFixed(2)}°) + g`,
-        result: `= ${formatFeet(bReach)} ft from the right to line g's end`,
-      },
-      bOverlap: {
-        expression: `(c × sin(θ) + g) − ((b + c) × sin(θ))`,
-        result: `= ${formatFeet(bOverlap)} ft line g enters the left 15 ft`,
-      },
-      projectionLoss: {
-        expression: `h − (c × sin(θ) + g)`,
-        result: `= ${formatFeet(projectionLoss)} ft line h reaches farther left than line g`,
       },
     },
   };
@@ -585,55 +579,17 @@ export function calculateRightAngleAreas(angleDegrees) {
         left: perpendicularWidth - DIMENSIONS.arrowA,
       },
     },
+    // Same lettered lines as the top diagram - d, e and f mean exactly what
+    // they mean there, so reuse those formulas instead of restating them.
     formulas: {
-      leftStripOverlapA: {
-        expression: `intersection of h with projected a`,
-        result: `= ${formatFeet(leftStripOverlaps.a.feet)} ft`,
-      },
-      leftStripOverlapB: {
-        expression: `intersection of fixed b with projected a`,
-        result: `= ${formatFeet(leftStripOverlaps.b.feet)} ft`,
-      },
-      gapArea: {
-        expression: "two unclaimed triangles inside the parcel",
-        result: `= ${formatFeet(gapArea)} ft² unclaimed`,
-      },
-      overlapArea: {
-        expression: `${formatFeet(leftStripOverlaps.b.feet)} ft × ${formatFeet(overlapRect.height / SCALE)} ft`,
-        result: `= ${formatFeet(overlapArea)} ft² claimed twice`,
-      },
-      spillArea: {
-        expression: "square-ended fit beyond the sloping top and bottom",
-        result: `= ${formatFeet(spillArea)} ft² outside the parcel`,
-      },
-      method: {
-        expression: "a and c follow the slanted edge, then are squared off",
-        result: `· fixed b = ${DIMENSIONS.innerSpan} ft is fitted from c`,
-      },
-      width: {
-        expression: `(a + b + c) × sin(${angleDegrees.toFixed(2)}°)`,
-        result: `= ${formatFeet(perpendicularWidth)} ft across`,
-      },
-      middle: {
-        expression: `projected b = ${formatFeet(perpendicularWidth)} ft − projected a − projected c`,
-        result: `= ${formatFeet(middleFeet)} ft for a ${DIMENSIONS.innerSpan} ft middle`,
-      },
-      middleShort: {
-        expression: `fixed b − projected b = ${DIMENSIONS.innerSpan} ft − ${formatFeet(middleFeet)} ft`,
-        result: `= ${formatFeet(middleShortFeet)} ft short in the middle`,
-      },
-      middleEnds: {
-        expression: `(fixed b + projected c) × |cot(${angleDegrees.toFixed(2)}°)|`,
-        result: `= ${formatFeet(middleEndFeet)} ft at the middle's far end`,
-      },
-      overhang: {
-        expression: `a, c = ${DIMENSIONS.inset} ft × |cos(${angleDegrees.toFixed(2)}°)|`,
-        result: `= ${formatFeet(overhangFeet)} ft over one edge, short of the other`,
-      },
-      chain: {
-        expression: `f → line h's ${DIMENSIONS.arrowA} ft endpoint → d`,
-        result: `= ${formatFeet(perpendicularWidth - DIMENSIONS.arrowA)} / ${formatFeet(Math.abs(DIMENSIONS.arrowA - projectedInsetFeet))} / ${formatFeet(projectedInsetFeet)} ft, left to right`,
-      },
+      a: base.formulas.a,
+      b: base.formulas.b,
+      c: base.formulas.c,
+      d: base.formulas.d,
+      e: base.formulas.e,
+      f: base.formulas.f,
+      g: base.formulas.g,
+      h: base.formulas.h,
     },
   };
 }
@@ -747,21 +703,16 @@ export function calculateParallelAreas(angleDegrees) {
       reach: DIMENSIONS.inset + DIMENSIONS.innerSpan,
       gap,
     },
+    // a, b, c, g and h are given the same way here as on the top diagram,
+    // so reuse those formulas instead of restating them.
     formulas: {
-      method: {
-        expression: "h and g run parallel to a + b + c",
-        result: "· no sine, no shrink",
-      },
-      reach: {
-        expression: `c + g = ${DIMENSIONS.inset} ft + ${DIMENSIONS.innerSpan} ft`,
-        result: `= ${formatFeet(DIMENSIONS.inset + DIMENSIONS.innerSpan)} ft, exactly where line h ends`,
-      },
-      total: {
-        expression: `h + a = ${DIMENSIONS.arrowA} ft + ${DIMENSIONS.inset} ft`,
-        result: `= ${formatFeet(DIMENSIONS.side)} ft, the whole side`,
-      },
-      gap: {
-        expression: `i = |h − (c + g)|`,
+      a: base.formulas.a,
+      b: base.formulas.b,
+      c: base.formulas.c,
+      g: base.formulas.g,
+      h: base.formulas.h,
+      i: {
+        expression: "i = |h − (c + g)|",
         result: `= ${formatFeet(gap)} ft at every angle`,
       },
     },

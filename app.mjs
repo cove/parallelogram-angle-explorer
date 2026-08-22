@@ -4,7 +4,7 @@ import {
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=37";
+} from "./geometry.mjs?v=38";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -196,17 +196,15 @@ export function initializeApp(documentRef, windowRef) {
       90,
     );
 
-    setFormula("pae-calc-shape", diagram.formulas.shape);
-    setFormula("pae-calc-perp-insets", diagram.formulas.outerOffsets);
-    setFormula("pae-calc-perp-inner", diagram.formulas.innerSpan);
-    setFormula("pae-calc-left-boundary", diagram.formulas.leftBoundary);
-    setFormula("pae-calc-fixed-arrows", diagram.formulas.fixedArrows);
-    setFormula("pae-calc-b-reach", diagram.formulas.bReach);
-    setFormula("pae-calc-left-over", diagram.formulas.leftOver);
-    setFormula("pae-calc-forced-inner", diagram.formulas.forcedInner);
-    setFormula("pae-calc-overlap", diagram.formulas.overlap);
-    setFormula("pae-calc-b-overlap", diagram.formulas.bOverlap);
-    setFormula("pae-calc-projection-loss", diagram.formulas.projectionLoss);
+    setFormula("pae-calc-a", diagram.formulas.a);
+    setFormula("pae-calc-b", diagram.formulas.b);
+    setFormula("pae-calc-c", diagram.formulas.c);
+    setFormula("pae-calc-d", diagram.formulas.d);
+    setFormula("pae-calc-e", diagram.formulas.e);
+    setFormula("pae-calc-f", diagram.formulas.f);
+    setFormula("pae-calc-g", diagram.formulas.g);
+    setFormula("pae-calc-h", diagram.formulas.h);
+    setFormula("pae-calc-i", diagram.formulas.i);
   }
 
   function drawAreas(angleDegrees) {
@@ -335,18 +333,14 @@ export function initializeApp(documentRef, windowRef) {
       "d",
       pathFromPoints(areas.overlapPolygon, true),
     );
-    setFormula("pae-area-calc-method", areas.formulas.method);
-    setFormula("pae-area-calc-width", areas.formulas.width);
-    setFormula("pae-area-calc-middle", areas.formulas.middle);
-    setFormula("pae-area-calc-middle-short", areas.formulas.middleShort);
-    setFormula("pae-area-calc-middle-ends", areas.formulas.middleEnds);
-    setFormula("pae-area-calc-overhang", areas.formulas.overhang);
-    setFormula("pae-area-calc-left-overlap-a", areas.formulas.leftStripOverlapB);
-    setFormula("pae-area-calc-left-overlap-b", areas.formulas.leftStripOverlapA);
-    setFormula("pae-area-calc-gap-area", areas.formulas.gapArea);
-    setFormula("pae-area-calc-overlap-area", areas.formulas.overlapArea);
-    setFormula("pae-area-calc-spill-area", areas.formulas.spillArea);
-    setFormula("pae-area-calc-chain", areas.formulas.chain);
+    setFormula("pae-area-calc-a", areas.formulas.a);
+    setFormula("pae-area-calc-b", areas.formulas.b);
+    setFormula("pae-area-calc-c", areas.formulas.c);
+    setFormula("pae-area-calc-d", areas.formulas.d);
+    setFormula("pae-area-calc-e", areas.formulas.e);
+    setFormula("pae-area-calc-f", areas.formulas.f);
+    setFormula("pae-area-calc-g", areas.formulas.g);
+    setFormula("pae-area-calc-h", areas.formulas.h);
   }
 
   function drawParallel(angleDegrees) {
@@ -417,10 +411,12 @@ export function initializeApp(documentRef, windowRef) {
       `i · Ends match · ${fit.measurements.gap.toFixed(2)} ft`,
     );
 
-    setFormula("pae-fit-calc-method", fit.formulas.method);
-    setFormula("pae-fit-calc-reach", fit.formulas.reach);
-    setFormula("pae-fit-calc-total", fit.formulas.total);
-    setFormula("pae-fit-calc-gap", fit.formulas.gap);
+    setFormula("pae-fit-calc-a", fit.formulas.a);
+    setFormula("pae-fit-calc-b", fit.formulas.b);
+    setFormula("pae-fit-calc-c", fit.formulas.c);
+    setFormula("pae-fit-calc-g", fit.formulas.g);
+    setFormula("pae-fit-calc-h", fit.formulas.h);
+    setFormula("pae-fit-calc-i", fit.formulas.i);
   }
 
   function setAngle(angleDegrees) {
