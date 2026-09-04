@@ -1,10 +1,11 @@
 import {
   calculateDiagram,
+  calculateNorthEdgeOverlap,
   calculateParallelAreas,
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=38";
+} from "./geometry.mjs?v=39";
 
 export function initializeApp(documentRef, windowRef) {
   const root = documentRef.getElementById("parallelogram-angle-explorer");
@@ -23,13 +24,14 @@ export function initializeApp(documentRef, windowRef) {
   const svg = root.querySelector("#pae-svg");
   const areaSvg = root.querySelector("#pae-area-svg");
   const fitSvg = root.querySelector("#pae-fit-svg");
+  const northSvg = root.querySelector("#pae-north-svg");
   const mobileLayout = windowRef.matchMedia("(max-width: 600px)");
   const element = (id) => root.querySelector(`#${id}`);
 
   function syncMobileViewport() {
     // Wide enough that the overlap and gap labels are not clipped on a phone.
     const viewBox = mobileLayout.matches ? "70 0 480 676" : "0 0 620 676";
-    for (const node of [svg, areaSvg, fitSvg]) {
+    for (const node of [svg, areaSvg, fitSvg, northSvg]) {
       if (node) {
         node.setAttribute("viewBox", viewBox);
       }
@@ -92,6 +94,7 @@ export function initializeApp(documentRef, windowRef) {
     drawForced(angleDegrees);
     drawAreas(angleDegrees);
     drawParallel(angleDegrees);
+    drawNorth(angleDegrees);
   }
 
   function drawForced(angleDegrees) {
@@ -419,6 +422,92 @@ export function initializeApp(documentRef, windowRef) {
     setFormula("pae-fit-calc-i", fit.formulas.i);
   }
 
+  function drawNorth(angleDegrees) {
+    if (!northSvg) {
+      return;
+    }
+    const north = calculateNorthEdgeOverlap(angleDegrees);
+
+    const shapePath = pathFromPoints(north.shape, true);
+    element("pae-north-shape").setAttribute("d", shapePath);
+    element("pae-north-clip-shape").setAttribute("d", shapePath);
+
+    element("pae-north-overlap-west").setAttribute(
+      "d",
+      pathFromPoints(north.overlaps.west, true),
+    );
+    element("pae-north-overlap-east").setAttribute(
+      "d",
+      pathFromPoints(north.overlaps.east, true),
+    );
+
+    setLine(element("pae-north-boundary-true-west"), north.boundaryLines.trueWest);
+    setLine(element("pae-north-boundary-assessor-west"), north.boundaryLines.assessorWest);
+    setLine(element("pae-north-boundary-true-east"), north.boundaryLines.trueEast);
+    setLine(element("pae-north-boundary-assessor-east"), north.boundaryLines.assessorEast);
+
+    for (const part of ["east", "middle", "west"]) {
+      setLine(element(`pae-north-true-${part}`), north.trueRow[part]);
+      setLine(element(`pae-north-assessor-${part}`), north.assessorRow[part]);
+    }
+    for (const mark of ["right", "left", "true-east", "true-west", "assessor-east", "assessor-west"]) {
+      const key = mark.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      setLine(element(`pae-north-ext-${mark}`), north.extensions[key]);
+    }
+
+    setVariableText(
+      element("pae-north-true-west-label"),
+      north.rowLabels.true.west,
+      `a · ${DIMENSIONS.inset} ft`,
+      north.rotation,
+    );
+    setVariableText(
+      element("pae-north-true-middle-label"),
+      north.rowLabels.true.middle,
+      `b · ${DIMENSIONS.innerSpan} ft`,
+      north.rotation,
+    );
+    setVariableText(
+      element("pae-north-true-east-label"),
+      north.rowLabels.true.east,
+      `c · ${DIMENSIONS.inset} ft`,
+      north.rotation,
+    );
+    setVariableText(
+      element("pae-north-assessor-west-label"),
+      north.rowLabels.assessor.west,
+      `d · ${north.measurements.assessorSegments.west.toFixed(2)} ft`,
+      north.rotation,
+    );
+    setVariableText(
+      element("pae-north-assessor-middle-label"),
+      north.rowLabels.assessor.middle,
+      `e · ${north.measurements.assessorSegments.middle.toFixed(2)} ft`,
+      north.rotation,
+    );
+    setVariableText(
+      element("pae-north-assessor-east-label"),
+      north.rowLabels.assessor.east,
+      `f · ${north.measurements.assessorSegments.east.toFixed(2)} ft`,
+      north.rotation,
+    );
+
+    setLine(element("pae-north-west-callout"), north.westCallout);
+    setVariableText(
+      element("pae-north-west-callout-label"),
+      north.westCalloutLabel,
+      `i · into true west 15 · ${north.measurements.westOverlap.toFixed(2)} ft`,
+    );
+
+    setFormula("pae-north-calc-a", north.formulas.a);
+    setFormula("pae-north-calc-b", north.formulas.b);
+    setFormula("pae-north-calc-c", north.formulas.c);
+    setFormula("pae-north-calc-d", north.formulas.d);
+    setFormula("pae-north-calc-e", north.formulas.e);
+    setFormula("pae-north-calc-f", north.formulas.f);
+    setFormula("pae-north-calc-i", north.formulas.i);
+  }
+
   function setAngle(angleDegrees) {
     for (const input of angleInputs) {
       input.value = String(angleDegrees);
@@ -433,7 +522,9 @@ export function initializeApp(documentRef, windowRef) {
   snap9874Button?.addEventListener("click", () => setAngle(PRESET_ANGLES.reverse));
   mobileLayout.addEventListener("change", syncMobileViewport);
   syncMobileViewport();
-  draw(Number(angleInputs[0].value));
+  // A page with no slider (the north-edge overlap is the same at every angle)
+  // still needs a starting angle to draw its leaning parcel.
+  draw(angleInputs[0] ? Number(angleInputs[0].value) : PRESET_ANGLES.initial);
 
-  return { draw, drawForced, drawAreas, drawParallel, setAngle, syncMobileViewport };
+  return { draw, drawForced, drawAreas, drawParallel, drawNorth, setAngle, syncMobileViewport };
 }

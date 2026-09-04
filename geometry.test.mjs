@@ -2,12 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  ASSESSOR_NORTH_EDGE,
   calculateDiagram,
+  calculateNorthEdgeOverlap,
   calculateParallelAreas,
   calculateRightAngleAreas,
   DIMENSIONS,
   PRESET_ANGLES,
-} from "./geometry.mjs?v=38";
+} from "./geometry.mjs?v=39";
 
 const approximately = (actual, expected, tolerance = 1e-9) => {
   assert.ok(
@@ -601,6 +603,111 @@ test("both parallel guides end on the same line at every angle", () => {
 test("rejects invalid angles for the parallel diagram too", () => {
   assert.throws(() => calculateParallelAreas(181), RangeError);
   assert.throws(() => calculateParallelAreas("90"), RangeError);
+});
+
+test("exports the Assessor's recorded north-edge segments", () => {
+  assert.deepEqual(ASSESSOR_NORTH_EDGE, { east: 15.21, middle: 50.72, west: 14.07 });
+  assert.ok(Object.isFrozen(ASSESSOR_NORTH_EDGE));
+  approximately(
+    ASSESSOR_NORTH_EDGE.east + ASSESSOR_NORTH_EDGE.middle + ASSESSOR_NORTH_EDGE.west,
+    DIMENSIONS.side,
+    1e-9,
+  );
+});
+
+test("steps the Assessor's north-edge segments off against the true 15 / 50 / 15", () => {
+  const north = calculateNorthEdgeOverlap(PRESET_ANGLES.initial);
+  const diagram = calculateDiagram(PRESET_ANGLES.initial);
+
+  assert.deepEqual(north.shape, diagram.shape);
+  assert.equal(north.shape.length, 4);
+  assert.equal(north.rotation, PRESET_ANGLES.initial - 90);
+  assert.equal(north.angleDegrees, PRESET_ANGLES.initial);
+
+  // The three recorded segments still total 80 ft.
+  approximately(north.measurements.total, DIMENSIONS.side, 1e-9);
+  assert.deepEqual(north.measurements.assessorSegments, { east: 15.21, middle: 50.72, west: 14.07 });
+  assert.deepEqual(north.measurements.trueSegments, { east: 15, middle: 50, west: 15 });
+
+  // Both interior marks land west of the true marks.
+  approximately(north.measurements.westOverlap, 0.93, 1e-9);
+  approximately(north.measurements.eastOverlap, 0.21, 1e-9);
+  assert.ok(north.marks.assessorWest.x < north.marks.trueWest.x);
+  assert.ok(north.marks.assessorEast.x < north.marks.trueEast.x);
+
+  // Dimension rows are connected end to end.
+  assert.equal(north.trueRow.east.x2, north.trueRow.middle.x1);
+  assert.equal(north.trueRow.middle.x2, north.trueRow.west.x1);
+  assert.equal(north.assessorRow.east.x2, north.assessorRow.middle.x1);
+  assert.equal(north.assessorRow.middle.x2, north.assessorRow.west.x1);
+  assert.equal(Object.keys(north.extensions).length, 6);
+
+  // Boundary lines are vertical and run top to bottom of the parcel.
+  for (const boundary of Object.values(north.boundaryLines)) {
+    assert.equal(boundary.x1, boundary.x2);
+    assert.ok(boundary.y2 > boundary.y1);
+  }
+  assert.equal(north.overlaps.west.length, 4);
+  assert.equal(north.overlaps.east.length, 4);
+
+  // The western callout starts on the Assessor boundary and runs right, into
+  // the open parcel, so its label never clips off the left of the drawing.
+  assert.equal(north.westCallout.x1, north.marks.assessorWest.x);
+  assert.equal(north.westCallout.x2, north.marks.assessorWest.x + 96);
+  assert.equal(north.westCallout.y1, north.westCallout.y2);
+  assert.equal(north.westCalloutLabel.x, north.marks.assessorWest.x + 100);
+
+  assert.deepEqual(north.formulas.a, { expression: "a", result: "= 15 ft — left edge (given)" });
+  assert.deepEqual(north.formulas.b, { expression: "b", result: "= 50 ft — middle edge (given)" });
+  assert.deepEqual(north.formulas.c, { expression: "c", result: "= 15 ft — right edge (given)" });
+  assert.deepEqual(north.formulas.d, {
+    expression: "d",
+    result: "= 14.07 ft — Assessor west segment (recorded)",
+  });
+  assert.deepEqual(north.formulas.e, {
+    expression: "e",
+    result: "= 50.72 ft — Assessor middle segment (recorded)",
+  });
+  assert.deepEqual(north.formulas.f, {
+    expression: "f",
+    result: "= 15.21 ft — Assessor east segment (recorded)",
+  });
+  assert.deepEqual(north.formulas.i, {
+    expression: "i = a − d",
+    result: "= 0.93 ft the Assessor middle span enters the true west 15 ft",
+  });
+});
+
+test("the north-edge overlap is the same at every angle and always finite", () => {
+  for (let hundredths = 100; hundredths <= 18000; hundredths += 25) {
+    const north = calculateNorthEdgeOverlap(hundredths / 100);
+    approximately(north.measurements.westOverlap, 0.93, 1e-9);
+    approximately(north.measurements.eastOverlap, 0.21, 1e-9);
+
+    const numbers = [];
+    const collect = (value) => {
+      if (typeof value === "number") {
+        numbers.push(value);
+      } else if (Array.isArray(value)) {
+        value.forEach(collect);
+      } else if (value && typeof value === "object") {
+        Object.values(value).forEach(collect);
+      }
+    };
+    collect(north);
+    assert.equal(numbers.every(Number.isFinite), true);
+  }
+
+  // The flattened parcel has zero width, so every mark collapses onto the
+  // east corner but the model still returns finite geometry.
+  const flat = calculateNorthEdgeOverlap(180);
+  assert.equal(flat.marks.trueWest.x, flat.marks.assessorWest.x);
+  assert.ok(Number.isFinite(flat.overlaps.west[0].y));
+});
+
+test("rejects invalid angles for the north-edge overlap too", () => {
+  assert.throws(() => calculateNorthEdgeOverlap(0), RangeError);
+  assert.throws(() => calculateNorthEdgeOverlap(Number.NaN), RangeError);
 });
 
 test("the fitted center reaches into the independently measured left strip", () => {

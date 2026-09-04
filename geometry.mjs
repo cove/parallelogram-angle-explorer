@@ -14,6 +14,16 @@ export const DIMENSIONS = Object.freeze({
   arrowB: 50,
 });
 
+// The Assessor's recorded segments across the 80 ft north boundary, east to
+// west. They are given figures from the assessment, not values this module
+// derives; they total 80 ft but do not land where the true 15 / 50 / 15 marks
+// do. Used only by calculateNorthEdgeOverlap.
+export const ASSESSOR_NORTH_EDGE = Object.freeze({
+  east: 15.21,
+  middle: 50.72,
+  west: 14.07,
+});
+
 const SCALE = 1.72;
 const CENTER_X = 300;
 const CENTER_Y = 250;
@@ -714,6 +724,166 @@ export function calculateParallelAreas(angleDegrees) {
       i: {
         expression: "i = |h − (c + g)|",
         result: `= ${formatFeet(gap)} ft at every angle`,
+      },
+    },
+  };
+}
+
+export function calculateNorthEdgeOverlap(angleDegrees) {
+  const base = calculateDiagram(angleDegrees);
+  const [leftTop, rightTop, rightBottom, leftBottom] = base.shape;
+  const rightX = rightTop.x;
+  const leftX = leftTop.x;
+  const topY = Math.min(leftTop.y, rightTop.y);
+  const bottomY = Math.max(leftBottom.y, rightBottom.y);
+
+  // Along the north edge a foot is a foot at any angle, so the Assessor's
+  // recorded 14.07 / 50.72 / 15.21 and the true 15 / 50 / 15 can be stepped
+  // off from the same east corner and compared mark for mark.
+  const alongTop = (feet) => point(
+    rightTop.x - base.sine * feet * SCALE,
+    rightTop.y + base.cosine * feet * SCALE,
+  );
+
+  const trueEastFeet = DIMENSIONS.inset;
+  const trueWestFeet = DIMENSIONS.inset + DIMENSIONS.innerSpan;
+  const assessorEastFeet = ASSESSOR_NORTH_EDGE.east;
+  const assessorWestFeet = ASSESSOR_NORTH_EDGE.east + ASSESSOR_NORTH_EDGE.middle;
+  const marks = {
+    trueEast: alongTop(trueEastFeet),
+    trueWest: alongTop(trueWestFeet),
+    assessorEast: alongTop(assessorEastFeet),
+    assessorWest: alongTop(assessorWestFeet),
+  };
+
+  const topOffset = (source, amount) => point(
+    source.x - base.cosine * amount,
+    source.y - base.sine * amount,
+  );
+  const trueRowOffset = 16;
+  const assessorRowOffset = 50;
+  const trueLabelOffset = 31;
+  const assessorLabelOffset = 82;
+  const rowDimensions = (eastMark, westMark, offset) => ({
+    east: line(topOffset(rightTop, offset), topOffset(eastMark, offset)),
+    middle: line(topOffset(eastMark, offset), topOffset(westMark, offset)),
+    west: line(topOffset(westMark, offset), topOffset(leftTop, offset)),
+  });
+  // The narrow 15 ft end segments cannot hold a label between their marks, so
+  // the two end labels are biased out toward the corners to clear the middle.
+  const weighted = (from, to, t) => point(
+    from.x + (to.x - from.x) * t,
+    from.y + (to.y - from.y) * t,
+  );
+  const rowLabels = (eastMark, westMark, offset, endBias) => ({
+    east: topOffset(weighted(eastMark, rightTop, endBias), offset),
+    middle: topOffset(midpoint(eastMark, westMark), offset),
+    west: topOffset(weighted(westMark, leftTop, endBias), offset),
+  });
+  const trueRow = rowDimensions(marks.trueEast, marks.trueWest, trueRowOffset);
+  const assessorRow = rowDimensions(marks.assessorEast, marks.assessorWest, assessorRowOffset);
+
+  const witness = (source) => line(source, topOffset(source, assessorRowOffset + 4));
+  const extensions = {
+    right: witness(rightTop),
+    left: witness(leftTop),
+    trueEast: witness(marks.trueEast),
+    trueWest: witness(marks.trueWest),
+    assessorEast: witness(marks.assessorEast),
+    assessorWest: witness(marks.assessorWest),
+  };
+
+  // The parcel's left and right sides are vertical in this drawing, so a
+  // boundary dropped from a north-edge mark and run parallel to the sides is a
+  // vertical line held between the leaning top and bottom edges.
+  const topEdgeYAtX = (x) => {
+    const width = rightX - leftX;
+    const fraction = width === 0 ? 0.5 : (x - leftX) / width;
+    return leftTop.y + (rightTop.y - leftTop.y) * fraction;
+  };
+  const bottomEdgeYAtX = (x) => topEdgeYAtX(x) + (leftBottom.y - leftTop.y);
+  const boundaryLine = (x) => line(point(x, topEdgeYAtX(x)), point(x, bottomEdgeYAtX(x)));
+  const boundaryLines = {
+    trueEast: boundaryLine(marks.trueEast.x),
+    trueWest: boundaryLine(marks.trueWest.x),
+    assessorEast: boundaryLine(marks.assessorEast.x),
+    assessorWest: boundaryLine(marks.assessorWest.x),
+  };
+
+  // Each overlap band is the ground between a true mark and the Assessor mark
+  // that should have coincided with it, carried the full depth of the parcel.
+  const band = (xTrue, xAssessor) => [
+    point(xTrue, topEdgeYAtX(xTrue)),
+    point(xAssessor, topEdgeYAtX(xAssessor)),
+    point(xAssessor, bottomEdgeYAtX(xAssessor)),
+    point(xTrue, bottomEdgeYAtX(xTrue)),
+  ];
+  const overlaps = {
+    west: band(marks.trueWest.x, marks.assessorWest.x),
+    east: band(marks.trueEast.x, marks.assessorEast.x),
+  };
+
+  const westOverlap = DIMENSIONS.inset - ASSESSOR_NORTH_EDGE.west;
+  const eastOverlap = ASSESSOR_NORTH_EDGE.east - DIMENSIONS.inset;
+  const total = ASSESSOR_NORTH_EDGE.east + ASSESSOR_NORTH_EDGE.middle + ASSESSOR_NORTH_EDGE.west;
+
+  // The callout runs right, into the open middle of the parcel, so its label
+  // never clips off the left edge of the drawing on a narrow screen.
+  const calloutY = (topY + bottomY) / 2;
+  const westCallout = line(
+    point(marks.assessorWest.x, calloutY),
+    point(marks.assessorWest.x + 96, calloutY),
+  );
+  const westCalloutLabel = point(marks.assessorWest.x + 100, calloutY + 4);
+
+  return {
+    angleDegrees,
+    shape: base.shape,
+    rotation: base.shortRotation,
+    marks,
+    trueRow,
+    assessorRow,
+    rowLabels: {
+      true: rowLabels(marks.trueEast, marks.trueWest, trueLabelOffset, 0.5),
+      assessor: rowLabels(marks.assessorEast, marks.assessorWest, assessorLabelOffset, 0.62),
+    },
+    extensions,
+    boundaryLines,
+    overlaps,
+    westCallout,
+    westCalloutLabel,
+    measurements: {
+      trueSegments: {
+        east: DIMENSIONS.inset,
+        middle: DIMENSIONS.innerSpan,
+        west: DIMENSIONS.inset,
+      },
+      assessorSegments: { ...ASSESSOR_NORTH_EDGE },
+      westOverlap,
+      eastOverlap,
+      total,
+    },
+    // Same a / b / c given edges as the other diagrams; d / e / f carry the
+    // Assessor's own recorded segments here, and i is the western overlap.
+    formulas: {
+      a: base.formulas.a,
+      b: base.formulas.b,
+      c: base.formulas.c,
+      d: {
+        expression: "d",
+        result: `= ${ASSESSOR_NORTH_EDGE.west.toFixed(2)} ft — Assessor west segment (recorded)`,
+      },
+      e: {
+        expression: "e",
+        result: `= ${ASSESSOR_NORTH_EDGE.middle.toFixed(2)} ft — Assessor middle segment (recorded)`,
+      },
+      f: {
+        expression: "f",
+        result: `= ${ASSESSOR_NORTH_EDGE.east.toFixed(2)} ft — Assessor east segment (recorded)`,
+      },
+      i: {
+        expression: "i = a − d",
+        result: `= ${formatFeet(westOverlap)} ft the Assessor middle span enters the true west 15 ft`,
       },
     },
   };

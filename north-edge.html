@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>North-Edge Overlap</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #ffffff;
+      --foreground: #1a1c1f;
+      --border: #d1d5db;
+      --viz-series-1: #2563eb;
+      --red: #c00000;
+      background: #ffffff;
+    }
+    html, body {
+      min-height: 100%;
+      margin: 0;
+      background: #ffffff;
+    }
+    body {
+      box-sizing: border-box;
+      padding: 16px;
+    }
+    .viz-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn {
+      appearance: auto;
+      min-height: 30px;
+      padding: 4px 10px;
+      color: #1a1c1f;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #e5e7eb;
+    }
+    .btn:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    a {
+      color: #2563a8;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="parallelogram-angle-explorer">
+  <style>
+    #parallelogram-angle-explorer {
+      color: var(--foreground);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    #parallelogram-angle-explorer * { box-sizing: border-box; }
+    #parallelogram-angle-explorer h2 {
+      font-size: 17px;
+      line-height: 1.25;
+      margin: 0 0 14px;
+    }
+    #parallelogram-angle-explorer svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 780px;
+    }
+    #parallelogram-angle-explorer .page { fill: #ffffff; stroke: var(--border); }
+    #parallelogram-angle-explorer .shape { fill: none; stroke: #111111; stroke-width: 2.2; }
+    #parallelogram-angle-explorer .inset-offset {
+      fill: none;
+      stroke: #258a53;
+      stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .top-dimension-extension {
+      fill: none;
+      stroke: #777777;
+      stroke-width: 1;
+    }
+    #parallelogram-angle-explorer .static-line {
+      fill: none;
+      stroke: #6a3d12;
+      stroke-width: 1.5;
+    }
+    #parallelogram-angle-explorer .fit-boundary-line {
+      fill: none;
+      stroke: #1c6d43;
+      stroke-width: 1.1;
+      stroke-dasharray: 6 5;
+    }
+    #parallelogram-angle-explorer .label {
+      fill: #111111;
+      font-size: 11px;
+      font-weight: 400;
+      font-family: inherit;
+      text-anchor: middle;
+    }
+    #parallelogram-angle-explorer .inset-label {
+      fill: #1c6d43;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    #parallelogram-angle-explorer .north-assessor-dim {
+      fill: none;
+      stroke: #6a3d12;
+      stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .north-assessor-label {
+      fill: #6a3d12;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    #parallelogram-angle-explorer text.north-callout-label {
+      fill: #c00000;
+      font-size: 10px;
+      font-weight: 400;
+      text-anchor: start;
+    }
+    #parallelogram-angle-explorer .north-callout {
+      fill: none;
+      stroke: #c00000;
+      stroke-width: 1.2;
+    }
+    #parallelogram-angle-explorer .area-overlap {
+      fill: #c00000;
+      fill-opacity: 0.5;
+      stroke: #c00000;
+      stroke-width: 0.8;
+    }
+    #parallelogram-angle-explorer .area-overlap-secondary { fill: #c00000; fill-opacity: 0.16; stroke: none; }
+    #parallelogram-angle-explorer text.emphasized-dimension-label {
+      font-size: 11px;
+      font-weight: 400;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 5px;
+      stroke-linejoin: round;
+    }
+    #parallelogram-angle-explorer .math-variable,
+    #parallelogram-angle-explorer var {
+      font-style: italic;
+    }
+    #parallelogram-angle-explorer .math-toggle .math-toggle-hide,
+    #parallelogram-angle-explorer .math-details[open] > .math-toggle .math-toggle-show {
+      display: none;
+    }
+    #parallelogram-angle-explorer .math-details[open] > .math-toggle .math-toggle-hide {
+      display: inline;
+    }
+    #parallelogram-angle-explorer .math-details {
+      margin: 0 0 4px;
+    }
+    #parallelogram-angle-explorer .math-toggle {
+      display: inline-block;
+      color: #2563a8;
+      font-size: 13px;
+      text-decoration: underline;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    #parallelogram-angle-explorer .math-toggle::-webkit-details-marker {
+      display: none;
+    }
+    #parallelogram-angle-explorer .math-toggle:hover {
+      color: #1b4c82;
+    }
+    #parallelogram-angle-explorer .math-toggle:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    #parallelogram-angle-explorer .math-details[open] > .math-toggle {
+      margin-bottom: 10px;
+    }
+    #parallelogram-angle-explorer .calculations {
+      color: #111111;
+      background: #ffffff;
+      margin: 8px 0 10px;
+    }
+    #parallelogram-angle-explorer .calculations h3 {
+      font-size: 15px;
+      margin: 0 0 2px;
+    }
+    #parallelogram-angle-explorer .calculation-note {
+      margin: 0 0 8px;
+      color: #444444;
+      font-size: 12px;
+    }
+    #parallelogram-angle-explorer .diagram-disclaimer {
+      margin: 0 0 10px;
+      padding: 8px 10px;
+      color: #6a3d12;
+      background: #fff7ed;
+      border-left: 3px solid #d06418;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    #parallelogram-angle-explorer .calculation-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 18px;
+    }
+    #parallelogram-angle-explorer .calculation {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    #parallelogram-angle-explorer .calculation-name {
+      font-weight: 700;
+    }
+    #parallelogram-angle-explorer .calculation-formula {
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    #parallelogram-angle-explorer .calculation-result {
+      margin-left: 4px;
+      font-weight: 700;
+    }
+    #parallelogram-angle-explorer .calculation-green { color: #1c6d43; }
+    #parallelogram-angle-explorer .calculation-brown { color: #6a3d12; }
+    #parallelogram-angle-explorer .calculation-red { color: #c00000; }
+    @media (max-width: 600px) {
+      #parallelogram-angle-explorer {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        max-width: none;
+        min-height: 100vh;
+        min-height: 100svh;
+        min-height: 100dvh;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 8px 8px 12px;
+        overscroll-behavior: none;
+      }
+      #parallelogram-angle-explorer h2 {
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      #parallelogram-angle-explorer #pae-north-heading {
+        order: 0;
+        flex: 0 0 auto;
+      }
+      #parallelogram-angle-explorer #pae-north-svg {
+        order: 1;
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: 62vh;
+      }
+      #parallelogram-angle-explorer #pae-north-calculations {
+        order: 3;
+        flex: 0 0 auto;
+        margin: 5px 0;
+      }
+      #parallelogram-angle-explorer #pae-source-footer {
+        order: 7;
+        flex: 0 0 auto;
+        margin-top: 6px;
+      }
+      #parallelogram-angle-explorer .calculation-grid {
+        grid-template-columns: 1fr;
+        gap: 2px;
+      }
+      #parallelogram-angle-explorer .calculation {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 6px;
+      }
+      #parallelogram-angle-explorer .calculation-formula {
+        font-size: 12px;
+      }
+    }
+  </style>
+
+  <h2>NORTH-EDGE OVERLAP</h2>
+  <p class="diagram-disclaimer" role="note"><strong>Disclaimer:</strong> These diagrams are illustrative only and are not guaranteed to be accurate. They are intended solely to provide an intuitive understanding of how parallelograms change at different angles.</p>
+  <h2 id="pae-north-heading">ASSESSOR SEGMENTS 14.07 / 50.72 / 15.21 STEPPED OFF ALONG THE NORTH BOUNDARY</h2>
+  <svg id="pae-north-svg" viewBox="0 0 620 676" role="img" aria-labelledby="pae-north-svg-title pae-north-svg-desc">
+    <title id="pae-north-svg-title">Assessor north-edge segments compared with the true 15 / 50 / 15 marks</title>
+    <desc id="pae-north-svg-desc">The parcel with two dimension rows above its north boundary. The inner green row is the true 15, 50 and 15 foot segments; the outer brown row is the Assessor's recorded 14.07, 50.72 and 15.21 foot segments. Both rows total 80 feet, but the Assessor's interior marks fall west of the true marks: the east mark by 0.21 feet and the middle-to-west mark by 0.93 feet. Dashed green boundary lines drop from the true marks and solid brown boundary lines from the Assessor marks; the red band between the western pair, carried the full depth of the parcel, is the ground the Assessor's oversized middle span takes from the true western 15 foot strip. A lighter red band shows the smaller eastern discrepancy. The overlap is the same at every slant angle because a foot stays a foot measured along the 80 foot edge.</desc>
+    <defs>
+      <marker id="pae-north-green-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#258a53"></path>
+      </marker>
+      <marker id="pae-north-brown-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#6a3d12"></path>
+      </marker>
+      <clipPath id="pae-north-clip">
+        <path id="pae-north-clip-shape"></path>
+      </clipPath>
+    </defs>
+    <g id="pae-north-scale" transform="translate(-93 0) scale(1.3)">
+    <rect class="page" x="92" y="12" width="436" height="496" rx="2"></rect>
+    <g clip-path="url(#pae-north-clip)">
+      <path id="pae-north-overlap-east" class="area-overlap-secondary"></path>
+      <path id="pae-north-overlap-west" class="area-overlap"></path>
+    </g>
+    <path id="pae-north-shape" class="shape"></path>
+
+    <line id="pae-north-boundary-true-east" class="fit-boundary-line"></line>
+    <line id="pae-north-boundary-true-west" class="fit-boundary-line"></line>
+    <line id="pae-north-boundary-assessor-east" class="static-line"></line>
+    <line id="pae-north-boundary-assessor-west" class="static-line"></line>
+
+    <line id="pae-north-ext-right" class="top-dimension-extension"></line>
+    <line id="pae-north-ext-true-east" class="top-dimension-extension"></line>
+    <line id="pae-north-ext-true-west" class="top-dimension-extension"></line>
+    <line id="pae-north-ext-assessor-east" class="top-dimension-extension"></line>
+    <line id="pae-north-ext-assessor-west" class="top-dimension-extension"></line>
+    <line id="pae-north-ext-left" class="top-dimension-extension"></line>
+
+    <line id="pae-north-true-east" class="inset-offset" marker-start="url(#pae-north-green-arrow)" marker-end="url(#pae-north-green-arrow)"></line>
+    <line id="pae-north-true-middle" class="inset-offset" marker-start="url(#pae-north-green-arrow)" marker-end="url(#pae-north-green-arrow)"></line>
+    <line id="pae-north-true-west" class="inset-offset" marker-start="url(#pae-north-green-arrow)" marker-end="url(#pae-north-green-arrow)"></line>
+    <text id="pae-north-true-east-label" class="label inset-label emphasized-dimension-label">c · 15 ft</text>
+    <text id="pae-north-true-middle-label" class="label inset-label emphasized-dimension-label">b · 50 ft</text>
+    <text id="pae-north-true-west-label" class="label inset-label emphasized-dimension-label">a · 15 ft</text>
+
+    <line id="pae-north-assessor-east" class="north-assessor-dim" marker-start="url(#pae-north-brown-arrow)" marker-end="url(#pae-north-brown-arrow)"></line>
+    <line id="pae-north-assessor-middle" class="north-assessor-dim" marker-start="url(#pae-north-brown-arrow)" marker-end="url(#pae-north-brown-arrow)"></line>
+    <line id="pae-north-assessor-west" class="north-assessor-dim" marker-start="url(#pae-north-brown-arrow)" marker-end="url(#pae-north-brown-arrow)"></line>
+    <text id="pae-north-assessor-east-label" class="label north-assessor-label emphasized-dimension-label">f · 15.21 ft</text>
+    <text id="pae-north-assessor-middle-label" class="label north-assessor-label emphasized-dimension-label">e · 50.72 ft</text>
+    <text id="pae-north-assessor-west-label" class="label north-assessor-label emphasized-dimension-label">d · 14.07 ft</text>
+
+    <line id="pae-north-west-callout" class="north-callout"></line>
+    <text id="pae-north-west-callout-label" class="label north-callout-label emphasized-dimension-label">i · into true west 15 · 0.93 ft</text>
+    </g>
+  </svg>
+
+  <section id="pae-north-calculations" class="calculations" aria-labelledby="pae-north-calculations-title">
+    <h3 id="pae-north-calculations-title">North-edge segment calculations</h3>
+    <p class="calculation-note">Stepped off along the 80 ft north boundary, the Assessor's 14.07 / 50.72 / 15.21 still total 80 ft, so on their own they leave no gap. But they do not fall where the true 15 / 50 / 15 marks do: the east mark sits 0.21 ft west of true and the middle-to-west mark 0.93 ft west. The recorded middle span therefore reaches 0.93 ft into the true western 15 ft boundary. Because a foot stays a foot measured along the edge, that 0.93 ft overlap is the same at every slant angle.</p>
+    <details class="math-details">
+      <summary class="math-toggle"><span class="math-toggle-show">Show math</span><span class="math-toggle-hide">Hide math</span></summary>
+      <div class="calculation-grid">
+        <div class="calculation calculation-green">
+          <span class="calculation-name"><var>a</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-a-expression">Calculating…</span><strong id="pae-north-calc-a-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-green">
+          <span class="calculation-name"><var>b</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-b-expression">Calculating…</span><strong id="pae-north-calc-b-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-green">
+          <span class="calculation-name"><var>c</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-c-expression">Calculating…</span><strong id="pae-north-calc-c-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-brown">
+          <span class="calculation-name"><var>d</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-d-expression">Calculating…</span><strong id="pae-north-calc-d-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-brown">
+          <span class="calculation-name"><var>e</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-e-expression">Calculating…</span><strong id="pae-north-calc-e-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-brown">
+          <span class="calculation-name"><var>f</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-f-expression">Calculating…</span><strong id="pae-north-calc-f-result" class="calculation-result"></strong></span>
+        </div>
+        <div class="calculation calculation-red">
+          <span class="calculation-name"><var>i</var></span>
+          <span class="calculation-formula"><span id="pae-north-calc-i-expression">Calculating…</span><strong id="pae-north-calc-i-result" class="calculation-result"></strong></span>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <footer id="pae-source-footer" class="viz-row">
+    <a href="./index.html">Assessor measurements</a>
+    <a href="./overlaps.html">The right-angle problem</a>
+    <a href="https://github.com/cove/parallelogram-angle-explorer" target="_blank" rel="noopener noreferrer">Source Code</a>
+  </footer>
+
+  <script type="module" src="./main.mjs?v=39"></script>
+</div>
+
+</body>
+</html>

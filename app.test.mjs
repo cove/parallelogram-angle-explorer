@@ -415,6 +415,85 @@ test("keeps the parallel diagram on the same mobile viewport", async () => {
   assert.equal(nodes.get("pae-fit-svg").getAttribute("viewBox"), "70 0 480 676");
 });
 
+test("renders the north-edge overlap page with no slider", async () => {
+  const { controller, mediaQuery, nodes } = await createHarness("./north-edge.html");
+
+  assert.equal(typeof controller.drawNorth, "function");
+  // The page carries no angle slider; it still draws its leaning parcel.
+  assert.equal(nodes.has("pae-angle"), false);
+  assert.equal(nodes.has("pae-north-angle"), false);
+  assert.equal(nodes.get("pae-north-svg").getAttribute("viewBox"), "0 0 620 676");
+
+  assert.match(nodes.get("pae-north-shape").getAttribute("d"), /^M .+ Z$/);
+  assert.equal(
+    nodes.get("pae-north-shape").getAttribute("d"),
+    nodes.get("pae-north-clip-shape").getAttribute("d"),
+  );
+
+  // Green row: the true 15 / 50 / 15 segments.
+  assert.equal(nodes.get("pae-north-true-west-label").textContent, "a · 15 ft");
+  assert.equal(nodes.get("pae-north-true-middle-label").textContent, "b · 50 ft");
+  assert.equal(nodes.get("pae-north-true-east-label").textContent, "c · 15 ft");
+  assert.match(nodes.get("pae-north-true-west-label").innerHTML, /class="math-variable">a<\/tspan>/);
+
+  // Brown row: the Assessor's recorded 14.07 / 50.72 / 15.21 segments.
+  assert.equal(nodes.get("pae-north-assessor-west-label").textContent, "d · 14.07 ft");
+  assert.equal(nodes.get("pae-north-assessor-middle-label").textContent, "e · 50.72 ft");
+  assert.equal(nodes.get("pae-north-assessor-east-label").textContent, "f · 15.21 ft");
+
+  assert.equal(
+    nodes.get("pae-north-west-callout-label").textContent,
+    "i · into true west 15 · 0.93 ft",
+  );
+
+  // The western overlap band is a closed four-corner polygon.
+  assert.match(nodes.get("pae-north-overlap-west").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
+  assert.match(nodes.get("pae-north-overlap-east").getAttribute("d"), /^M .+ L .+ L .+ L .+ Z$/);
+
+  // Boundary lines dropped from the marks are vertical.
+  assert.equal(
+    nodes.get("pae-north-boundary-true-west").getAttribute("x1"),
+    nodes.get("pae-north-boundary-true-west").getAttribute("x2"),
+  );
+  assert.equal(
+    nodes.get("pae-north-boundary-assessor-west").getAttribute("x1"),
+    nodes.get("pae-north-boundary-assessor-west").getAttribute("x2"),
+  );
+
+  assert.equal(nodes.get("pae-north-calc-a-result").textContent, "= 15 ft — left edge (given)");
+  assert.equal(
+    nodes.get("pae-north-calc-d-result").textContent,
+    "= 14.07 ft — Assessor west segment (recorded)",
+  );
+  assert.equal(
+    nodes.get("pae-north-calc-e-result").textContent,
+    "= 50.72 ft — Assessor middle segment (recorded)",
+  );
+  assert.equal(
+    nodes.get("pae-north-calc-f-result").textContent,
+    "= 15.21 ft — Assessor east segment (recorded)",
+  );
+  assert.equal(
+    nodes.get("pae-north-calc-i-expression").innerHTML,
+    "<var>i</var> = <var>a</var> − <var>d</var>",
+  );
+  assert.equal(
+    nodes.get("pae-north-calc-i-result").textContent,
+    "= 0.93 ft the Assessor middle span enters the true west 15 ft",
+  );
+
+  mediaQuery.setMatches(true);
+  assert.equal(nodes.get("pae-north-svg").getAttribute("viewBox"), "70 0 480 676");
+});
+
+test("the north-edge page carries none of the other diagrams", async () => {
+  const { nodes } = await createHarness("./north-edge.html");
+  assert.equal(nodes.has("pae-svg"), false);
+  assert.equal(nodes.has("pae-area-svg"), false);
+  assert.equal(nodes.has("pae-fit-svg"), false);
+  assert.equal(nodes.has("pae-north-svg"), true);
+});
+
 test("keeps the right-angle page's two sliders in step", async () => {
   const { nodes } = await createHarness("./overlaps.html");
   const sliders = ["pae-area-angle", "pae-fit-angle"].map((id) => nodes.get(id));
@@ -479,7 +558,7 @@ test("each page carries only its own diagrams", async () => {
 test("every module version query matches", async () => {
   // A page can load a fresh app.mjs beside a cached geometry.mjs if these
   // drift apart, and the mismatched pair throws instead of drawing.
-  const files = ["index.html", "overlaps.html", "main.mjs", "app.mjs", "geometry.test.mjs"];
+  const files = ["index.html", "overlaps.html", "north-edge.html", "main.mjs", "app.mjs", "geometry.test.mjs"];
   const versions = new Set();
   for (const file of files) {
     const source = await readFile(new URL(`./${file}`, import.meta.url), "utf8");
@@ -511,6 +590,7 @@ test("show-math is one row per lettered diagram line, nothing else", async () =>
     { file: "index.html", sectionId: "pae-calculations", letters: ["a", "b", "c", "d", "e", "f", "g", "h", "i"] },
     { file: "overlaps.html", sectionId: "pae-area-calculations", letters: ["a", "b", "c", "d", "e", "f", "g", "h"] },
     { file: "overlaps.html", sectionId: "pae-fit-calculations", letters: ["a", "b", "c", "g", "h", "i"] },
+    { file: "north-edge.html", sectionId: "pae-north-calculations", letters: ["a", "b", "c", "d", "e", "f", "i"] },
   ];
 
   const sources = new Map();
