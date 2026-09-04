@@ -760,10 +760,10 @@ export function calculateNorthEdgeOverlap(angleDegrees) {
     source.x - base.cosine * amount,
     source.y - base.sine * amount,
   );
-  const trueRowOffset = 16;
-  const assessorRowOffset = 50;
-  const trueLabelOffset = 31;
-  const assessorLabelOffset = 82;
+  const trueRowOffset = 15;
+  const assessorRowOffset = 40;
+  const trueLabelOffset = 29;
+  const assessorLabelOffset = 55;
   const rowDimensions = (eastMark, westMark, offset) => ({
     east: line(topOffset(rightTop, offset), topOffset(eastMark, offset)),
     middle: line(topOffset(eastMark, offset), topOffset(westMark, offset)),
